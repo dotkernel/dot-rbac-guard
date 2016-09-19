@@ -1,0 +1,66 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: n3vra
+ * Date: 6/14/2016
+ * Time: 5:27 PM
+ */
+
+namespace Dot\Rbac\Guard\Event;
+
+use Dot\Authorization\AuthorizationInterface;
+use Dot\Event\Event;
+
+/**
+ * Class AuthorizationEvent
+ * @package Dot\Rbac\Guard\Event
+ */
+class AuthorizationEvent extends Event
+{
+    const EVENT_AUTHORIZE = 'authorize';
+    const EVENT_FORBIDDEN = 'forbidden';
+
+    /** @var bool  */
+    protected $authorized = false;
+
+    /** @var  AuthorizationInterface */
+    protected $authorizationService;
+
+
+    /**
+     * @return boolean
+     */
+    public function isAuthorized()
+    {
+        return $this->authorized;
+    }
+
+    /**
+     * @param boolean $authorized
+     * @return AuthorizationEvent
+     */
+    public function setAuthorized($authorized)
+    {
+        $this->authorized = $authorized;
+        return $this;
+    }
+
+    /**
+     * @return AuthorizationInterface
+     */
+    public function getAuthorizationService()
+    {
+        return $this->authorizationService;
+    }
+
+    /**
+     * @param AuthorizationInterface $authorizationService
+     * @return AuthorizationEvent
+     */
+    public function setAuthorizationService($authorizationService)
+    {
+        $this->authorizationService = $authorizationService;
+        return $this;
+    }
+    
+}

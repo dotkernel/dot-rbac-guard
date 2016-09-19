@@ -1,0 +1,77 @@
+{
+  "name": "dotkernel/dot-rbac-guard",
+  "type": "library",
+  "description": "Various authorization guards for route/controller authorization",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "n3vrax",
+      "email": "tibi@apidemia.com"
+    }
+  ],
+  "require": {
+    "php": "^5.6 || ^7.0",
+    "psr/http-message": "^1.0",
+    "container-interop/container-interop": "^1.1",
+
+    "zendframework/zend-expressive-router": "^1.2",
+    "zendframework/zend-expressive-helpers": "^2.0",
+    "zendframework/zend-diactoros": "^1.3",
+    "zendframework/zend-stdlib": "^3.0",
+    "zendframework/zend-servicemanager": "^3.0",
+    "zendframework/zend-eventmanager": "^3.0",
+
+    "dotkernel/dot-rbac": "0.6.x-dev",
+    "dotkernel/dot-event": "0.6.x-dev",
+    "dotkernel/dot-controller": "0.6.x-dev",
+    "dotkernel/dot-authorization": "0.6.x-dev",
+    "dotkernel/dot-flashmessenger": "0.6.x-dev"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8",
+    "squizlabs/php_codesniffer": "^2.3",
+
+    "dotkernel/dot-authentication": "0.6.x-dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dot\\Rbac\\Guard\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "DotTest\\Rbac\\Guard\\": "test/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/dotkernel/dot-authorization.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/dotkernel/dot-authentication.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/dotkernel/dot-rbac.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/dotkernel/dot-controller.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/dotkernel/dot-event.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/dotkernel/dot-flashmessenger.git"
+    }
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.6-dev"
+    }
+  }
+}

@@ -1,7 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vrax
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 5/20/2016
  * Time: 8:46 PM
  */
@@ -16,6 +17,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
 
+/**
+ * Class RoutePermissionGuard
+ * @package Dot\Rbac\Guard\Route
+ */
 class RoutePermissionGuard implements GuardInterface
 {
     use ProtectionPolicyTrait;
@@ -32,39 +37,53 @@ class RoutePermissionGuard implements GuardInterface
      */
     protected $rules = [];
 
+    /**\
+     * RoutePermissionGuard constructor.
+     * @param AuthorizationInterface $authorizationService
+     * @param array $rules
+     */
     public function __construct(AuthorizationInterface $authorizationService, array $rules = [])
     {
         $this->authorizationService = $authorizationService;
         $this->setRules($rules);
     }
 
+    /**
+     * @param array $rules
+     */
     public function setRules(array $rules)
     {
         $this->rules = [];
-        foreach ($rules as $key => $value)
-        {
-            if(is_int($key)) {
+        foreach ($rules as $key => $value) {
+            if (is_int($key)) {
                 $routeRegex = $value;
                 $permissions = [];
-            }
-            else {
+            } else {
                 $routeRegex = $key;
-                $permissions = (array) $value;
+                $permissions = (array)$value;
             }
             $this->rules[$routeRegex] = $permissions;
         }
     }
 
+    /**
+     * @return int
+     */
     public function getPriority()
     {
         return self::PRIORITY;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return bool
+     */
     public function isGranted(ServerRequestInterface $request, ResponseInterface $response)
     {
         $routeResult = $request->getAttribute(RouteResult::class, false);
         //if we dont have a matched route(probably 404 not found) let it go to the final handler
-        if(!$routeResult instanceof RouteResult) {
+        if (!$routeResult instanceof RouteResult) {
             return true;
         }
 
@@ -89,7 +108,7 @@ class RoutePermissionGuard implements GuardInterface
             ? $allowedPermissions['permissions']
             : $allowedPermissions;
 
-        $condition   = isset($allowedPermissions['condition'])
+        $condition = isset($allowedPermissions['condition'])
             ? $allowedPermissions['condition']
             : GuardInterface::CONDITION_AND;
 

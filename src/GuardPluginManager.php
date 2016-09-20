@@ -1,7 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vrax
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 5/20/2016
  * Time: 8:48 PM
  */
@@ -29,6 +30,7 @@ class GuardPluginManager extends AbstractPluginManager
     protected $factories = [
         RouteGuard::class => RouteGuardFactory::class,
         RoutePermissionGuard::class => RoutePermissionGuardFactory::class,
+
         ControllerGuard::class => ControllerGuardFactory::class,
         ControllerPermissionGuard::class => ControllerPermissionGuardFactory::class,
     ];

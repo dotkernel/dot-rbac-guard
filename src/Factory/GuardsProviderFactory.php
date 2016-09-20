@@ -1,28 +1,33 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vrax
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 5/21/2016
  * Time: 2:48 AM
  */
 
 namespace Dot\Rbac\Guard\Factory;
 
-use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\GuardPluginManager;
-use Dot\Rbac\Guard\GuardsProvider;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
+use Dot\Rbac\Guard\Provider\GuardsProvider;
 use Interop\Container\ContainerInterface;
 
+/**
+ * Class GuardsProviderFactory
+ * @package Dot\Rbac\Guard\Factory
+ */
 class GuardsProviderFactory
 {
+    /**
+     * @param ContainerInterface $container
+     * @return GuardsProvider
+     */
     public function __invoke(ContainerInterface $container)
     {
+        /** @var RbacGuardOptions $options */
         $options = $container->get(RbacGuardOptions::class);
-        if(!$options instanceof RbacGuardOptions) {
-            throw new RuntimeException("ModuleOptions service is not of the required type");
-        }
-
         $guardsOptions = $options->getGuards();
 
         if(empty($guardsOptions)) {

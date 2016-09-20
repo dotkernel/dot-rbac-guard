@@ -1,7 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vrax
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 5/25/2016
  * Time: 7:04 PM
  */
@@ -28,21 +29,20 @@ trait RouteOptionParserTrait
     {
         $params = [];
         $queryParams = [];
-        if(is_string($route)) {
+        if (is_string($route)) {
             $routeName = $route;
-        }
-        elseif(is_array($route)) {
+        } elseif (is_array($route)) {
             $routeName = isset($route['name']) ? $route['name'] : null;
             $params = isset($route['params']) ? $route['params'] : [];
-            $queryParams = isset($route['query_params']) ? $route['query_params'] : [] ;
+            $queryParams = isset($route['query_params']) ? $route['query_params'] : [];
         }
 
-        if(empty($routeName) || !is_string($routeName)) {
+        if (empty($routeName) || !is_string($routeName)) {
             throw new RuntimeException('Invalid route option');
         }
 
         $uri = new Uri($urlHelper->generate($routeName, $params));
-        if(!empty($queryParams)) {
+        if (!empty($queryParams)) {
             $query = http_build_query($queryParams);
             $uri = $uri->withQuery($query);
         }
@@ -56,10 +56,9 @@ trait RouteOptionParserTrait
      */
     public function getRouteName($route)
     {
-        if(is_string($route)) {
+        if (is_string($route)) {
             return $route;
-        }
-        elseif(is_array($route)) {
+        } elseif (is_array($route)) {
             return isset($route['name']) ? $route['name'] : null;
         }
 

@@ -1,7 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vrax
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 5/21/2016
  * Time: 12:49 AM
  */
@@ -10,6 +11,7 @@ namespace Dot\Rbac\Guard\Options;
 
 use Dot\Rbac\Guard\GuardInterface;
 use Zend\Stdlib\AbstractOptions;
+use Zend\Stdlib\ArrayUtils;
 
 /**
  * Class RbacGuardOptions
@@ -17,6 +19,9 @@ use Zend\Stdlib\AbstractOptions;
  */
 class RbacGuardOptions extends AbstractOptions
 {
+    const UNAUTHORIZED_EXCEPTION_MESSAGE = 0;
+    const FORBIDDEN_EXCEPTION_MESSAGE = 1;
+
     /**
      * @var string
      */
@@ -46,6 +51,12 @@ class RbacGuardOptions extends AbstractOptions
      * @var string
      */
     protected $redirectQueryName = 'redirect';
+
+    /** @var array  */
+    protected $messages = [
+        RbacGuardOptions::UNAUTHORIZED_EXCEPTION_MESSAGE => 'You must be authenticated to access this content',
+        RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE => 'You don\'t have enough permissions to access this content',
+    ];
 
     /**
      * ModuleOptions constructor.
@@ -165,5 +176,31 @@ class RbacGuardOptions extends AbstractOptions
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+
+    /**
+     * @param $messages
+     * @return $this
+     */
+    public function setMessages($messages)
+    {
+        $this->messages = ArrayUtils::merge($this->messages, $messages, true);
+        return $this;
+    }
+
+    /**
+     * @param $key
+     * @return mixed|string
+     */
+    public function getMessage($key)
+    {
+        return isset($this->messages[$key]) ? $this->messages[$key] : 'Unknown message';
+    }
 
  }

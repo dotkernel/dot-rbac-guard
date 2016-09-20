@@ -1,7 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vra
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 6/14/2016
  * Time: 5:27 PM
  */
@@ -57,7 +58,7 @@ class AuthorizationEvent extends Event
      * @param AuthorizationInterface $authorizationService
      * @return AuthorizationEvent
      */
-    public function setAuthorizationService($authorizationService)
+    public function setAuthorizationService(AuthorizationInterface $authorizationService)
     {
         $this->authorizationService = $authorizationService;
         return $this;

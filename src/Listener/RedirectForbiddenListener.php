@@ -1,7 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vra
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 6/18/2016
  * Time: 5:56 PM
  */
@@ -17,6 +18,10 @@ use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\Uri;
 use Zend\Expressive\Helper\UrlHelper;
 
+/**
+ * Class RedirectForbiddenListener
+ * @package Dot\Rbac\Guard\Listener
+ */
 class RedirectForbiddenListener
 {
     use RouteOptionParserTrait;

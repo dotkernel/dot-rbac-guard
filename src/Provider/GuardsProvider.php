@@ -1,20 +1,23 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vrax
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 5/21/2016
  * Time: 2:49 AM
  */
 
-namespace Dot\Rbac\Guard;
+namespace Dot\Rbac\Guard\Provider;
+
+use Dot\Rbac\Guard\GuardInterface;
 
 /**
  * Class GuardsProvider
- * @package Dot\Rbac\Guard
+ * @package Dot\Rbac\Guard\Provider
  */
 class GuardsProvider
 {
-    /** @var array  */
+    /** @var array */
     protected $guards = [];
 
     /**
@@ -24,7 +27,7 @@ class GuardsProvider
     public function __construct(array $guards = [])
     {
         $this->guards = $guards;
-        usort($this->guards, function(GuardInterface $a, GuardInterface $b) {
+        usort($this->guards, function (GuardInterface $a, GuardInterface $b) {
             return $a->getPriority() - $b->getPriority();
         });
     }

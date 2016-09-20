@@ -1,12 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: n3vra
+ * @copyright: DotKernel
+ * @library: dotkernel/dot-rbac-guard
+ * @author: n3vrax
  * Date: 6/22/2016
  * Time: 4:25 PM
  */
 
-namespace N3vrax\DkRbacGuard\Listener;
+namespace Dot\Rbac\Guard\Listener;
 
 use Dot\Authentication\AuthenticationInterface;
 use Dot\Authentication\Exception\UnauthorizedException;
@@ -14,24 +15,46 @@ use Dot\Authorization\Exception\ForbiddenException;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\GuardInterface;
-use Dot\Rbac\Guard\GuardsProvider;
+use Dot\Rbac\Guard\Options\RbacGuardOptions;
+use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
 
+/**
+ * Class DefaultAuthorizationListener
+ * @package Dot\Rbac\Guard\Listener
+ */
 class DefaultAuthorizationListener extends AbstractListenerAggregate
 {
-    /** @var  GuardsProvider */
+    /** @var  RbacGuardOptions */
+    protected $options;
+
+    /** @var  GuardsProviderInterface */
     protected $guardsProvider;
 
     /** @var  AuthenticationInterface */
     protected $authentication;
 
-    public function __construct(GuardsProvider $guardsProvider, AuthenticationInterface $authentication)
-    {
+    /**
+     * DefaultAuthorizationListener constructor.
+     * @param GuardsProviderInterface $guardsProvider
+     * @param RbacGuardOptions $options
+     * @param AuthenticationInterface|null $authentication
+     */
+    public function __construct(
+        GuardsProviderInterface $guardsProvider,
+        RbacGuardOptions $options,
+        AuthenticationInterface $authentication = null
+    ) {
         $this->authentication = $authentication;
+        $this->options = $options;
         $this->guardsProvider = $guardsProvider;
     }
 
+    /**
+     * @param EventManagerInterface $events
+     * @param int $priority
+     */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(
@@ -47,6 +70,9 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
         );
     }
 
+    /**
+     * @param AuthorizationEvent $e
+     */
     public function authorize(AuthorizationEvent $e)
     {
         $request = $e->getRequest();
@@ -58,39 +84,41 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
         //break on the first one that does not grants access
 
         $isGranted = true;
-        foreach ($guards as $guard)
-        {
-            if(!$guard instanceof GuardInterface) {
+        foreach ($guards as $guard) {
+            if (!$guard instanceof GuardInterface) {
                 throw new RuntimeException("Guard is not an instance of " . GuardInterface::class);
             }
 
-            if(!$guard->isGranted($request, $response)) {
+            if (!$guard->isGranted($request, $response)) {
                 $isGranted = false;
                 break;
             }
         }
 
         $e->setAuthorized($isGranted);
-
     }
 
+    /**
+     * @param AuthorizationEvent $e
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
+     */
     public function authorizationPost(AuthorizationEvent $e)
     {
         $isGranted = $e->isAuthorized();
-        if(!$isGranted)
-        {
-            //we throw a 401 if is guest, and let unauthorized exception handlers process it
-            //403 otherwise, resulting in a final handler or redirect, whatever you register as the error handler
-            if($this->authentication->hasIdentity())
-            {
-                throw new ForbiddenException(
-                    'You don\'t have enough permissions to access this content', 403);
+        if (!$isGranted) {
+            if ($this->authentication) {
+                //we throw a 401 if is guest, and let unauthorized exception handlers process it
+                //403 otherwise, resulting in a final handler or redirect, whatever you register as the error handler
+                if (!$this->authentication->hasIdentity()) {
+                    throw new UnauthorizedException(
+                        $this->options->getMessage(RbacGuardOptions::UNAUTHORIZED_EXCEPTION_MESSAGE), 401);
+                }
             }
-            else
-            {
-                throw new UnauthorizedException(
-                    'You must be authenticated to access this content', 401);
-            }
+
+            throw new ForbiddenException(
+                $this->options->getMessage(RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE), 403);
+
         }
     }
 }

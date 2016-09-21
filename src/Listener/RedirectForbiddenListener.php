@@ -44,8 +44,8 @@ class RedirectForbiddenListener
     public function __construct(
         UrlHelper $urlHelper,
         FlashMessengerInterface $flashMessenger,
-        RbacGuardOptions $options)
-    {
+        RbacGuardOptions $options
+    ) {
         $this->urlHelper = $urlHelper;
         $this->flashMessenger = $flashMessenger;
         $this->options = $options;
@@ -62,27 +62,28 @@ class RedirectForbiddenListener
         //get whatever messages
         $messages = [];
         $error = $e->getParam('error', null);
-        if(is_array($error)) {
+        if (is_array($error)) {
             foreach ($error as $e) {
-                if(is_string($e)) {
+                if (is_string($e)) {
                     $messages[] = $e;
                 }
             }
-        }
-        else if(is_string($error)) {
-            $messages[] = $error;
-        }
-        else if($error instanceof \Exception)
-        {
-            $messages[] = $error->getMessage();
+        } else {
+            if (is_string($error)) {
+                $messages[] = $error;
+            } else {
+                if ($error instanceof \Exception) {
+                    $messages[] = $error->getMessage();
+                }
+            }
         }
 
         $messages = empty($messages)
             ? ['You don\'t have enough permissions to access this content']
             : $messages;
-        
+
         /** @var Uri $uri */
-        $uri = $this->getUri($this->options->getRedirectRoute(), $this->urlHelper);
+        $uri = $this->getUri($this->options->getRedirectOptions()->getRedirectRoute(), $this->urlHelper);
 
         //add a flash message in case the login page displays errors
         if ($this->flashMessenger) {
@@ -93,13 +94,17 @@ class RedirectForbiddenListener
 
         $query = $uri->getQuery();
         $arr = [];
-        if($this->options->isAllowRedirect()) {
-            if(!empty($query)) {
+        if ($this->options->getRedirectOptions()->isAllowRedirectParam()) {
+            if (!empty($query)) {
                 parse_str($query, $arr);
             }
 
             $query = http_build_query(
-                array_merge($arr, [$this->options->getRedirectQueryName() => urlencode($request->getUri())])
+                array_merge(
+                    $arr, [
+                    $this->options->getRedirectOptions()->getRedirectParamName() =>
+                        urlencode($request->getUri())
+                ])
             );
 
             $uri = $uri->withQuery($query);

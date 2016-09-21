@@ -63,8 +63,8 @@ class ForbiddenHandler
                 $this->authorizationService,
                 AuthorizationEvent::EVENT_FORBIDDEN,
                 [], $request, $response);
-            
-            $result = $this->getEventManager()->triggerEventUntil(function($r) {
+
+            $result = $this->getEventManager()->triggerEventUntil(function ($r) {
                 return ($r instanceof ResponseInterface);
             }, $event);
 

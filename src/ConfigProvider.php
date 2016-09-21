@@ -12,7 +12,7 @@ namespace Dot\Rbac\Guard;
 use Dot\Rbac\Guard\Factory\DefaultAuthorizationListenerFactory;
 use Dot\Rbac\Guard\Factory\ForbiddenHandlerFactory;
 use Dot\Rbac\Guard\Factory\GuardPluginManagerFactory;
-use Dot\Rbac\Guard\Factory\GuardsProviderFactory;
+use Dot\Rbac\Guard\Factory\GuardsProviderPluginManagerFactory;
 use Dot\Rbac\Guard\Factory\RbacGuardMiddlewareFactory;
 use Dot\Rbac\Guard\Factory\RbacGuardOptionsFactory;
 use Dot\Rbac\Guard\Factory\RedirectForbiddenListenerFactory;
@@ -21,7 +21,7 @@ use Dot\Rbac\Guard\Listener\RedirectForbiddenListener;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
 use Dot\Rbac\Guard\Middleware\RbacGuardMiddleware;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
+use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 
 class ConfigProvider
 {
@@ -31,10 +31,13 @@ class ConfigProvider
             'dependencies' => [
                 'factories' => [
                     GuardPluginManager::class => GuardPluginManagerFactory::class,
+
+                    GuardsProviderPluginManager::class => GuardsProviderPluginManagerFactory::class,
+
                     RbacGuardOptions::class => RbacGuardOptionsFactory::class,
-                    GuardsProviderInterface::class => GuardsProviderFactory::class,
 
                     RbacGuardMiddleware::class => RbacGuardMiddlewareFactory::class,
+
                     ForbiddenHandler::class => ForbiddenHandlerFactory::class,
 
                     RedirectForbiddenListener::class => RedirectForbiddenListenerFactory::class,
@@ -53,22 +56,15 @@ class ConfigProvider
                 ],
             ],
 
-            'dk_authorization' => [
+            'dot_authorization' => [
 
                 'protection_policy' => GuardInterface::POLICY_ALLOW,
 
-                'guards' => [
+                'guards_provider_manager' => [],
 
-                ],
+                'guard_manager' => [],
 
-                'guard_manager' => [
-                    'factories' => [
-
-                    ],
-                    'invokables' => [
-
-                    ]
-                ],
+                'guards_provider' => [],
             ]
         ];
     }

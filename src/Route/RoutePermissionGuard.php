@@ -25,7 +25,7 @@ class RoutePermissionGuard implements GuardInterface
 {
     use ProtectionPolicyTrait;
 
-    const PRIORITY = 50;
+    const PRIORITY = 70;
 
     /**
      * @var AuthorizationInterface

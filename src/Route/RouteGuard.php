@@ -11,7 +11,7 @@ namespace Dot\Rbac\Guard\Route;
 
 use Dot\Rbac\Guard\GuardInterface;
 use Dot\Rbac\Guard\ProtectionPolicyTrait;
-use Dot\Rbac\Role\RoleService;
+use Dot\Rbac\Role\RoleServiceInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
@@ -27,7 +27,7 @@ class RouteGuard implements GuardInterface
     const PRIORITY = 100;
 
     /**
-     * @var RoleService
+     * @var RoleServiceInterface
      */
     protected $roleService;
 
@@ -38,10 +38,10 @@ class RouteGuard implements GuardInterface
 
     /**
      * RouteGuard constructor.
-     * @param RoleService $roleService
+     * @param RoleServiceInterface $roleService
      * @param array $rules
      */
-    public function __construct(RoleService $roleService, array $rules = [])
+    public function __construct(RoleServiceInterface $roleService, array $rules = [])
     {
         $this->roleService = $roleService;
         $this->setRules($rules);

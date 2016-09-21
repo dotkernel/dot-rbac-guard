@@ -11,7 +11,7 @@ namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Guard\Route\RouteGuard;
-use Dot\Rbac\Role\RoleService;
+use Dot\Rbac\Role\RoleServiceInterface;
 use Interop\Container\ContainerInterface;
 
 /**
@@ -28,7 +28,7 @@ class RouteGuardFactory
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = [])
     {
-        $roleService = $container->get(RoleService::class);
+        $roleService = $container->get(RoleServiceInterface::class);
         /** @var  RbacGuardOptions */
         $rbacGuardOptions = $container->get(RbacGuardOptions::class);
 

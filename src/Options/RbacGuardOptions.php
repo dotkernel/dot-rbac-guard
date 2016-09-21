@@ -9,6 +9,7 @@
 
 namespace Dot\Rbac\Guard\Options;
 
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\GuardInterface;
 use Zend\Stdlib\AbstractOptions;
 use Zend\Stdlib\ArrayUtils;
@@ -27,30 +28,11 @@ class RbacGuardOptions extends AbstractOptions
      */
     protected $protectionPolicy = GuardInterface::POLICY_ALLOW;
 
-    /**
-     * @var array
-     */
-    protected $guards = [];
+    /** @var array  */
+    protected $guardsProvider = [];
 
-    /**
-     * @var bool
-     */
-    protected $enableRedirectForbiddenListener = false;
-
-    /**
-     * @var string|array
-     */
-    protected $redirectRoute;
-
-    /**
-     * @var bool
-     */
-    protected $allowRedirect = true;
-
-    /**
-     * @var string
-     */
-    protected $redirectQueryName = 'redirect';
+    /** @var  RedirectOptions */
+    protected $redirectOptions;
 
     /** @var array  */
     protected $messages = [
@@ -89,92 +71,49 @@ class RbacGuardOptions extends AbstractOptions
     /**
      * @return array
      */
-    public function getGuards()
+    public function getGuardsProvider()
     {
-        return $this->guards;
+        return $this->guardsProvider;
     }
 
     /**
-     * @param array $guards
+     * @param array $guardsProvider
      * @return RbacGuardOptions
      */
-    public function setGuards($guards)
+    public function setGuardsProvider($guardsProvider)
     {
-        $this->guards = $guards;
+        $this->guardsProvider = $guardsProvider;
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return RedirectOptions
      */
-    public function isEnableRedirectForbiddenListener()
+    public function getRedirectOptions()
     {
-        return $this->enableRedirectForbiddenListener;
+        return $this->redirectOptions;
     }
 
     /**
-     * @param boolean $enableRedirectForbiddenListener
+     * @param RedirectOptions|array $redirectOptions
      * @return RbacGuardOptions
      */
-    public function setEnableRedirectForbiddenListener($enableRedirectForbiddenListener)
+    public function setRedirectOptions($redirectOptions)
     {
-        $this->enableRedirectForbiddenListener = $enableRedirectForbiddenListener;
+        if(is_array($redirectOptions)) {
+            $this->redirectOptions = new RedirectOptions($redirectOptions);
+        }
+        elseif($redirectOptions instanceof RedirectOptions) {
+            $this->redirectOptions = $redirectOptions;
+        }
+        else {
+            throw new InvalidArgumentException('Redirect options must be an array or an instance of ' .
+                RedirectOptions::class);
+        }
+
         return $this;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isAllowRedirect()
-    {
-        return $this->allowRedirect;
-    }
-
-    /**
-     * @param boolean $allowRedirect
-     * @return RbacGuardOptions
-     */
-    public function setAllowRedirect($allowRedirect)
-    {
-        $this->allowRedirect = $allowRedirect;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRedirectQueryName()
-    {
-        return $this->redirectQueryName;
-    }
-
-    /**
-     * @param string $redirectQueryName
-     * @return RbacGuardOptions
-     */
-    public function setRedirectQueryName($redirectQueryName)
-    {
-        $this->redirectQueryName = $redirectQueryName;
-        return $this;
-    }
-
-    /**
-     * @return array|string
-     */
-    public function getRedirectRoute()
-    {
-        return $this->redirectRoute;
-    }
-
-    /**
-     * @param array|string $redirectRoute
-     * @return RbacGuardOptions
-     */
-    public function setRedirectRoute($redirectRoute)
-    {
-        $this->redirectRoute = $redirectRoute;
-        return $this;
-    }
 
     /**
      * @return array

@@ -73,11 +73,24 @@ class ControllerPermissionGuard implements GuardInterface
             return true;
         }
 
-        $controller = $routeResult->getMatchedMiddleware();
-        if(is_array($controller))
-            $controller = current($controller);
-        
-        if(is_subclass_of($controller, AbstractActionController::class))
+        /**
+         * check if at least one Controller is in the middleware stack
+         */
+        $middleware = $routeResult->getMatchedMiddleware();
+        $controller = null;
+        if(is_array($middleware)) {
+            foreach ($middleware as $m) {
+                if(is_subclass_of($m, AbstractActionController::class)) {
+                    $controller = $m;
+                    break;
+                }
+            }
+        }
+        else {
+            $controller = is_subclass_of($middleware, AbstractActionController::class) ? $middleware : null;
+        }
+
+        if($controller)
         {
             $route = $routeResult->getMatchedRouteName();
             $params = $routeResult->getMatchedParams();

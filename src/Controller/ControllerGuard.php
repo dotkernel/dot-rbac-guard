@@ -13,7 +13,7 @@ use Dot\Controller\AbstractActionController;
 use Dot\Controller\AbstractController;
 use Dot\Rbac\Guard\GuardInterface;
 use Dot\Rbac\Guard\ProtectionPolicyTrait;
-use Dot\Rbac\Role\RoleService;
+use Dot\Rbac\Role\RoleServiceInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
@@ -22,9 +22,9 @@ class ControllerGuard implements GuardInterface
 {
     use ProtectionPolicyTrait;
 
-    const PRIORITY = 25;
+    const PRIORITY = 40;
 
-    /** @var RoleService  */
+    /** @var RoleServiceInterface  */
     protected $roleService;
 
     /** @var array  */
@@ -32,10 +32,10 @@ class ControllerGuard implements GuardInterface
 
     /**
      * ControllerGuard constructor.
-     * @param RoleService $roleService
+     * @param RoleServiceInterface $roleService
      * @param array $rules
      */
-    public function __construct(RoleService $roleService, array $rules = [])
+    public function __construct(RoleServiceInterface $roleService, array $rules = [])
     {
         $this->roleService = $roleService;
         $this->setRules($rules);
@@ -77,11 +77,24 @@ class ControllerGuard implements GuardInterface
             return true;
         }
 
-        $controller = $routeResult->getMatchedMiddleware();
-        if(is_array($controller))
-            $controller = current($controller);
+        /**
+         * check if at least one Controller is in the middleware stack
+         */
+        $middleware = $routeResult->getMatchedMiddleware();
+        $controller = null;
+        if(is_array($middleware)) {
+            foreach ($middleware as $m) {
+                if(is_subclass_of($m, AbstractActionController::class)) {
+                    $controller = $m;
+                    break;
+                }
+            }
+        }
+        else {
+            $controller = is_subclass_of($middleware, AbstractActionController::class) ? $middleware : null;
+        }
         
-        if(is_subclass_of($controller, AbstractActionController::class))
+        if($controller)
         {
             $route = $routeResult->getMatchedRouteName();
             $params = $routeResult->getMatchedParams();

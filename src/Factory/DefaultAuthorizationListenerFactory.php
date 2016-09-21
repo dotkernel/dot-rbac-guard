@@ -11,7 +11,8 @@ namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authentication\AuthenticationInterface;
 use Dot\Rbac\Guard\Listener\DefaultAuthorizationListener;
-use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
+use Dot\Rbac\Guard\Options\RbacGuardOptions;
+use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 use Interop\Container\ContainerInterface;
 
 /**
@@ -26,12 +27,20 @@ class DefaultAuthorizationListenerFactory
      */
     public function __invoke(ContainerInterface $container)
     {
+        /** @var RbacGuardOptions $options */
+        $options = $container->get(RbacGuardOptions::class);
+        /** @var GuardsProviderPluginManager $guardsProviderManager */
+        $guardsProviderManager = $container->get(GuardsProviderPluginManager::class);
+
+        $guardsProviderConfig = $options->getGuardsProvider();
+        $guardsProvider = $guardsProviderManager->get(key($guardsProviderConfig), current($guardsProviderConfig));
+
         $authentication = $container->has(AuthenticationInterface::class)
             ? $container->get(AuthenticationInterface::class)
             : null;
 
         return new DefaultAuthorizationListener(
-            $container->get(GuardsProviderInterface::class),
+            $guardsProvider,
             $authentication
         );
     }

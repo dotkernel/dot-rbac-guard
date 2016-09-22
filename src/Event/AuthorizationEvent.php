@@ -27,6 +27,8 @@ class AuthorizationEvent extends Event
     /** @var  AuthorizationInterface */
     protected $authorizationService;
 
+    /** @var  mixed */
+    protected $error;
 
     /**
      * @return boolean
@@ -63,5 +65,25 @@ class AuthorizationEvent extends Event
         $this->authorizationService = $authorizationService;
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * @param mixed $error
+     * @return AuthorizationEvent
+     */
+    public function setError($error)
+    {
+        $this->error = $error;
+        return $this;
+    }
+
+
     
 }

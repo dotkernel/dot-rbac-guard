@@ -10,13 +10,12 @@
 namespace Dot\Rbac\Guard\Listener;
 
 use Dot\FlashMessenger\FlashMessengerInterface;
+use Dot\Helpers\Route\RouteOptionHelper;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Dot\Rbac\Guard\RouteOptionParserTrait;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\Uri;
-use Zend\Expressive\Helper\UrlHelper;
 
 /**
  * Class RedirectForbiddenListener
@@ -24,29 +23,27 @@ use Zend\Expressive\Helper\UrlHelper;
  */
 class RedirectForbiddenListener
 {
-    use RouteOptionParserTrait;
-
     /** @var  RbacGuardOptions */
     protected $options;
 
     /** @var  FlashMessengerInterface */
     protected $flashMessenger;
 
-    /** @var  UrlHelper */
-    protected $urlHelper;
+    /** @var  RouteOptionHelper */
+    protected $routeOptionHelper;
 
     /**
      * DefaultForbiddenListener constructor.
-     * @param UrlHelper $urlHelper
+     * @param RouteOptionHelper $routeOptionHelper
      * @param FlashMessengerInterface $flashMessenger
      * @param RbacGuardOptions $options
      */
     public function __construct(
-        UrlHelper $urlHelper,
-        FlashMessengerInterface $flashMessenger,
-        RbacGuardOptions $options
+        RouteOptionHelper $routeOptionHelper,
+        RbacGuardOptions $options,
+        FlashMessengerInterface $flashMessenger = null
     ) {
-        $this->urlHelper = $urlHelper;
+        $this->urlHelper = $routeOptionHelper;
         $this->flashMessenger = $flashMessenger;
         $this->options = $options;
     }
@@ -61,7 +58,7 @@ class RedirectForbiddenListener
 
         //get whatever messages
         $messages = [];
-        $error = $e->getParam('error', null);
+        $error = $e->getError();
         if (is_array($error)) {
             foreach ($error as $e) {
                 if (is_string($e)) {
@@ -79,13 +76,13 @@ class RedirectForbiddenListener
         }
 
         $messages = empty($messages)
-            ? ['You don\'t have enough permissions to access this content']
+            ? [$this->options->getMessage(RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE)]
             : $messages;
 
         /** @var Uri $uri */
-        $uri = $this->getUri($this->options->getRedirectOptions()->getRedirectRoute(), $this->urlHelper);
+        $uri = $this->routeOptionHelper->getUri($this->options->getRedirectOptions()->getRedirectRoute());
 
-        //add a flash message in case the login page displays errors
+        //add a flash message in case the landing page displays errors
         if ($this->flashMessenger) {
             foreach ($messages as $message) {
                 $this->flashMessenger->addError($message);
@@ -112,60 +109,5 @@ class RedirectForbiddenListener
 
         return new RedirectResponse($uri);
     }
-
-    /**
-     * @return RbacGuardOptions
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param RbacGuardOptions $options
-     * @return RedirectForbiddenListener
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
-        return $this;
-    }
-
-    /**
-     * @return FlashMessengerInterface
-     */
-    public function getFlashMessenger()
-    {
-        return $this->flashMessenger;
-    }
-
-    /**
-     * @param FlashMessengerInterface $flashMessenger
-     * @return RedirectForbiddenListener
-     */
-    public function setFlashMessenger(FlashMessengerInterface $flashMessenger)
-    {
-        $this->flashMessenger = $flashMessenger;
-        return $this;
-    }
-
-    /**
-     * @return UrlHelper
-     */
-    public function getUrlHelper()
-    {
-        return $this->urlHelper;
-    }
-
-    /**
-     * @param UrlHelper $urlHelper
-     * @return RedirectForbiddenListener
-     */
-    public function setUrlHelper($urlHelper)
-    {
-        $this->urlHelper = $urlHelper;
-        return $this;
-    }
-
 
 }

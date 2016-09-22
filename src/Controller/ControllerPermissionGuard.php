@@ -45,6 +45,9 @@ class ControllerPermissionGuard implements GuardInterface
         $this->setRules($rules);
     }
 
+    /**
+     * @param array $rules
+     */
     public function setRules(array $rules)
     {
         $this->rules = [];
@@ -66,6 +69,11 @@ class ControllerPermissionGuard implements GuardInterface
         }
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return bool
+     */
     public function isGranted(ServerRequestInterface $request, ResponseInterface $response)
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
@@ -133,6 +141,9 @@ class ControllerPermissionGuard implements GuardInterface
         return true;
     }
 
+    /**
+     * @return int
+     */
     public function getPriority()
     {
         return static::PRIORITY;

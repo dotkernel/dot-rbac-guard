@@ -29,7 +29,7 @@ trait AuthorizationEventTrait
      * @param ResponseInterface|null $response
      * @return AuthorizationEvent
      */
-    protected function createAuthorizeEvent(
+    protected function createAuthorizationEvent(
         AuthorizationInterface $authorization,
         $name = AuthorizationEvent::EVENT_AUTHORIZE,
         array $eventParams = [],
@@ -50,6 +50,30 @@ trait AuthorizationEventTrait
         }
 
         $event->setParams(array_merge($event->getParams(), $eventParams));
+
+        return $event;
+    }
+
+    /**
+     * @param AuthorizationInterface $authorization
+     * @param $error
+     * @param string $name
+     * @param array $eventParams
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return AuthorizationEvent
+     */
+    protected function createAuthorizationEventWithError(
+        AuthorizationInterface $authorization,
+        $error,
+        $name = AuthorizationEvent::EVENT_FORBIDDEN,
+        array $eventParams = [],
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) {
+        
+        $event = $this->createAuthorizationEvent($authorization, $name, $eventParams, $request, $response);
+        $event->setError($error);
 
         return $event;
     }

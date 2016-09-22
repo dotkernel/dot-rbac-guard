@@ -18,6 +18,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
 
+/**
+ * Class ControllerGuard
+ * @package Dot\Rbac\Guard\Controller
+ */
 class ControllerGuard implements GuardInterface
 {
     use ProtectionPolicyTrait;

@@ -10,10 +10,10 @@
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\FlashMessenger\FlashMessengerInterface;
+use Dot\Helpers\Route\RouteOptionHelper;
 use Dot\Rbac\Guard\Listener\RedirectForbiddenListener;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Interop\Container\ContainerInterface;
-use Zend\Expressive\Helper\UrlHelper;
 
 /**
  * Class RedirectForbiddenListenerFactory
@@ -27,10 +27,14 @@ class RedirectForbiddenListenerFactory
      */
     public function __invoke(ContainerInterface $container)
     {
+        $flashMessenger = $container->has(FlashMessengerInterface::class)
+            ? $container->get(FlashMessengerInterface::class)
+            : null;
+
         return new RedirectForbiddenListener(
-            $container->get(UrlHelper::class),
-            $container->get(FlashMessengerInterface::class),
-            $container->get(RbacGuardOptions::class)
+            $container->get(RouteOptionHelper::class),
+            $container->get(RbacGuardOptions::class),
+            $flashMessenger
         );
     }
 }

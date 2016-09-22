@@ -58,9 +58,9 @@ class ForbiddenHandler
         if ($error instanceof \Exception && in_array($error->getCode(), $this->authorizationStatusCodes)
             || in_array($response->getStatusCode(), $this->authorizationStatusCodes)
         ) {
-
-            $event = $this->createAuthorizeEvent(
+            $event = $this->createAuthorizationEventWithError(
                 $this->authorizationService,
+                $error,
                 AuthorizationEvent::EVENT_FORBIDDEN,
                 [], $request, $response);
 
@@ -76,9 +76,6 @@ class ForbiddenHandler
 
             //if no handler or not a response, use pass-trough strategy
             $response = $response->withStatus(403);
-            if ($error instanceof \Exception) {
-                $error = $error->getMessage();
-            }
         }
 
         return $next($request, $response, $error);

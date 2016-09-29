@@ -18,8 +18,8 @@ use Dot\Event\Event;
  */
 class AuthorizationEvent extends Event
 {
-    const EVENT_AUTHORIZE = 'authorize';
-    const EVENT_FORBIDDEN = 'forbidden';
+    const EVENT_AUTHORIZE = 'event.authorization.authorize';
+    const EVENT_FORBIDDEN = 'event.authorization.forbidden';
 
     /** @var bool  */
     protected $authorized = false;

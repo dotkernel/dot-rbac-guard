@@ -24,12 +24,6 @@ class RedirectOptions extends AbstractOptions
     /** @var  array */
     protected $redirectRoute;
 
-    /** @var bool  */
-    protected $allowRedirectParam = true;
-
-    /** @var string  */
-    protected $redirectParamName = 'redirect';
-
     /**
      * @return boolean
      */
@@ -65,42 +59,4 @@ class RedirectOptions extends AbstractOptions
         $this->redirectRoute = $redirectRoute;
         return $this;
     }
-
-    /**
-     * @return boolean
-     */
-    public function isAllowRedirectParam()
-    {
-        return $this->allowRedirectParam;
-    }
-
-    /**
-     * @param boolean $allowRedirectParam
-     * @return RedirectOptions
-     */
-    public function setAllowRedirectParam($allowRedirectParam)
-    {
-        $this->allowRedirectParam = $allowRedirectParam;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRedirectParamName()
-    {
-        return $this->redirectParamName;
-    }
-
-    /**
-     * @param string $redirectParamName
-     * @return RedirectOptions
-     */
-    public function setRedirectParamName($redirectParamName)
-    {
-        $this->redirectParamName = $redirectParamName;
-        return $this;
-    }
-
-
 }

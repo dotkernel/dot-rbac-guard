@@ -10,6 +10,7 @@
 namespace Dot\Rbac\Guard\Listener;
 
 use Dot\FlashMessenger\FlashMessengerInterface;
+use Dot\Helpers\Route\RedirectParamAppendTrait;
 use Dot\Helpers\Route\RouteOptionHelper;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
@@ -23,6 +24,8 @@ use Zend\Diactoros\Uri;
  */
 class RedirectForbiddenListener
 {
+    use RedirectParamAppendTrait;
+
     /** @var  RbacGuardOptions */
     protected $options;
 
@@ -30,20 +33,20 @@ class RedirectForbiddenListener
     protected $flashMessenger;
 
     /** @var  RouteOptionHelper */
-    protected $routeOptionHelper;
+    protected $routeHelper;
 
     /**
      * DefaultForbiddenListener constructor.
-     * @param RouteOptionHelper $routeOptionHelper
+     * @param RouteOptionHelper $routeHelper
      * @param FlashMessengerInterface $flashMessenger
      * @param RbacGuardOptions $options
      */
     public function __construct(
-        RouteOptionHelper $routeOptionHelper,
+        RouteOptionHelper $routeHelper,
         RbacGuardOptions $options,
         FlashMessengerInterface $flashMessenger = null
     ) {
-        $this->urlHelper = $routeOptionHelper;
+        $this->routeHelper = $routeHelper;
         $this->flashMessenger = $flashMessenger;
         $this->options = $options;
     }
@@ -80,7 +83,7 @@ class RedirectForbiddenListener
             : $messages;
 
         /** @var Uri $uri */
-        $uri = $this->routeOptionHelper->getUri($this->options->getRedirectOptions()->getRedirectRoute());
+        $uri = $this->routeHelper->getUri($this->options->getRedirectOptions()->getRedirectRoute());
 
         //add a flash message in case the landing page displays errors
         if ($this->flashMessenger) {
@@ -89,22 +92,11 @@ class RedirectForbiddenListener
             }
         }
 
-        $query = $uri->getQuery();
-        $arr = [];
-        if ($this->options->getRedirectOptions()->isAllowRedirectParam()) {
-            if (!empty($query)) {
-                parse_str($query, $arr);
-            }
-
-            $query = http_build_query(
-                array_merge(
-                    $arr, [
-                    $this->options->getRedirectOptions()->getRedirectParamName() =>
-                        urlencode($request->getUri())
-                ])
-            );
-
-            $uri = $uri->withQuery($query);
+        /**
+         * Append the current URI in case you want to redirect back to that after user gains permission
+         */
+        if ($this->options->isAllowRedirectParam()) {
+            $uri = $this->appendWantedUrl($uri, $request->getUri(), $this->options->getRedirectParamName());
         }
 
         return new RedirectResponse($uri);

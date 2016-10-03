@@ -31,6 +31,12 @@ class RbacGuardOptions extends AbstractOptions
     /** @var array  */
     protected $guardsProvider = [];
 
+    /** @var bool  */
+    protected $allowRedirectParam = true;
+
+    /** @var string  */
+    protected $redirectParamName = 'redirect';
+
     /** @var  RedirectOptions */
     protected $redirectOptions;
 
@@ -142,4 +148,39 @@ class RbacGuardOptions extends AbstractOptions
         return isset($this->messages[$key]) ? $this->messages[$key] : 'Unknown message';
     }
 
+    /**
+     * @return boolean
+     */
+    public function isAllowRedirectParam()
+    {
+        return $this->allowRedirectParam;
+    }
+
+    /**
+     * @param boolean $allowRedirectParam
+     * @return RbacGuardOptions
+     */
+    public function setAllowRedirectParam($allowRedirectParam)
+    {
+        $this->allowRedirectParam = $allowRedirectParam;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectParamName()
+    {
+        return $this->redirectParamName;
+    }
+
+    /**
+     * @param string $redirectParamName
+     * @return RbacGuardOptions
+     */
+    public function setRedirectParamName($redirectParamName)
+    {
+        $this->redirectParamName = $redirectParamName;
+        return $this;
+    }
  }

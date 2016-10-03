@@ -46,7 +46,7 @@ class RbacGuardMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
-        $event = $this->createAuthorizeEvent(
+        $event = $this->createAuthorizationEvent(
             $this->authorizationService,
             AuthorizationEvent::EVENT_AUTHORIZE,
             [], $request, $response);

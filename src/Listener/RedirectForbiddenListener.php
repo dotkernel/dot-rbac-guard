@@ -10,8 +10,8 @@
 namespace Dot\Rbac\Guard\Listener;
 
 use Dot\FlashMessenger\FlashMessengerInterface;
-use Dot\Helpers\Route\RedirectParamAppendTrait;
 use Dot\Helpers\Route\RouteOptionHelper;
+use Dot\Helpers\Route\UriHelperTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Psr\Http\Message\ResponseInterface;
@@ -24,7 +24,7 @@ use Zend\Diactoros\Uri;
  */
 class RedirectForbiddenListener
 {
-    use RedirectParamAppendTrait;
+    use UriHelperTrait;
 
     /** @var  RbacGuardOptions */
     protected $options;
@@ -96,7 +96,7 @@ class RedirectForbiddenListener
          * Append the current URI in case you want to redirect back to that after user gains permission
          */
         if ($this->options->isAllowRedirectParam()) {
-            $uri = $this->appendWantedUrl($uri, $request->getUri(), $this->options->getRedirectParamName());
+            $uri = $this->appendQueryParam($uri, $request->getUri(), $this->options->getRedirectParamName());
         }
 
         return new RedirectResponse($uri);

@@ -81,7 +81,7 @@ class RedirectForbiddenListener
         }
 
         if (empty($messages)) {
-            $messages = [$this->options->getMessage(RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE)];
+            $messages = [$this->options->getMessage(RbacGuardOptions::FORBIDDEN_MESSAGE)];
         }
 
         /** @var Uri $uri */

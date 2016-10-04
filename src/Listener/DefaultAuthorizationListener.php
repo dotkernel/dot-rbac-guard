@@ -112,12 +112,12 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
                 //403 otherwise, resulting in a final handler or redirect, whatever you register as the error handler
                 if (!$this->authentication->hasIdentity()) {
                     throw new UnauthorizedException(
-                        $this->options->getMessage(RbacGuardOptions::UNAUTHORIZED_EXCEPTION_MESSAGE), 401);
+                        $this->options->getMessage(RbacGuardOptions::UNAUTHORIZED_MESSAGE), 401);
                 }
             }
 
             throw new ForbiddenException(
-                $this->options->getMessage(RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE), 403);
+                $this->options->getMessage(RbacGuardOptions::FORBIDDEN_MESSAGE), 403);
 
         }
     }

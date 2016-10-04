@@ -20,8 +20,8 @@ use Zend\Stdlib\ArrayUtils;
  */
 class RbacGuardOptions extends AbstractOptions
 {
-    const UNAUTHORIZED_EXCEPTION_MESSAGE = 0;
-    const FORBIDDEN_EXCEPTION_MESSAGE = 1;
+    const UNAUTHORIZED_MESSAGE = 0;
+    const FORBIDDEN_MESSAGE = 1;
 
     /**
      * @var string
@@ -42,8 +42,8 @@ class RbacGuardOptions extends AbstractOptions
 
     /** @var array  */
     protected $messages = [
-        RbacGuardOptions::UNAUTHORIZED_EXCEPTION_MESSAGE => 'You must be authenticated to access this content',
-        RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE => 'You don\'t have enough permissions to access this content',
+        RbacGuardOptions::UNAUTHORIZED_MESSAGE => 'You must be authenticated to access this content',
+        RbacGuardOptions::FORBIDDEN_MESSAGE => 'You don\'t have enough permissions to access this content',
     ];
 
     /**
@@ -145,7 +145,7 @@ class RbacGuardOptions extends AbstractOptions
      */
     public function getMessage($key)
     {
-        return isset($this->messages[$key]) ? $this->messages[$key] : 'Unknown message';
+        return isset($this->messages[$key]) ? $this->messages[$key] : null;
     }
 
     /**

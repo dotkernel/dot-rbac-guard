@@ -5,7 +5,7 @@ return [
     'dot_authorization' => [
 
         //define how it will treat non-matching guard rules, allow all by default
-        'protection_policy' => \N3vrax\DkRbacGuard\GuardInterface::POLICY_ALLOW,
+        'protection_policy' => \Dot\Rbac\Guard\GuardInterface::POLICY_ALLOW,
 
         //register custom guards providers here
         'guards_provider_manager' => [],
@@ -23,7 +23,7 @@ return [
                 //the RouteGuard allows you to restrict access to routes based on the user's role
                 //route can also contain wildcard(*)
                 //to block access to a route, set the roles to an empty array
-                \N3vrax\DkRbacGuard\Route\RouteGuard::class => [
+                \Dot\Rbac\Guard\Route\RouteGuard::class => [
                     'premium' => ['admin'],
                     'login' => ['guest'],
                     'logout' => ['admin', 'user', 'viewer'],
@@ -31,7 +31,7 @@ return [
                     'home' => ['*'],
                 ],
                 //the RoutePermissionGuard allows you to restrict access to routes based on permissions
-                \N3vrax\DkRbacGuard\Route\RoutePermissionGuard::class => [
+                \Dot\Rbac\Guard\Route\RoutePermissionGuard::class => [
                     'premium' => ['premium'],
                     'account' => ['my-account'],
                     'logout' => ['only-logged'],

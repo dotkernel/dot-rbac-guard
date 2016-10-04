@@ -9,6 +9,7 @@
 
 namespace Dot\Rbac\Guard\Listener;
 
+use Dot\Authorization\Exception\ForbiddenException;
 use Dot\FlashMessenger\FlashMessengerInterface;
 use Dot\Helpers\Route\RouteOptionHelper;
 use Dot\Helpers\Route\UriHelperTrait;
@@ -34,6 +35,9 @@ class RedirectForbiddenListener
 
     /** @var  RouteOptionHelper */
     protected $routeHelper;
+
+    /** @var bool  */
+    protected $debug = false;
 
     /**
      * DefaultForbiddenListener constructor.
@@ -68,19 +72,17 @@ class RedirectForbiddenListener
                     $messages[] = $e;
                 }
             }
-        } else {
-            if (is_string($error)) {
-                $messages[] = $error;
-            } else {
-                if ($error instanceof \Exception) {
-                    $messages[] = $error->getMessage();
-                }
+        } elseif (is_string($error)) {
+            $messages[] = $error;
+        } elseif ($error instanceof \Exception) {
+            if($this->isDebug() || $error instanceof ForbiddenException) {
+                $messages[] = $error->getMessage();
             }
         }
 
-        $messages = empty($messages)
-            ? [$this->options->getMessage(RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE)]
-            : $messages;
+        if (empty($messages)) {
+            $messages = [$this->options->getMessage(RbacGuardOptions::FORBIDDEN_EXCEPTION_MESSAGE)];
+        }
 
         /** @var Uri $uri */
         $uri = $this->routeHelper->getUri($this->options->getRedirectOptions()->getRedirectRoute());
@@ -100,6 +102,24 @@ class RedirectForbiddenListener
         }
 
         return new RedirectResponse($uri);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDebug()
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param boolean $debug
+     * @return RedirectForbiddenListener
+     */
+    public function setDebug($debug)
+    {
+        $this->debug = $debug;
+        return $this;
     }
 
 }

@@ -27,14 +27,20 @@ class RedirectForbiddenListenerFactory
      */
     public function __invoke(ContainerInterface $container)
     {
+        $config = $container->get('config');
+        $debug = isset($config['debug']) ? (bool) $config['debug'] : false;
+
         $flashMessenger = $container->has(FlashMessengerInterface::class)
             ? $container->get(FlashMessengerInterface::class)
             : null;
 
-        return new RedirectForbiddenListener(
+        $listener = new RedirectForbiddenListener(
             $container->get(RouteOptionHelper::class),
             $container->get(RbacGuardOptions::class),
             $flashMessenger
         );
+        $listener->setDebug($debug);
+
+        return $listener;
     }
 }

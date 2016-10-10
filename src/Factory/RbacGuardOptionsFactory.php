@@ -12,8 +12,16 @@ namespace Dot\Rbac\Guard\Factory;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Interop\Container\ContainerInterface;
 
+/**
+ * Class RbacGuardOptionsFactory
+ * @package Dot\Rbac\Guard\Factory
+ */
 class RbacGuardOptionsFactory
 {
+    /**
+     * @param ContainerInterface $container
+     * @return RbacGuardOptions
+     */
     public function __invoke(ContainerInterface $container)
     {
         return new RbacGuardOptions($container->get('config')['dot_authorization']);

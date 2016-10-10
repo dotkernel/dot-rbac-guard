@@ -20,9 +20,6 @@ use Zend\Stdlib\ArrayUtils;
  */
 class RbacGuardOptions extends AbstractOptions
 {
-    const UNAUTHORIZED_MESSAGE = 0;
-    const FORBIDDEN_MESSAGE = 1;
-
     /**
      * @var string
      */
@@ -40,11 +37,8 @@ class RbacGuardOptions extends AbstractOptions
     /** @var  RedirectOptions */
     protected $redirectOptions;
 
-    /** @var array  */
-    protected $messages = [
-        RbacGuardOptions::UNAUTHORIZED_MESSAGE => 'You must be authenticated to access this content',
-        RbacGuardOptions::FORBIDDEN_MESSAGE => 'You don\'t have enough permissions to access this content',
-    ];
+    /** @var  MessagesOptions */
+    protected $messagesOptions;
 
     /**
      * ModuleOptions constructor.
@@ -97,6 +91,9 @@ class RbacGuardOptions extends AbstractOptions
      */
     public function getRedirectOptions()
     {
+        if(!$this->redirectOptions) {
+            $this->setRedirectOptions([]);
+        }
         return $this->redirectOptions;
     }
 
@@ -113,39 +110,47 @@ class RbacGuardOptions extends AbstractOptions
             $this->redirectOptions = $redirectOptions;
         }
         else {
-            throw new InvalidArgumentException('Redirect options must be an array or an instance of ' .
-                RedirectOptions::class);
+            throw new InvalidArgumentException(sprintf(
+                'RedirectOptions should be an array or an %s object. %s provided.',
+                RedirectOptions::class,
+                is_object($redirectOptions) ? get_class($redirectOptions) : gettype($redirectOptions)
+            ));
         }
 
         return $this;
     }
 
-
     /**
-     * @return array
+     * @return MessagesOptions
      */
-    public function getMessages()
+    public function getMessagesOptions()
     {
-        return $this->messages;
+        if(!$this->messagesOptions) {
+            $this->setMessagesOptions([]);
+        }
+        return $this->messagesOptions;
     }
 
     /**
-     * @param $messages
-     * @return $this
+     * @param MessagesOptions|array $messagesOptions
+     * @return RbacGuardOptions
      */
-    public function setMessages($messages)
+    public function setMessagesOptions($messagesOptions)
     {
-        $this->messages = ArrayUtils::merge($this->messages, $messages, true);
+        if(is_array($messagesOptions)) {
+            $this->messagesOptions = new MessagesOptions($messagesOptions);
+        }
+        elseif($messagesOptions instanceof MessagesOptions) {
+            $this->messagesOptions = $messagesOptions;
+        }
+        else {
+            throw new InvalidArgumentException(sprintf(
+                'MessagesOptions should be an array or an %s object. %s provided.',
+                MessagesOptions::class,
+                is_object($messagesOptions) ? get_class($messagesOptions) : gettype($messagesOptions)
+            ));
+        }
         return $this;
-    }
-
-    /**
-     * @param $key
-     * @return mixed|string
-     */
-    public function getMessage($key)
-    {
-        return isset($this->messages[$key]) ? $this->messages[$key] : null;
     }
 
     /**

@@ -56,4 +56,7 @@ return [
             'redirect_route' => ['name' => 'route name', 'params' => []],
 
         ],
+
+        //overwrite default messages
+        //'messages_options' => [],
 ];

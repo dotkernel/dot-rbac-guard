@@ -28,7 +28,7 @@ class RedirectForbiddenListenerFactory
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get('config');
-        $debug = isset($config['debug']) ? (bool) $config['debug'] : false;
+        $debug = isset($config['debug']) ? (bool)$config['debug'] : false;
 
         $flashMessenger = $container->has(FlashMessengerInterface::class)
             ? $container->get(FlashMessengerInterface::class)

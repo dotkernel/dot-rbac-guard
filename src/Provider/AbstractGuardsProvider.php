@@ -48,5 +48,5 @@ abstract class AbstractGuardsProvider implements GuardsProviderInterface
         return $this;
     }
 
-    
+
 }

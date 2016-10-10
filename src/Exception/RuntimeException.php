@@ -15,5 +15,5 @@ namespace Dot\Rbac\Guard\Exception;
  */
 class RuntimeException extends \RuntimeException implements ExceptionInterface
 {
-    
+
 }

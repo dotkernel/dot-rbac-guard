@@ -28,10 +28,10 @@ class ControllerGuard implements GuardInterface
 
     const PRIORITY = 40;
 
-    /** @var RoleServiceInterface  */
+    /** @var RoleServiceInterface */
     protected $roleService;
 
-    /** @var array  */
+    /** @var array */
     protected $rules = [];
 
     /**
@@ -54,10 +54,10 @@ class ControllerGuard implements GuardInterface
 
         foreach ($rules as $rule) {
             $route = strtolower($rule['route']);
-            $actions = isset($rule['actions']) ? (array) $rule['actions'] : [];
-            $roles = (array) $rule['roles'];
+            $actions = isset($rule['actions']) ? (array)$rule['actions'] : [];
+            $roles = (array)$rule['roles'];
 
-            if(empty($actions)) {
+            if (empty($actions)) {
                 $this->rules[$route][0] = $roles;
                 continue;
             }
@@ -77,7 +77,7 @@ class ControllerGuard implements GuardInterface
     public function isGranted(ServerRequestInterface $request, ResponseInterface $response)
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
-        if(!$routeResult instanceof RouteResult) {
+        if (!$routeResult instanceof RouteResult) {
             return true;
         }
 
@@ -86,20 +86,18 @@ class ControllerGuard implements GuardInterface
          */
         $middleware = $routeResult->getMatchedMiddleware();
         $controller = null;
-        if(is_array($middleware)) {
+        if (is_array($middleware)) {
             foreach ($middleware as $m) {
-                if(is_subclass_of($m, AbstractActionController::class)) {
+                if (is_subclass_of($m, AbstractActionController::class)) {
                     $controller = $m;
                     break;
                 }
             }
-        }
-        else {
+        } else {
             $controller = is_subclass_of($middleware, AbstractActionController::class) ? $middleware : null;
         }
-        
-        if($controller)
-        {
+
+        if ($controller) {
             $route = $routeResult->getMatchedRouteName();
             $params = $routeResult->getMatchedParams();
             $action = isset($params['action']) && !empty($params['action'])
@@ -108,21 +106,19 @@ class ControllerGuard implements GuardInterface
 
             $action = AbstractController::getMethodFromAction($action);
 
-            if(!isset($this->rules[$route])) {
+            if (!isset($this->rules[$route])) {
                 return $this->protectionPolicy === self::POLICY_ALLOW;
             }
 
-            if(isset($this->rules[$route][$action])) {
+            if (isset($this->rules[$route][$action])) {
                 $allowedRoles = $this->rules[$route][$action];
-            }
-            elseif(isset($this->rules[$route][0])) {
+            } elseif (isset($this->rules[$route][0])) {
                 $allowedRoles = $this->rules[$route][0];
-            }
-            else {
+            } else {
                 return $this->protectionPolicy === self::POLICY_ALLOW;
             }
 
-            if(in_array('*', $allowedRoles)) {
+            if (in_array('*', $allowedRoles)) {
                 return true;
             }
 

@@ -71,7 +71,7 @@ trait AuthorizationEventTrait
         ServerRequestInterface $request,
         ResponseInterface $response
     ) {
-        
+
         $event = $this->createAuthorizationEvent($authorization, $name, $eventParams, $request, $response);
         $event->setError($error);
 

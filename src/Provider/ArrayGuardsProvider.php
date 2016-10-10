@@ -19,7 +19,7 @@ use Dot\Rbac\Guard\GuardPluginManager;
  */
 class ArrayGuardsProvider extends AbstractGuardsProvider
 {
-    /** @var array  */
+    /** @var array */
     protected $guardsConfig = [];
 
     /** @var GuardInterface[] */
@@ -43,20 +43,19 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
      */
     public function getGuards()
     {
-        if($this->guards) {
+        if ($this->guards) {
             return $this->guards;
         }
 
-        if(empty($this->guardsConfig)) {
+        if (empty($this->guardsConfig)) {
             return [];
         }
 
         $this->guards = [];
         foreach ($this->guardsConfig as $name => $config) {
-            if($this->guardManager->has($name)) {
+            if ($this->guardManager->has($name)) {
                 $this->guards[] = $this->guardManager->get($name, $config);
-            }
-            else {
+            } else {
                 throw new RuntimeException(sprintf("Guard %s is not registered in the guard plugin manager", $name));
             }
         }

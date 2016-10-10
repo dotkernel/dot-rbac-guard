@@ -14,6 +14,7 @@ use Dot\FlashMessenger\FlashMessengerInterface;
 use Dot\Helpers\Route\RouteOptionHelper;
 use Dot\Helpers\Route\UriHelperTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
+use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response\RedirectResponse;
@@ -36,7 +37,7 @@ class RedirectForbiddenListener
     /** @var  RouteOptionHelper */
     protected $routeHelper;
 
-    /** @var bool  */
+    /** @var bool */
     protected $debug = false;
 
     /**
@@ -75,13 +76,13 @@ class RedirectForbiddenListener
         } elseif (is_string($error)) {
             $messages[] = $error;
         } elseif ($error instanceof \Exception) {
-            if($this->isDebug() || $error instanceof ForbiddenException) {
+            if ($this->isDebug() || $error instanceof ForbiddenException) {
                 $messages[] = $error->getMessage();
             }
         }
 
         if (empty($messages)) {
-            $messages = [$this->options->getMessage(RbacGuardOptions::FORBIDDEN_MESSAGE)];
+            $messages = [$this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN_MESSAGE)];
         }
 
         /** @var Uri $uri */

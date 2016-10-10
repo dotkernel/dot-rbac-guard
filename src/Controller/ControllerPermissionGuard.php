@@ -28,10 +28,10 @@ class ControllerPermissionGuard implements GuardInterface
 
     const PRIORITY = 10;
 
-    /** @var AuthorizationInterface  */
+    /** @var AuthorizationInterface */
     protected $authorization;
 
-    /** @var array  */
+    /** @var array */
     protected $rules = [];
 
     /**
@@ -54,10 +54,10 @@ class ControllerPermissionGuard implements GuardInterface
 
         foreach ($rules as $rule) {
             $route = strtolower($rule['route']);
-            $actions = isset($rule['actions']) ? (array) $rule['actions'] : [];
-            $permissions = (array) $rule['permissions'];
+            $actions = isset($rule['actions']) ? (array)$rule['actions'] : [];
+            $permissions = (array)$rule['permissions'];
 
-            if(empty($actions)) {
+            if (empty($actions)) {
                 $this->rules[$route][0] = $permissions;
                 continue;
             }
@@ -77,7 +77,7 @@ class ControllerPermissionGuard implements GuardInterface
     public function isGranted(ServerRequestInterface $request, ResponseInterface $response)
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
-        if(!$routeResult instanceof RouteResult) {
+        if (!$routeResult instanceof RouteResult) {
             return true;
         }
 
@@ -86,20 +86,18 @@ class ControllerPermissionGuard implements GuardInterface
          */
         $middleware = $routeResult->getMatchedMiddleware();
         $controller = null;
-        if(is_array($middleware)) {
+        if (is_array($middleware)) {
             foreach ($middleware as $m) {
-                if(is_subclass_of($m, AbstractActionController::class)) {
+                if (is_subclass_of($m, AbstractActionController::class)) {
                     $controller = $m;
                     break;
                 }
             }
-        }
-        else {
+        } else {
             $controller = is_subclass_of($middleware, AbstractActionController::class) ? $middleware : null;
         }
 
-        if($controller)
-        {
+        if ($controller) {
             $route = $routeResult->getMatchedRouteName();
             $params = $routeResult->getMatchedParams();
             $action = isset($params['action']) && !empty($params['action'])
@@ -108,30 +106,28 @@ class ControllerPermissionGuard implements GuardInterface
 
             $action = AbstractController::getMethodFromAction($action);
 
-            if(!isset($this->rules[$route])) {
+            if (!isset($this->rules[$route])) {
                 return $this->protectionPolicy === self::POLICY_ALLOW;
             }
 
-            if(isset($this->rules[$route][$action])) {
+            if (isset($this->rules[$route][$action])) {
                 $allowedPermissions = $this->rules[$route][$action];
-            }
-            elseif(isset($this->rules[$route][0])) {
+            } elseif (isset($this->rules[$route][0])) {
                 $allowedPermissions = $this->rules[$route][0];
-            }
-            else {
+            } else {
                 return $this->protectionPolicy === self::POLICY_ALLOW;
             }
 
-            if(empty($allowedPermissions)) {
+            if (empty($allowedPermissions)) {
                 return $this->protectionPolicy === self::POLICY_ALLOW;
             }
 
-            if(in_array('*', $allowedPermissions)) {
+            if (in_array('*', $allowedPermissions)) {
                 return true;
             }
 
             foreach ($allowedPermissions as $permission) {
-                if(!$this->authorization->isGranted($permission)) {
+                if (!$this->authorization->isGranted($permission)) {
                     return false;
                 }
             }

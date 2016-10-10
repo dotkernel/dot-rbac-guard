@@ -18,7 +18,7 @@ use Zend\Stdlib\AbstractOptions;
  */
 class RedirectOptions extends AbstractOptions
 {
-    /** @var bool  */
+    /** @var bool */
     protected $enable = false;
 
     /** @var  array */

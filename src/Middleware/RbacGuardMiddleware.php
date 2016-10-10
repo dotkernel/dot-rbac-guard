@@ -26,7 +26,7 @@ class RbacGuardMiddleware
     use EventManagerAwareTrait;
     use AuthorizationEventTrait;
 
-    /** @var AuthorizationInterface  */
+    /** @var AuthorizationInterface */
     protected $authorizationService;
 
     /**
@@ -51,12 +51,12 @@ class RbacGuardMiddleware
             AuthorizationEvent::EVENT_AUTHORIZE,
             [], $request, $response);
 
-        $result = $this->getEventManager()->triggerEventUntil(function($r){
+        $result = $this->getEventManager()->triggerEventUntil(function ($r) {
             return ($r instanceof ResponseInterface);
         }, $event);
 
         $result = $result->last();
-        if($result instanceof ResponseInterface) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
 

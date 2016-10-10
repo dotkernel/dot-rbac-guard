@@ -15,5 +15,5 @@ namespace Dot\Rbac\Guard\Exception;
  */
 interface ExceptionInterface
 {
-    
+
 }

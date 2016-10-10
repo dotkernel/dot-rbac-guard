@@ -21,7 +21,7 @@ class AuthorizationEvent extends Event
     const EVENT_AUTHORIZE = 'event.authorization.authorize';
     const EVENT_FORBIDDEN = 'event.authorization.forbidden';
 
-    /** @var bool  */
+    /** @var bool */
     protected $authorized = false;
 
     /** @var  AuthorizationInterface */
@@ -85,5 +85,4 @@ class AuthorizationEvent extends Event
     }
 
 
-    
 }

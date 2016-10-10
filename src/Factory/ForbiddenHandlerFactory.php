@@ -39,7 +39,7 @@ class ForbiddenHandlerFactory
             ? $container->get(EventManagerInterface::class)
             : new EventManager();
 
-        if($options->getRedirectOptions()->isEnable()) {
+        if ($options->getRedirectOptions()->isEnable()) {
             $listener = $container->get(RedirectForbiddenListener::class);
             $eventManager->attach(AuthorizationEvent::EVENT_FORBIDDEN, $listener, 1);
         }

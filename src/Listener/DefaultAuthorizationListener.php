@@ -15,6 +15,7 @@ use Dot\Authorization\Exception\ForbiddenException;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\GuardInterface;
+use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Zend\EventManager\AbstractListenerAggregate;
@@ -112,12 +113,12 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
                 //403 otherwise, resulting in a final handler or redirect, whatever you register as the error handler
                 if (!$this->authentication->hasIdentity()) {
                     throw new UnauthorizedException(
-                        $this->options->getMessage(RbacGuardOptions::UNAUTHORIZED_MESSAGE), 401);
+                        $this->options->getMessagesOptions()->getMessage(MessagesOptions::UNAUTHORIZED_MESSAGE), 401);
                 }
             }
 
             throw new ForbiddenException(
-                $this->options->getMessage(RbacGuardOptions::FORBIDDEN_MESSAGE), 403);
+                $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN_MESSAGE), 403);
 
         }
     }

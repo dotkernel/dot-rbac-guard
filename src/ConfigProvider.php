@@ -65,6 +65,8 @@ class ConfigProvider
                 'guard_manager' => [],
 
                 'guards_provider' => [],
+
+                'messages_options' => [],
             ]
         ];
     }

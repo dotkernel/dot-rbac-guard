@@ -44,36 +44,6 @@
       "DotTest\\Rbac\\Guard\\": "test/"
     }
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/dotkernel/dot-helpers.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/dotkernel/dot-authorization.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/dotkernel/dot-authentication.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/dotkernel/dot-rbac.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/dotkernel/dot-controller.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/dotkernel/dot-event.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/dotkernel/dot-flashmessenger.git"
-    }
-  ],
   "extra": {
     "branch-alias": {
       "dev-master": "0.6-dev"

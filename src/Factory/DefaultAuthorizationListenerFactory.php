@@ -41,6 +41,7 @@ class DefaultAuthorizationListenerFactory
 
         return new DefaultAuthorizationListener(
             $guardsProvider,
+            $options,
             $authentication
         );
     }

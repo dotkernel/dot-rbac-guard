@@ -10,6 +10,7 @@
 namespace Dot\Rbac\Guard\Middleware;
 
 use Dot\Authorization\AuthorizationInterface;
+use Dot\Authorization\Exception\ForbiddenException;
 use Dot\Rbac\Guard\AuthorizationEventTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Psr\Http\Message\ResponseInterface;
@@ -76,6 +77,11 @@ class ForbiddenHandler
 
             //if no handler or not a response, use pass-trough strategy
             $response = $response->withStatus(403);
+            //if we use pass-through, convert the exception into a regular string error, to avoid whoops
+            //only if the exception is of the right type
+            if($error instanceof ForbiddenException) {
+                $error = $error->getMessage();
+            }
         }
 
         return $next($request, $response, $error);

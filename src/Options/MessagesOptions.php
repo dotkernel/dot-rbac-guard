@@ -23,6 +23,8 @@ class MessagesOptions extends AbstractOptions
         MessagesOptions::FORBIDDEN_MESSAGE => 'You don\'t have enough permissions to access this content',
     ];
 
+    protected $__strictMode__ = false;
+
     /**
      * @return array
      */

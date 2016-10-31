@@ -43,8 +43,8 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
      * @param AuthenticationInterface|null $authentication
      */
     public function __construct(
-        GuardsProviderInterface $guardsProvider,
         RbacGuardOptions $options,
+        GuardsProviderInterface $guardsProvider = null,
         AuthenticationInterface $authentication = null
     ) {
         $this->authentication = $authentication;
@@ -78,6 +78,11 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
     {
         $request = $e->getRequest();
         $response = $e->getResponse();
+
+        if(!$this->guardsProvider) {
+            $e->setAuthorized(true);
+            return;
+        }
 
         $guards = $this->guardsProvider->getGuards();
 

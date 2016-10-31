@@ -33,15 +33,18 @@ class DefaultAuthorizationListenerFactory
         $guardsProviderManager = $container->get(GuardsProviderPluginManager::class);
 
         $guardsProviderConfig = $options->getGuardsProvider();
-        $guardsProvider = $guardsProviderManager->get(key($guardsProviderConfig), current($guardsProviderConfig));
+        $guardsProvider = null;
+        if(!empty($guardsProviderConfig) && is_array($guardsProviderConfig)) {
+            $guardsProvider = $guardsProviderManager->get(key($guardsProviderConfig), current($guardsProviderConfig));
+        }
 
         $authentication = $container->has(AuthenticationInterface::class)
             ? $container->get(AuthenticationInterface::class)
             : null;
 
         return new DefaultAuthorizationListener(
-            $guardsProvider,
             $options,
+            $guardsProvider,
             $authentication
         );
     }

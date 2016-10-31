@@ -30,7 +30,7 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
      * @param GuardPluginManager $manager
      * @param array $guardsConfig
      */
-    public function __construct(GuardPluginManager $manager, array $guardsConfig = [])
+    public function __construct(GuardPluginManager $manager, array $guardsConfig = null)
     {
         $this->guardsConfig = $guardsConfig;
         parent::__construct($manager);

@@ -26,7 +26,7 @@ class ArrayGuardsProviderFactory
      * @param array $guardsConfig
      * @return ArrayGuardsProvider
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $guardsConfig = [])
+    public function __invoke(ContainerInterface $container, $requestedName, array $guardsConfig = null)
     {
         $guardManager = $container->get(GuardPluginManager::class);
         return new ArrayGuardsProvider($guardManager, $guardsConfig);

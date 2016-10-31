@@ -14,9 +14,11 @@ use Dot\FlashMessenger\FlashMessengerInterface;
 use Dot\Helpers\Route\RouteOptionHelper;
 use Dot\Helpers\Route\UriHelperTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
+use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\Uri;
 
@@ -87,6 +89,10 @@ class RedirectForbiddenListener
 
         /** @var Uri $uri */
         $uri = $this->routeHelper->getUri($this->options->getRedirectOptions()->getRedirectRoute());
+        if($this->areUriEqual($uri, $request->getUri())) {
+            throw new RuntimeException('The forbidden redirection route is the same as the forbidden route'.
+                ' This can result in an endless redirect loop. Please edit your  authorization schema to open the route you want to redirect to');
+        }
 
         //add a flash message in case the landing page displays errors
         if ($this->flashMessenger) {
@@ -121,6 +127,14 @@ class RedirectForbiddenListener
     {
         $this->debug = $debug;
         return $this;
+    }
+
+    protected function areUriEqual(UriInterface $uri1, UriInterface $uri2)
+    {
+        return $uri1->getScheme() === $uri2->getScheme()
+        && $uri1->getHost() === $uri2->getHost()
+        && $uri1->getPath() === $uri2->getPath()
+        && $uri1->getPort() === $uri2->getPort();
     }
 
 }

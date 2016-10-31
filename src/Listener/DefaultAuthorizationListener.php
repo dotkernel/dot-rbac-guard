@@ -96,8 +96,10 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
                 throw new RuntimeException("Guard is not an instance of " . GuardInterface::class);
             }
 
-            if (!$guard->isGranted($request, $response)) {
-                $isGranted = false;
+            //according to the policy, we whitelist or blacklist matched routes
+            $r = $guard->isGranted($request, $response);
+            if($r !== $isGranted) {
+                $isGranted = $r;
                 break;
             }
         }

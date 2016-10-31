@@ -17,6 +17,7 @@ use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
+use Dot\Rbac\Guard\ProtectionPolicyTrait;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
@@ -80,7 +81,7 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
         $response = $e->getResponse();
 
         if(!$this->guardsProvider) {
-            $e->setAuthorized(true);
+            $e->setAuthorized($this->options->getProtectionPolicy() === GuardInterface::POLICY_ALLOW);
             return;
         }
 
@@ -89,7 +90,7 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
         //iterate over guards, which are sorted by priority
         //break on the first one that does not grants access
 
-        $isGranted = true;
+        $isGranted = $this->options->getProtectionPolicy() === GuardInterface::POLICY_ALLOW;
         foreach ($guards as $guard) {
             if (!$guard instanceof GuardInterface) {
                 throw new RuntimeException("Guard is not an instance of " . GuardInterface::class);

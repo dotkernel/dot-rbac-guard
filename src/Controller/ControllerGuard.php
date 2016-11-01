@@ -126,7 +126,7 @@ class ControllerGuard implements GuardInterface
         }
 
         //if not an AbstractController, this guard will skip
-        return true;
+        return $this->protectionPolicy === self::POLICY_ALLOW;
     }
 
     /**

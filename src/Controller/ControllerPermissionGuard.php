@@ -131,6 +131,8 @@ class ControllerPermissionGuard implements GuardInterface
                     return false;
                 }
             }
+
+            return true;
         }
 
         //if not an AbstractController, this guard will skip

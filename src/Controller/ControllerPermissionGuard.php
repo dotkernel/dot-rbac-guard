@@ -78,7 +78,7 @@ class ControllerPermissionGuard implements GuardInterface
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
         if (!$routeResult instanceof RouteResult) {
-            return true;
+            return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
         /**

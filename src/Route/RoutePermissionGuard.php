@@ -84,7 +84,7 @@ class RoutePermissionGuard implements GuardInterface
         $routeResult = $request->getAttribute(RouteResult::class, false);
         //if we dont have a matched route(probably 404 not found) let it go to the final handler
         if (!$routeResult instanceof RouteResult) {
-            return true;
+            return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
         $routeName = $routeResult->getMatchedRouteName();

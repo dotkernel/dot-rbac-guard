@@ -21,6 +21,7 @@ use Dot\Rbac\Guard\ProtectionPolicyTrait;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Expressive\Router\RouteResult;
 
 /**
  * Class DefaultAuthorizationListener
@@ -80,6 +81,14 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
         $request = $e->getRequest();
         $response = $e->getResponse();
 
+        //if no route result(a.k.a 404) authorize it and let it go to the final handler
+        $routeResult = $request->getAttribute(RouteResult::class, null);
+        if (!$routeResult instanceof RouteResult) {
+            $e->setAuthorized(true);
+            return;
+        }
+
+        //if config is not provided, authorize according to the policy
         if(!$this->guardsProvider) {
             $e->setAuthorized($this->options->getProtectionPolicy() === GuardInterface::POLICY_ALLOW);
             return;

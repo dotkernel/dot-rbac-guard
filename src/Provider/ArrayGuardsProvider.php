@@ -72,7 +72,7 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
     protected function sortGuardsByPriority()
     {
         usort($this->guards, function (GuardInterface $a, GuardInterface $b) {
-            return $a->getPriority() - $b->getPriority();
+            return $b->getPriority() - $a->getPriority();
         });
     }
 }

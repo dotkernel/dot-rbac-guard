@@ -12,6 +12,7 @@ namespace Dot\Rbac\Guard\Controller;
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Controller\AbstractActionController;
 use Dot\Controller\AbstractController;
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\GuardInterface;
 use Dot\Rbac\Guard\ProtectionPolicyTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -126,13 +127,36 @@ class ControllerPermissionGuard implements GuardInterface
                 return true;
             }
 
-            foreach ($allowedPermissions as $permission) {
-                if (!$this->authorization->isGranted($permission)) {
-                    return false;
+            $permissions = isset($allowedPermissions['permissions'])
+                ? $allowedPermissions['permissions']
+                : $allowedPermissions;
+
+            $condition = isset($allowedPermissions['condition'])
+                ? $allowedPermissions['condition']
+                : GuardInterface::CONDITION_AND;
+
+            if (GuardInterface::CONDITION_AND === $condition) {
+                foreach ($permissions as $permission) {
+                    if (!$this->authorization->isGranted($permission)) {
+                        return false;
+                    }
                 }
+                return true;
             }
 
-            return true;
+            if (GuardInterface::CONDITION_OR === $condition) {
+                foreach ($permissions as $permission) {
+                    if ($this->authorization->isGranted($permission)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            throw new InvalidArgumentException(sprintf(
+                'Condition must be either "AND" or "OR", %s given',
+                is_object($condition) ? get_class($condition) : gettype($condition)
+            ));
         }
 
         //if not an AbstractController, this guard will skip

@@ -8,7 +8,6 @@
 
 namespace Dot\Rbac\Guard\Options;
 
-
 use Zend\Stdlib\AbstractOptions;
 use Zend\Stdlib\ArrayUtils;
 
@@ -19,8 +18,8 @@ class MessagesOptions extends AbstractOptions
 
     /** @var array */
     protected $messages = [
-        MessagesOptions::UNAUTHORIZED_MESSAGE => 'You must be authenticated to access this content',
-        MessagesOptions::FORBIDDEN_MESSAGE => 'You don\'t have enough permissions to access this content',
+        MessagesOptions::UNAUTHORIZED_MESSAGE => 'You must be authenticated to access the requested content',
+        MessagesOptions::FORBIDDEN_MESSAGE => 'You don\'t have enough permissions to access the requested content',
     ];
 
     protected $__strictMode__ = false;

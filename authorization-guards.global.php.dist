@@ -21,7 +21,6 @@ return [
             \Dot\Rbac\Guard\Provider\ArrayGuardsProvider::class => [
 
                 //the RouteGuard allows you to restrict access to routes based on the user's role
-                //route can also contain wildcard(*)
                 //to block access to a route, set the roles to an empty array
                 \Dot\Rbac\Guard\Route\RouteGuard::class => [
                     'premium' => ['admin'],

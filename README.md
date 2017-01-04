@@ -116,7 +116,7 @@ Create a configuration file for this module in your 'config/autoload' folder
 ## Register the RbacGuardMiddleware in the pipe
 
 The last step in order to use this package is to register the middleware. This middleware triggers the authorization event.
-You MUST insert this middleware between the routing middleware and the dispatch middleware of the application, because the guards need the RouteResult in order to get the match route and params.
+You MUST insert this middleware between the routing middleware and the dispatch middleware of the application, because the guards need the RouteResult in order to get the matched route and params.
 
 ##### middleware-pipeline.global.php
 ```php
@@ -140,7 +140,7 @@ You MUST insert this middleware between the routing middleware and the dispatch 
 //...
 ```
 
-Authorization through guards is event based. We provide a default event listener that does the job of asking each registered guard is permission is allowed based on rules set in the configuration.
+Authorization through guards is event based. We provide a default event listener that does the job of asking each registered guard if permission is allowed based on rules set in the configuration.
 By using this approach, you can further customize authorization, by registering your event listeners before or after the actual authorization.
 
 When authorization fails, there are 2 possible outcomes

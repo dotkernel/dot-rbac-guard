@@ -21,7 +21,7 @@
     "phpunit/phpunit": "^4.8",
     "squizlabs/php_codesniffer": "^2.3",
 
-    "zendframework/zend-expressive-router": "^1.2",
+    "zendframework/zend-expressive-router": "^2.0",
     "zendframework/zend-diactoros": "^1.3",
     "zendframework/zend-stdlib": "^3.0",
     "zendframework/zend-servicemanager": "^3.0",

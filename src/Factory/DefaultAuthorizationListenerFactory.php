@@ -34,7 +34,7 @@ class DefaultAuthorizationListenerFactory
 
         $guardsProviderConfig = $options->getGuardsProvider();
         $guardsProvider = null;
-        if(!empty($guardsProviderConfig) && is_array($guardsProviderConfig)) {
+        if (!empty($guardsProviderConfig) && is_array($guardsProviderConfig)) {
             $guardsProvider = $guardsProviderManager->get(key($guardsProviderConfig), current($guardsProviderConfig));
         }
 

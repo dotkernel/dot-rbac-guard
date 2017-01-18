@@ -52,7 +52,13 @@ return [
 
             'enable' => false,
 
-            'redirect_route' => ['name' => 'route name', 'params' => []],
+            'redirect_route' => [
+                'route_name' => '',
+                'route_params' => [],
+                'query_params' => [],
+                'fragment_identifier' => null,
+                'route_options' => []
+            ],
 
         ],
 

@@ -17,7 +17,6 @@ use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Dot\Rbac\Guard\ProtectionPolicyTrait;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
@@ -89,7 +88,7 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
         }
 
         //if config is not provided, authorize according to the policy
-        if(!$this->guardsProvider) {
+        if (!$this->guardsProvider) {
             $e->setAuthorized($this->options->getProtectionPolicy() === GuardInterface::POLICY_ALLOW);
             return;
         }
@@ -107,7 +106,7 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
 
             //according to the policy, we whitelist or blacklist matched routes
             $r = $guard->isGranted($request, $response);
-            if($r !== $isGranted) {
+            if ($r !== $isGranted) {
                 $isGranted = $r;
                 break;
             }
@@ -130,13 +129,16 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
                 //403 otherwise, resulting in a final handler or redirect, whatever you register as the error handler
                 if (!$this->authentication->hasIdentity()) {
                     throw new UnauthorizedException(
-                        $this->options->getMessagesOptions()->getMessage(MessagesOptions::UNAUTHORIZED_MESSAGE), 401);
+                        $this->options->getMessagesOptions()->getMessage(MessagesOptions::UNAUTHORIZED_MESSAGE),
+                        401
+                    );
                 }
             }
 
             throw new ForbiddenException(
-                $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN_MESSAGE), 403);
-
+                $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN_MESSAGE),
+                403
+            );
         }
     }
 }

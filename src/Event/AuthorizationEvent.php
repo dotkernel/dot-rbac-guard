@@ -83,6 +83,4 @@ class AuthorizationEvent extends Event
         $this->error = $error;
         return $this;
     }
-
-
 }

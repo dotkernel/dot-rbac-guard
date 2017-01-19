@@ -9,7 +9,6 @@
 
 namespace Dot\Rbac\Guard\Options;
 
-
 use Zend\Stdlib\AbstractOptions;
 
 /**

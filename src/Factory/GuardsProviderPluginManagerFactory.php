@@ -9,7 +9,6 @@
 
 namespace Dot\Rbac\Guard\Factory;
 
-
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 use Interop\Container\ContainerInterface;
 
@@ -27,6 +26,7 @@ class GuardsProviderPluginManagerFactory
     {
         return new GuardsProviderPluginManager(
             $container,
-            $container->get('config')['dot_authorization']['guards_provider_manager']);
+            $container->get('config')['dot_authorization']['guards_provider_manager']
+        );
     }
 }

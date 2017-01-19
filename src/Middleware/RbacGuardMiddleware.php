@@ -9,7 +9,6 @@
 
 namespace Dot\Rbac\Guard\Middleware;
 
-
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\AuthorizationEventTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
@@ -49,7 +48,10 @@ class RbacGuardMiddleware
         $event = $this->createAuthorizationEvent(
             $this->authorizationService,
             AuthorizationEvent::EVENT_AUTHORIZE,
-            [], $request, $response);
+            [],
+            $request,
+            $response
+        );
 
         $result = $this->getEventManager()->triggerEventUntil(function ($r) {
             return ($r instanceof ResponseInterface);

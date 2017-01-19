@@ -9,7 +9,6 @@
 
 namespace Dot\Rbac\Guard\Provider;
 
-
 use Dot\Rbac\Guard\GuardPluginManager;
 
 /**
@@ -47,6 +46,4 @@ abstract class AbstractGuardsProvider implements GuardsProviderInterface
         $this->guardManager = $guardManager;
         return $this;
     }
-
-
 }

@@ -9,7 +9,6 @@
 
 namespace Dot\Rbac\Guard\Provider;
 
-
 use Dot\Rbac\Guard\Factory\ArrayGuardsProviderFactory;
 use Zend\ServiceManager\AbstractPluginManager;
 

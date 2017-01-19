@@ -63,7 +63,10 @@ class ForbiddenHandler
                 $this->authorizationService,
                 $error,
                 AuthorizationEvent::EVENT_FORBIDDEN,
-                [], $request, $response);
+                [],
+                $request,
+                $response
+            );
 
             $result = $this->getEventManager()->triggerEventUntil(function ($r) {
                 return ($r instanceof ResponseInterface);
@@ -79,7 +82,7 @@ class ForbiddenHandler
             $response = $response->withStatus(403);
             //if we use pass-through, convert the exception into a regular string error, to avoid whoops
             //only if the exception is of the right type
-            if($error instanceof ForbiddenException) {
+            if ($error instanceof ForbiddenException) {
                 $error = $error->getMessage();
             }
         }

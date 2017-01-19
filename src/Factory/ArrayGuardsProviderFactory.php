@@ -9,7 +9,6 @@
 
 namespace Dot\Rbac\Guard\Factory;
 
-
 use Dot\Rbac\Guard\GuardPluginManager;
 use Dot\Rbac\Guard\Provider\ArrayGuardsProvider;
 use Interop\Container\ContainerInterface;

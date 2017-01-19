@@ -34,7 +34,6 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
     {
         $this->guardsConfig = $guardsConfig;
         parent::__construct($manager);
-
     }
 
     /**

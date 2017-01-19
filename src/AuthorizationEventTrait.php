@@ -9,7 +9,6 @@
 
 namespace Dot\Rbac\Guard;
 
-
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Psr\Http\Message\ResponseInterface;
@@ -21,6 +20,30 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 trait AuthorizationEventTrait
 {
+    /**
+     * @param AuthorizationInterface $authorization
+     * @param $error
+     * @param string $name
+     * @param array $eventParams
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return AuthorizationEvent
+     */
+    protected function createAuthorizationEventWithError(
+        AuthorizationInterface $authorization,
+        $error,
+        $name = AuthorizationEvent::EVENT_FORBIDDEN,
+        array $eventParams = [],
+        ServerRequestInterface $request = null,
+        ResponseInterface $response = null
+    ) {
+
+        $event = $this->createAuthorizationEvent($authorization, $name, $eventParams, $request, $response);
+        $event->setError($error);
+
+        return $event;
+    }
+
     /**
      * @param AuthorizationInterface $authorization
      * @param string $name
@@ -50,30 +73,6 @@ trait AuthorizationEventTrait
         }
 
         $event->setParams(array_merge($event->getParams(), $eventParams));
-
-        return $event;
-    }
-
-    /**
-     * @param AuthorizationInterface $authorization
-     * @param $error
-     * @param string $name
-     * @param array $eventParams
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return AuthorizationEvent
-     */
-    protected function createAuthorizationEventWithError(
-        AuthorizationInterface $authorization,
-        $error,
-        $name = AuthorizationEvent::EVENT_FORBIDDEN,
-        array $eventParams = [],
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ) {
-
-        $event = $this->createAuthorizationEvent($authorization, $name, $eventParams, $request, $response);
-        $event->setError($error);
 
         return $event;
     }

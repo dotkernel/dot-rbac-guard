@@ -19,18 +19,19 @@ trait ProtectionPolicyTrait
     protected $protectionPolicy = GuardInterface::POLICY_DENY;
 
     /**
-     * @param $protectionPolicy
-     */
-    public function setProtectionPolicy($protectionPolicy)
-    {
-        $this->protectionPolicy = (string)$protectionPolicy;
-    }
-
-    /**
      * @return string
      */
     public function getProtectionPolicy()
     {
         return $this->protectionPolicy;
     }
+
+    /**
+     * @param $protectionPolicy
+     */
+    public function setProtectionPolicy($protectionPolicy)
+    {
+        $this->protectionPolicy = (string)$protectionPolicy;
+    }
 }
+

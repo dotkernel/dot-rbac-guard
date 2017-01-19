@@ -99,8 +99,16 @@ Create a configuration file for this module in your 'config/autoload' folder
 
         'enable' => false,
 
-        'redirect_route' => ['name' => 'route name', 'params' => []],
+        //options for the redirect on forbidden handler
+        'redirect_options' => [
 
+            'enable' => false,
+
+            'redirect_route' => [
+                'name' => '',
+                'params' => []
+            ],
+        ],
     ],
 
     //overwrite default messages

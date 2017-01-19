@@ -36,8 +36,32 @@ return [
                     'logout' => ['only-logged'],
                 ],
 
-                //TODO: Controller type guards config template
+                \Dot\Rbac\Guard\Controller\ControllerGuard::class => [
+                   [
+                       'route' => 'controller route name',
+                       'actions' => [//list of actions to apply, or empty array for all actions],
+                       //by default, authorization pass if all permissions are present(AND)
+                       'roles' => [//list of roles to allow],
+                   ],
+                ],
 
+                \Dot\Rbac\Guard\Controller\ControllerPermissionGuard::class => [
+                    [
+                        'route' => 'controller route name',
+                        'actions' => [//list of actions to apply, or empty array for all actions],
+                        //by default, authorization pass if all permissions are present(AND)
+                        'permissions' => [//list of permissions to allow],
+                    ],
+                    [
+                        'route' => 'controller route name',
+                        'actions' => [//list of actions to apply, or empty array for all actions],
+                        'permissions' => [
+                            //permission can be defined in this way too, for all permission type guards
+                            'permissions' => [//list of permissions],
+                            'condition' => \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
+                        ]
+                    ]
+                ],
             ],
         ],
 
@@ -52,7 +76,10 @@ return [
 
             'enable' => false,
 
-            'redirect_route' => ['name' => 'route name', 'params' => []],
+            'redirect_route' => [
+                'name' => '',
+                'params' => []
+            ],
 
         ],
 

@@ -12,7 +12,6 @@ namespace Dot\Rbac\Guard\Options;
 use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\GuardInterface;
 use Zend\Stdlib\AbstractOptions;
-use Zend\Stdlib\ArrayUtils;
 
 /**
  * Class RbacGuardOptions
@@ -25,13 +24,13 @@ class RbacGuardOptions extends AbstractOptions
      */
     protected $protectionPolicy = GuardInterface::POLICY_ALLOW;
 
-    /** @var array  */
+    /** @var array */
     protected $guardsProvider = [];
 
-    /** @var bool  */
+    /** @var bool */
     protected $allowRedirectParam = true;
 
-    /** @var string  */
+    /** @var string */
     protected $redirectParamName = 'redirect';
 
     /** @var  RedirectOptions */
@@ -91,7 +90,7 @@ class RbacGuardOptions extends AbstractOptions
      */
     public function getRedirectOptions()
     {
-        if(!$this->redirectOptions) {
+        if (!$this->redirectOptions) {
             $this->setRedirectOptions([]);
         }
         return $this->redirectOptions;
@@ -103,13 +102,11 @@ class RbacGuardOptions extends AbstractOptions
      */
     public function setRedirectOptions($redirectOptions)
     {
-        if(is_array($redirectOptions)) {
+        if (is_array($redirectOptions)) {
             $this->redirectOptions = new RedirectOptions($redirectOptions);
-        }
-        elseif($redirectOptions instanceof RedirectOptions) {
+        } elseif ($redirectOptions instanceof RedirectOptions) {
             $this->redirectOptions = $redirectOptions;
-        }
-        else {
+        } else {
             throw new InvalidArgumentException(sprintf(
                 'RedirectOptions should be an array or an %s object. %s provided.',
                 RedirectOptions::class,
@@ -125,7 +122,7 @@ class RbacGuardOptions extends AbstractOptions
      */
     public function getMessagesOptions()
     {
-        if(!$this->messagesOptions) {
+        if (!$this->messagesOptions) {
             $this->setMessagesOptions([]);
         }
         return $this->messagesOptions;
@@ -137,13 +134,11 @@ class RbacGuardOptions extends AbstractOptions
      */
     public function setMessagesOptions($messagesOptions)
     {
-        if(is_array($messagesOptions)) {
+        if (is_array($messagesOptions)) {
             $this->messagesOptions = new MessagesOptions($messagesOptions);
-        }
-        elseif($messagesOptions instanceof MessagesOptions) {
+        } elseif ($messagesOptions instanceof MessagesOptions) {
             $this->messagesOptions = $messagesOptions;
-        }
-        else {
+        } else {
             throw new InvalidArgumentException(sprintf(
                 'MessagesOptions should be an array or an %s object. %s provided.',
                 MessagesOptions::class,
@@ -188,4 +183,4 @@ class RbacGuardOptions extends AbstractOptions
         $this->redirectParamName = $redirectParamName;
         return $this;
     }
- }
+}

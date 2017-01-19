@@ -105,11 +105,8 @@ Create a configuration file for this module in your 'config/autoload' folder
             'enable' => false,
 
             'redirect_route' => [
-                'route_name' => '',
-                'route_params' => [],
-                'query_params' => [],
-                'fragment_identifier' => null,
-                'route_options' => []
+                'name' => '',
+                'params' => []
             ],
         ],
     ],

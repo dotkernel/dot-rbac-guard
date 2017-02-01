@@ -7,6 +7,8 @@
  * Time: 5:27 PM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard\Event;
 
 use Dot\Authorization\AuthorizationInterface;
@@ -33,54 +35,48 @@ class AuthorizationEvent extends Event
     /**
      * @return boolean
      */
-    public function isAuthorized()
+    public function isAuthorized() : bool
     {
         return $this->authorized;
     }
 
     /**
      * @param boolean $authorized
-     * @return AuthorizationEvent
      */
-    public function setAuthorized($authorized)
+    public function setAuthorized(bool $authorized)
     {
         $this->authorized = $authorized;
-        return $this;
     }
 
     /**
      * @return AuthorizationInterface
      */
-    public function getAuthorizationService()
+    public function getAuthorizationService() : AuthorizationInterface
     {
         return $this->authorizationService;
     }
 
     /**
      * @param AuthorizationInterface $authorizationService
-     * @return AuthorizationEvent
      */
     public function setAuthorizationService(AuthorizationInterface $authorizationService)
     {
         $this->authorizationService = $authorizationService;
-        return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getError()
+    public function getError() : ?mixed
     {
         return $this->error;
     }
 
     /**
      * @param mixed $error
-     * @return AuthorizationEvent
      */
-    public function setError($error)
+    public function setError(mixed $error)
     {
         $this->error = $error;
-        return $this;
     }
 }

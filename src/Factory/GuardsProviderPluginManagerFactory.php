@@ -7,6 +7,8 @@
  * Time: 12:45 AM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;

@@ -7,9 +7,10 @@
  * Time: 8:39 PM
  */
 
-namespace Dot\Rbac\Guard;
+declare(strict_types=1);
 
-use Psr\Http\Message\ResponseInterface;
+namespace Dot\Rbac\Guard\Guard;
+
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -28,13 +29,12 @@ interface GuardInterface
      * Checks if the user is authorized to get through the guard
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request, ResponseInterface $response);
+    public function isGranted(ServerRequestInterface $request) : bool;
 
     /**
      * @return int
      */
-    public function getPriority();
+    public function getPriority() : int;
 }

@@ -7,9 +7,11 @@
  * Time: 12:38 AM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard\Factory;
 
-use Dot\Rbac\Guard\GuardPluginManager;
+use Dot\Rbac\Guard\Guard\GuardPluginManager;
 use Interop\Container\ContainerInterface;
 
 /**
@@ -27,8 +29,6 @@ class GuardPluginManagerFactory
         $config = $container->get('config');
         $config = $config['dot_authorization']['guard_manager'];
 
-        $pluginManager = new GuardPluginManager($container, $config);
-
-        return $pluginManager;
+        return new GuardPluginManager($container, $config);
     }
 }

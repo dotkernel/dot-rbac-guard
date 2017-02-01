@@ -7,10 +7,11 @@
  * Time: 12:49 AM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard\Options;
 
-use Dot\Rbac\Guard\Exception\InvalidArgumentException;
-use Dot\Rbac\Guard\GuardInterface;
+use Dot\Rbac\Guard\Guard\GuardInterface;
 use Zend\Stdlib\AbstractOptions;
 
 /**
@@ -28,10 +29,10 @@ class RbacGuardOptions extends AbstractOptions
     protected $guardsProvider = [];
 
     /** @var bool */
-    protected $allowRedirectParam = true;
+    protected $enableWantedUrl = true;
 
     /** @var string */
-    protected $redirectParamName = 'redirect';
+    protected $wantedUrlName = 'redirect';
 
     /** @var  RedirectOptions */
     protected $redirectOptions;
@@ -52,43 +53,39 @@ class RbacGuardOptions extends AbstractOptions
     /**
      * @return string
      */
-    public function getProtectionPolicy()
+    public function getProtectionPolicy() : string
     {
         return $this->protectionPolicy;
     }
 
     /**
      * @param string $protectionPolicy
-     * @return RbacGuardOptions
      */
-    public function setProtectionPolicy($protectionPolicy)
+    public function setProtectionPolicy(string $protectionPolicy)
     {
         $this->protectionPolicy = $protectionPolicy;
-        return $this;
     }
 
     /**
      * @return array
      */
-    public function getGuardsProvider()
+    public function getGuardsProvider() : array
     {
         return $this->guardsProvider;
     }
 
     /**
      * @param array $guardsProvider
-     * @return RbacGuardOptions
      */
-    public function setGuardsProvider($guardsProvider)
+    public function setGuardsProvider(array $guardsProvider)
     {
         $this->guardsProvider = $guardsProvider;
-        return $this;
     }
 
     /**
      * @return RedirectOptions
      */
-    public function getRedirectOptions()
+    public function getRedirectOptions() : RedirectOptions
     {
         if (!$this->redirectOptions) {
             $this->setRedirectOptions([]);
@@ -97,30 +94,17 @@ class RbacGuardOptions extends AbstractOptions
     }
 
     /**
-     * @param RedirectOptions|array $redirectOptions
-     * @return RbacGuardOptions
+     * @param array $redirectOptions
      */
-    public function setRedirectOptions($redirectOptions)
+    public function setRedirectOptions(array $redirectOptions)
     {
-        if (is_array($redirectOptions)) {
-            $this->redirectOptions = new RedirectOptions($redirectOptions);
-        } elseif ($redirectOptions instanceof RedirectOptions) {
-            $this->redirectOptions = $redirectOptions;
-        } else {
-            throw new InvalidArgumentException(sprintf(
-                'RedirectOptions should be an array or an %s object. %s provided.',
-                RedirectOptions::class,
-                is_object($redirectOptions) ? get_class($redirectOptions) : gettype($redirectOptions)
-            ));
-        }
-
-        return $this;
+        $this->redirectOptions = new RedirectOptions($redirectOptions);
     }
 
     /**
      * @return MessagesOptions
      */
-    public function getMessagesOptions()
+    public function getMessagesOptions() : MessagesOptions
     {
         if (!$this->messagesOptions) {
             $this->setMessagesOptions([]);
@@ -129,58 +113,42 @@ class RbacGuardOptions extends AbstractOptions
     }
 
     /**
-     * @param MessagesOptions|array $messagesOptions
-     * @return RbacGuardOptions
+     * @param array $messagesOptions
      */
-    public function setMessagesOptions($messagesOptions)
+    public function setMessagesOptions(array $messagesOptions)
     {
-        if (is_array($messagesOptions)) {
-            $this->messagesOptions = new MessagesOptions($messagesOptions);
-        } elseif ($messagesOptions instanceof MessagesOptions) {
-            $this->messagesOptions = $messagesOptions;
-        } else {
-            throw new InvalidArgumentException(sprintf(
-                'MessagesOptions should be an array or an %s object. %s provided.',
-                MessagesOptions::class,
-                is_object($messagesOptions) ? get_class($messagesOptions) : gettype($messagesOptions)
-            ));
-        }
-        return $this;
+        $this->messagesOptions = new MessagesOptions($messagesOptions);
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isAllowRedirectParam()
+    public function isEnableWantedUrl(): bool
     {
-        return $this->allowRedirectParam;
+        return $this->enableWantedUrl;
     }
 
     /**
-     * @param boolean $allowRedirectParam
-     * @return RbacGuardOptions
+     * @param bool $enableWantedUrl
      */
-    public function setAllowRedirectParam($allowRedirectParam)
+    public function setEnableWantedUrl(bool $enableWantedUrl)
     {
-        $this->allowRedirectParam = $allowRedirectParam;
-        return $this;
+        $this->enableWantedUrl = $enableWantedUrl;
     }
 
     /**
      * @return string
      */
-    public function getRedirectParamName()
+    public function getWantedUrlName(): string
     {
-        return $this->redirectParamName;
+        return $this->wantedUrlName;
     }
 
     /**
-     * @param string $redirectParamName
-     * @return RbacGuardOptions
+     * @param string $wantedUrlName
      */
-    public function setRedirectParamName($redirectParamName)
+    public function setWantedUrlName(string $wantedUrlName)
     {
-        $this->redirectParamName = $redirectParamName;
-        return $this;
+        $this->wantedUrlName = $wantedUrlName;
     }
 }

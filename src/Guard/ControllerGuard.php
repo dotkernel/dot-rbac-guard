@@ -7,14 +7,14 @@
  * Time: 8:02 PM
  */
 
-namespace Dot\Rbac\Guard\Controller;
+declare(strict_types=1);
+
+namespace Dot\Rbac\Guard\Guard;
 
 use Dot\Controller\AbstractActionController;
 use Dot\Controller\AbstractController;
-use Dot\Rbac\Guard\GuardInterface;
-use Dot\Rbac\Guard\ProtectionPolicyTrait;
+use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Role\RoleServiceInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
 
@@ -22,27 +22,27 @@ use Zend\Expressive\Router\RouteResult;
  * Class ControllerGuard
  * @package Dot\Rbac\Guard\Controller
  */
-class ControllerGuard implements GuardInterface
+class ControllerGuard extends AbstractGuard
 {
-    use ProtectionPolicyTrait;
-
     const PRIORITY = 40;
 
     /** @var RoleServiceInterface */
     protected $roleService;
 
-    /** @var array */
-    protected $rules = [];
-
     /**
      * ControllerGuard constructor.
-     * @param RoleServiceInterface $roleService
-     * @param array $rules
+     * @param array $options
      */
-    public function __construct(RoleServiceInterface $roleService, array $rules = [])
+    public function __construct(array $options = [])
     {
-        $this->roleService = $roleService;
-        $this->setRules($rules);
+        parent::__construct($options);
+        if (isset($options['role_service']) && $options['role_service'] instanceof RoleServiceInterface) {
+            $this->setRoleService($options['role_service']);
+        }
+
+        if (! $this->roleService instanceof RoleServiceInterface) {
+            throw new RuntimeException('RoleService is required by this guard and was not set');
+        }
     }
 
     /**
@@ -70,11 +70,26 @@ class ControllerGuard implements GuardInterface
     }
 
     /**
+     * @return RoleServiceInterface
+     */
+    public function getRoleService(): RoleServiceInterface
+    {
+        return $this->roleService;
+    }
+
+    /**
+     * @param RoleServiceInterface $roleService
+     */
+    public function setRoleService(RoleServiceInterface $roleService)
+    {
+        $this->roleService = $roleService;
+    }
+
+    /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request, ResponseInterface $response)
+    public function isGranted(ServerRequestInterface $request) : bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
         if (!$routeResult instanceof RouteResult) {
@@ -98,7 +113,7 @@ class ControllerGuard implements GuardInterface
         }
 
         if ($controller) {
-            $route = $routeResult->getMatchedRouteName();
+            $route = strtolower($routeResult->getMatchedRouteName());
             $params = $routeResult->getMatchedParams();
             $action = isset($params['action']) && !empty($params['action'])
                 ? $params['action']
@@ -127,13 +142,5 @@ class ControllerGuard implements GuardInterface
 
         //if not an AbstractController, this guard will skip
         return $this->protectionPolicy === self::POLICY_ALLOW;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPriority()
-    {
-        return static::PRIORITY;
     }
 }

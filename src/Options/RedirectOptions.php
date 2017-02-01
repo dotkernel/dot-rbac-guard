@@ -7,6 +7,8 @@
  * Time: 12:45 AM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard\Options;
 
 use Zend\Stdlib\AbstractOptions;
@@ -26,36 +28,32 @@ class RedirectOptions extends AbstractOptions
     /**
      * @return boolean
      */
-    public function isEnable()
+    public function isEnable() : bool
     {
         return $this->enable;
     }
 
     /**
      * @param boolean $enable
-     * @return RedirectOptions
      */
-    public function setEnable($enable)
+    public function setEnable(bool $enable)
     {
         $this->enable = $enable;
-        return $this;
     }
 
     /**
      * @return array
      */
-    public function getRedirectRoute()
+    public function getRedirectRoute() : array
     {
         return $this->redirectRoute;
     }
 
     /**
      * @param array $redirectRoute
-     * @return RedirectOptions
      */
-    public function setRedirectRoute($redirectRoute)
+    public function setRedirectRoute(array $redirectRoute)
     {
         $this->redirectRoute = $redirectRoute;
-        return $this;
     }
 }

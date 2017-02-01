@@ -7,12 +7,12 @@
  * Time: 8:46 PM
  */
 
-namespace Dot\Rbac\Guard\Route;
+declare(strict_types=1);
 
-use Dot\Rbac\Guard\GuardInterface;
-use Dot\Rbac\Guard\ProtectionPolicyTrait;
+namespace Dot\Rbac\Guard\Guard;
+
+use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Role\RoleServiceInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
 
@@ -20,10 +20,8 @@ use Zend\Expressive\Router\RouteResult;
  * Class RouteGuard
  * @package Dot\Rbac\Guard\Route
  */
-class RouteGuard implements GuardInterface
+class RouteGuard extends AbstractGuard
 {
-    use ProtectionPolicyTrait;
-
     const PRIORITY = 100;
 
     /**
@@ -32,19 +30,20 @@ class RouteGuard implements GuardInterface
     protected $roleService;
 
     /**
-     * @var array
-     */
-    protected $rules = [];
-
-    /**
      * RouteGuard constructor.
-     * @param RoleServiceInterface $roleService
-     * @param array $rules
+     * @param array $options
      */
-    public function __construct(RoleServiceInterface $roleService, array $rules = [])
+    public function __construct(array $options = [])
     {
-        $this->roleService = $roleService;
-        $this->setRules($rules);
+        parent::__construct($options);
+
+        if (isset($options['role_service']) && $options['role_service'] instanceof RoleServiceInterface) {
+            $this->setRoleService($options['role_service']);
+        }
+
+        if (! $this->roleService instanceof RoleServiceInterface) {
+            throw new RuntimeException('RoleService is required by this guard and was not set');
+        }
     }
 
     /**
@@ -56,31 +55,38 @@ class RouteGuard implements GuardInterface
 
         foreach ($rules as $key => $value) {
             if (is_int($key)) {
-                $routeRegex = $value;
+                $routeName = strtolower($value);
                 $roles = [];
             } else {
-                $routeRegex = $key;
+                $routeName = strtolower($key);
                 $roles = (array)$value;
             }
 
-            $this->rules[$routeRegex] = $roles;
+            $this->rules[$routeName] = $roles;
         }
     }
 
     /**
-     * @return int
+     * @return RoleServiceInterface
      */
-    public function getPriority()
+    public function getRoleService(): RoleServiceInterface
     {
-        return self::PRIORITY;
+        return $this->roleService;
+    }
+
+    /**
+     * @param RoleServiceInterface $roleService
+     */
+    public function setRoleService(RoleServiceInterface $roleService)
+    {
+        $this->roleService = $roleService;
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request, ResponseInterface $response)
+    public function isGranted(ServerRequestInterface $request) : bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, false);
         //if we dont have a matched route(probably 404 not found) let it go to the final handler
@@ -88,12 +94,12 @@ class RouteGuard implements GuardInterface
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        $routeName = $routeResult->getMatchedRouteName();
+        $matchedRouteName = strtolower($routeResult->getMatchedRouteName());
         $allowedRoles = null;
 
-        foreach (array_keys($this->rules) as $routeRule) {
-            if (fnmatch($routeRule, $routeName, FNM_CASEFOLD)) {
-                $allowedRoles = $this->rules[$routeRule];
+        foreach (array_keys($this->rules) as $routeName) {
+            if ($routeName === $matchedRouteName) {
+                $allowedRoles = $this->rules[$routeName];
                 break;
             }
         }

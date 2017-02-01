@@ -7,7 +7,11 @@
  * Time: 12:55 AM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard;
+
+use Dot\Rbac\Guard\Guard\GuardInterface;
 
 /**
  * Class ProtectionPolicyTrait
@@ -21,7 +25,7 @@ trait ProtectionPolicyTrait
     /**
      * @return string
      */
-    public function getProtectionPolicy()
+    public function getProtectionPolicy() : string
     {
         return $this->protectionPolicy;
     }
@@ -29,9 +33,9 @@ trait ProtectionPolicyTrait
     /**
      * @param $protectionPolicy
      */
-    public function setProtectionPolicy($protectionPolicy)
+    public function setProtectionPolicy(string $protectionPolicy)
     {
-        $this->protectionPolicy = (string)$protectionPolicy;
+        $this->protectionPolicy = $protectionPolicy;
     }
 }
 

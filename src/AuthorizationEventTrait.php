@@ -7,11 +7,12 @@
  * Time: 8:00 PM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard;
 
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -26,19 +27,17 @@ trait AuthorizationEventTrait
      * @param string $name
      * @param array $eventParams
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @return AuthorizationEvent
      */
     protected function createAuthorizationEventWithError(
         AuthorizationInterface $authorization,
-        $error,
-        $name = AuthorizationEvent::EVENT_FORBIDDEN,
+        mixed $error,
+        string $name = AuthorizationEvent::EVENT_FORBIDDEN,
         array $eventParams = [],
-        ServerRequestInterface $request = null,
-        ResponseInterface $response = null
-    ) {
+        ServerRequestInterface $request = null
+    ) : AuthorizationEvent {
 
-        $event = $this->createAuthorizationEvent($authorization, $name, $eventParams, $request, $response);
+        $event = $this->createAuthorizationEvent($authorization, $name, $eventParams, $request);
         $event->setError($error);
 
         return $event;
@@ -49,16 +48,14 @@ trait AuthorizationEventTrait
      * @param string $name
      * @param array $eventParams
      * @param ServerRequestInterface|null $request
-     * @param ResponseInterface|null $response
      * @return AuthorizationEvent
      */
     protected function createAuthorizationEvent(
         AuthorizationInterface $authorization,
-        $name = AuthorizationEvent::EVENT_AUTHORIZE,
+        string $name = AuthorizationEvent::EVENT_AUTHORIZE,
         array $eventParams = [],
-        ServerRequestInterface $request = null,
-        ResponseInterface $response = null
-    ) {
+        ServerRequestInterface $request = null
+    ) : AuthorizationEvent {
         $event = new AuthorizationEvent();
         $event->setName($name);
         $event->setTarget($this);
@@ -66,10 +63,6 @@ trait AuthorizationEventTrait
 
         if ($request) {
             $event->setRequest($request);
-        }
-
-        if ($response) {
-            $event->setResponse($response);
         }
 
         $event->setParams(array_merge($event->getParams(), $eventParams));

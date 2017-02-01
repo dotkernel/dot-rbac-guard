@@ -7,6 +7,8 @@
  * Time: 12:45 AM
  */
 
+declare(strict_types=1);
+
 namespace Dot\Rbac\Guard;
 
 use Dot\Rbac\Guard\Factory\DefaultAuthorizationListenerFactory;
@@ -16,6 +18,8 @@ use Dot\Rbac\Guard\Factory\GuardsProviderPluginManagerFactory;
 use Dot\Rbac\Guard\Factory\RbacGuardMiddlewareFactory;
 use Dot\Rbac\Guard\Factory\RbacGuardOptionsFactory;
 use Dot\Rbac\Guard\Factory\RedirectForbiddenListenerFactory;
+use Dot\Rbac\Guard\Guard\GuardInterface;
+use Dot\Rbac\Guard\Guard\GuardPluginManager;
 use Dot\Rbac\Guard\Listener\DefaultAuthorizationListener;
 use Dot\Rbac\Guard\Listener\RedirectForbiddenListener;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
@@ -25,23 +29,17 @@ use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 
 class ConfigProvider
 {
-    public function __invoke()
+    public function __invoke() : array
     {
         return [
             'dependencies' => [
                 'factories' => [
                     GuardPluginManager::class => GuardPluginManagerFactory::class,
-
                     GuardsProviderPluginManager::class => GuardsProviderPluginManagerFactory::class,
-
                     RbacGuardOptions::class => RbacGuardOptionsFactory::class,
-
                     RbacGuardMiddleware::class => RbacGuardMiddlewareFactory::class,
-
                     ForbiddenHandler::class => ForbiddenHandlerFactory::class,
-
                     RedirectForbiddenListener::class => RedirectForbiddenListenerFactory::class,
-
                     DefaultAuthorizationListener::class => DefaultAuthorizationListenerFactory::class,
                 ],
             ],

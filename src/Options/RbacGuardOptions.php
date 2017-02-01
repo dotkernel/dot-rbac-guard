@@ -7,7 +7,7 @@
  * Time: 12:49 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Options;
 
@@ -53,7 +53,7 @@ class RbacGuardOptions extends AbstractOptions
     /**
      * @return string
      */
-    public function getProtectionPolicy() : string
+    public function getProtectionPolicy(): string
     {
         return $this->protectionPolicy;
     }
@@ -69,7 +69,7 @@ class RbacGuardOptions extends AbstractOptions
     /**
      * @return array
      */
-    public function getGuardsProvider() : array
+    public function getGuardsProvider(): array
     {
         return $this->guardsProvider;
     }
@@ -85,7 +85,7 @@ class RbacGuardOptions extends AbstractOptions
     /**
      * @return RedirectOptions
      */
-    public function getRedirectOptions() : RedirectOptions
+    public function getRedirectOptions(): RedirectOptions
     {
         if (!$this->redirectOptions) {
             $this->setRedirectOptions([]);
@@ -104,7 +104,7 @@ class RbacGuardOptions extends AbstractOptions
     /**
      * @return MessagesOptions
      */
-    public function getMessagesOptions() : MessagesOptions
+    public function getMessagesOptions(): MessagesOptions
     {
         if (!$this->messagesOptions) {
             $this->setMessagesOptions([]);

@@ -7,6 +7,8 @@
  * Time: 2:09 AM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Middleware;
 
 use Dot\Authorization\AuthorizationInterface;
@@ -41,16 +43,18 @@ class RbacGuardMiddleware
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param callable|null $next
-     * @return mixed
+     * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
-    {
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ): ResponseInterface {
         $event = $this->createAuthorizationEvent(
             $this->authorizationService,
             AuthorizationEvent::EVENT_AUTHORIZE,
             [],
-            $request,
-            $response
+            $request
         );
 
         $result = $this->getEventManager()->triggerEventUntil(function ($r) {

@@ -39,7 +39,7 @@ class Factory
      * @param array $specs
      * @return GuardInterface
      */
-    public function create(array $specs) : GuardInterface
+    public function create(array $specs): GuardInterface
     {
         $type = $specs['type'] ?? '';
         if (empty($type)) {
@@ -53,10 +53,10 @@ class Factory
     /**
      * @return GuardPluginManager
      */
-    public function getGuardPluginManager() : GuardPluginManager
+    public function getGuardPluginManager(): GuardPluginManager
     {
-        if (! $this->guardPluginManager) {
-            $this ->guardPluginManager = new GuardPluginManager($this->container, []);
+        if (!$this->guardPluginManager) {
+            $this->guardPluginManager = new GuardPluginManager($this->container, []);
         }
 
         return $this->guardPluginManager;

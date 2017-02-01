@@ -7,6 +7,8 @@
  * Time: 6:15 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\FlashMessenger\FlashMessengerInterface;
@@ -23,18 +25,20 @@ class RedirectForbiddenListenerFactory
 {
     /**
      * @param ContainerInterface $container
+     * @param $requestedName
      * @return RedirectForbiddenListener
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName)
     {
         $config = $container->get('config');
-        $debug = isset($config['debug']) ? (bool)$config['debug'] : false;
+        $debug = $config['debug'] ?? false;
 
         $flashMessenger = $container->has(FlashMessengerInterface::class)
             ? $container->get(FlashMessengerInterface::class)
             : null;
 
-        $listener = new RedirectForbiddenListener(
+        /** @var RedirectForbiddenListener $listener */
+        $listener = new $requestedName(
             $container->get(RouteOptionHelper::class),
             $container->get(RbacGuardOptions::class),
             $flashMessenger

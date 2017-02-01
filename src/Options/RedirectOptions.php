@@ -7,7 +7,7 @@
  * Time: 12:45 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Options;
 
@@ -28,7 +28,7 @@ class RedirectOptions extends AbstractOptions
     /**
      * @return boolean
      */
-    public function isEnable() : bool
+    public function isEnable(): bool
     {
         return $this->enable;
     }
@@ -44,7 +44,7 @@ class RedirectOptions extends AbstractOptions
     /**
      * @return array
      */
-    public function getRedirectRoute() : array
+    public function getRedirectRoute(): array
     {
         return $this->redirectRoute;
     }

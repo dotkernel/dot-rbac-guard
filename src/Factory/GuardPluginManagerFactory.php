@@ -7,7 +7,7 @@
  * Time: 12:38 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Factory;
 

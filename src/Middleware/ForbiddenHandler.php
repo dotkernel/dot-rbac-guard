@@ -7,6 +7,8 @@
  * Time: 9:23 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Middleware;
 
 use Dot\Authorization\AuthorizationInterface;
@@ -54,7 +56,7 @@ class ForbiddenHandler
         ServerRequestInterface $request,
         ResponseInterface $response,
         callable $next = null
-    ) {
+    ): ResponseInterface {
         //check for forbidden errors
         if ($error instanceof \Exception && in_array($error->getCode(), $this->authorizationStatusCodes)
             || in_array($response->getStatusCode(), $this->authorizationStatusCodes)
@@ -64,8 +66,7 @@ class ForbiddenHandler
                 $error,
                 AuthorizationEvent::EVENT_FORBIDDEN,
                 [],
-                $request,
-                $response
+                $request
             );
 
             $result = $this->getEventManager()->triggerEventUntil(function ($r) {

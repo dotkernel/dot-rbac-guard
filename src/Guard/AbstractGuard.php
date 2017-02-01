@@ -7,7 +7,7 @@
  * Time: 3:43 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Guard;
 
@@ -37,15 +37,11 @@ abstract class AbstractGuard implements GuardInterface
         }
 
         if (isset($options['protection_policy'])
-            && in_array($options['protection_policy'], [GuardInterface::POLICY_ALLOW, GuardInterface::POLICY_DENY])) {
+            && in_array($options['protection_policy'], [GuardInterface::POLICY_ALLOW, GuardInterface::POLICY_DENY])
+        ) {
             $this->setProtectionPolicy($options['protection_policy']);
         }
     }
-
-    /**
-     * @param array $rules
-     */
-    abstract public function setRules(array $rules);
 
     /**
      * @return array
@@ -56,9 +52,14 @@ abstract class AbstractGuard implements GuardInterface
     }
 
     /**
+     * @param array $rules
+     */
+    abstract public function setRules(array $rules);
+
+    /**
      * @return int
      */
-    public function getPriority() : int
+    public function getPriority(): int
     {
         return static::PRIORITY;
     }

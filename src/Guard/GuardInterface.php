@@ -7,7 +7,7 @@
  * Time: 8:39 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Guard;
 
@@ -31,10 +31,10 @@ interface GuardInterface
      * @param ServerRequestInterface $request
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request) : bool;
+    public function isGranted(ServerRequestInterface $request): bool;
 
     /**
      * @return int
      */
-    public function getPriority() : int;
+    public function getPriority(): int;
 }

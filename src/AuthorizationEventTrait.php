@@ -7,7 +7,7 @@
  * Time: 8:00 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard;
 
@@ -35,7 +35,7 @@ trait AuthorizationEventTrait
         string $name = AuthorizationEvent::EVENT_FORBIDDEN,
         array $eventParams = [],
         ServerRequestInterface $request = null
-    ) : AuthorizationEvent {
+    ): AuthorizationEvent {
 
         $event = $this->createAuthorizationEvent($authorization, $name, $eventParams, $request);
         $event->setError($error);
@@ -55,7 +55,7 @@ trait AuthorizationEventTrait
         string $name = AuthorizationEvent::EVENT_AUTHORIZE,
         array $eventParams = [],
         ServerRequestInterface $request = null
-    ) : AuthorizationEvent {
+    ): AuthorizationEvent {
         $event = new AuthorizationEvent();
         $event->setName($name);
         $event->setTarget($this);

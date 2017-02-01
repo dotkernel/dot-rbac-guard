@@ -7,7 +7,7 @@
  * Time: 8:02 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Guard;
 
@@ -40,7 +40,7 @@ class ControllerGuard extends AbstractGuard
             $this->setRoleService($options['role_service']);
         }
 
-        if (! $this->roleService instanceof RoleServiceInterface) {
+        if (!$this->roleService instanceof RoleServiceInterface) {
             throw new RuntimeException('RoleService is required by this guard and was not set');
         }
     }
@@ -89,7 +89,7 @@ class ControllerGuard extends AbstractGuard
      * @param ServerRequestInterface $request
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request) : bool
+    public function isGranted(ServerRequestInterface $request): bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
         if (!$routeResult instanceof RouteResult) {

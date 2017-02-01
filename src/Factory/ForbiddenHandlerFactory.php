@@ -7,6 +7,8 @@
  * Time: 3:45 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authorization\AuthorizationInterface;
@@ -26,15 +28,17 @@ class ForbiddenHandlerFactory
 {
     /**
      * @param ContainerInterface $container
+     * @param $requestedName
      * @return ForbiddenHandler
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName)
     {
         /** @var RbacGuardOptions $options */
         $options = $container->get(RbacGuardOptions::class);
         $authorizationService = $container->get(AuthorizationInterface::class);
 
-        $handler = new ForbiddenHandler($authorizationService);
+        /** @var ForbiddenHandler $handler */
+        $handler = new $requestedName($authorizationService);
         $eventManager = $container->has(EventManagerInterface::class)
             ? $container->get(EventManagerInterface::class)
             : new EventManager();

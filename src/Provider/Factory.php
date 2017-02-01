@@ -7,7 +7,7 @@
  * Time: 4:43 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Provider;
 
@@ -43,7 +43,7 @@ class Factory
      * @param array $specs
      * @return GuardsProviderInterface
      */
-    public function create(array $specs) : GuardsProviderInterface
+    public function create(array $specs): GuardsProviderInterface
     {
         $type = $specs['type'] ?? '';
         if (empty($type)) {
@@ -56,9 +56,9 @@ class Factory
     /**
      * @return GuardsProviderPluginManager
      */
-    public function getGuardsProviderPluginManager() : GuardsProviderPluginManager
+    public function getGuardsProviderPluginManager(): GuardsProviderPluginManager
     {
-        if (! $this->guardsProviderPluginManager) {
+        if (!$this->guardsProviderPluginManager) {
             $this->guardsProviderPluginManager = new GuardsProviderPluginManager($this->container, []);
         }
 

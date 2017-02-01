@@ -7,7 +7,7 @@
  * Time: 2:49 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Provider;
 
@@ -42,7 +42,7 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
      * Gets the  cached guard list or creates it from the config
      * @return GuardInterface[]
      */
-    public function getGuards() : array
+    public function getGuards(): array
     {
         if ($this->guards) {
             return $this->guards;

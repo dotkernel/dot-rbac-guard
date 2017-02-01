@@ -7,6 +7,8 @@
  * Time: 12:45 AM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Provider;
 
 use Dot\Rbac\Guard\Exception\RuntimeException;
@@ -31,7 +33,7 @@ abstract class AbstractGuardsProvider implements GuardsProviderInterface
             $this->setGuardFactory($options['guard_factory']);
         }
 
-        if (! $this->guardFactory instanceof Factory) {
+        if (!$this->guardFactory instanceof Factory) {
             throw new RuntimeException('Guard factory is required and was not set');
         }
     }
@@ -39,7 +41,7 @@ abstract class AbstractGuardsProvider implements GuardsProviderInterface
     /**
      * @return Factory
      */
-    public function getGuardFactory() : Factory
+    public function getGuardFactory(): Factory
     {
         return $this->guardFactory;
     }

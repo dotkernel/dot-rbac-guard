@@ -7,7 +7,7 @@
  * Time: 5:27 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Event;
 
@@ -35,7 +35,7 @@ class AuthorizationEvent extends Event
     /**
      * @return boolean
      */
-    public function isAuthorized() : bool
+    public function isAuthorized(): bool
     {
         return $this->authorized;
     }
@@ -51,7 +51,7 @@ class AuthorizationEvent extends Event
     /**
      * @return AuthorizationInterface
      */
-    public function getAuthorizationService() : AuthorizationInterface
+    public function getAuthorizationService(): AuthorizationInterface
     {
         return $this->authorizationService;
     }
@@ -67,7 +67,7 @@ class AuthorizationEvent extends Event
     /**
      * @return mixed
      */
-    public function getError() : ?mixed
+    public function getError(): ?mixed
     {
         return $this->error;
     }

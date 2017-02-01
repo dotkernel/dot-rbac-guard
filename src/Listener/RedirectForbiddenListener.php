@@ -7,6 +7,8 @@
  * Time: 5:56 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Listener;
 
 use Dot\Authorization\Exception\ForbiddenException;
@@ -62,29 +64,13 @@ class RedirectForbiddenListener
      * @param AuthorizationEvent $e
      * @return ResponseInterface
      */
-    public function __invoke(AuthorizationEvent $e)
+    public function __invoke(AuthorizationEvent $e): ResponseInterface
     {
         $request = $e->getRequest();
 
-        //get whatever messages
-        $messages = [];
-        $error = $e->getError();
-        if (is_array($error)) {
-            foreach ($error as $e) {
-                if (is_string($e)) {
-                    $messages[] = $e;
-                }
-            }
-        } elseif (is_string($error)) {
-            $messages[] = $error;
-        } elseif ($error instanceof \Exception) {
-            if ($this->isDebug() || $error instanceof ForbiddenException) {
-                $messages[] = $error->getMessage();
-            }
-        }
-
+        $messages = $this->getErrorMessages($e);
         if (empty($messages)) {
-            $messages = [$this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN_MESSAGE)];
+            $messages = [$this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN)];
         }
 
         /** @var Uri $uri */
@@ -97,45 +83,73 @@ class RedirectForbiddenListener
 
         //add a flash message in case the landing page displays errors
         if ($this->flashMessenger) {
-            foreach ($messages as $message) {
-                $this->flashMessenger->addError($message);
-            }
+            $this->flashMessenger->addError($messages);
         }
 
         /**
          * Append the current URI in case you want to redirect back to that after user gains permission
          */
-        if ($this->options->isAllowRedirectParam()) {
-            $uri = $this->appendQueryParam($uri, $request->getUri(), $this->options->getRedirectParamName());
+        if ($this->options->isEnableWantedUrl()) {
+            $uri = $this->appendQueryParam(
+                $uri,
+                $this->options->getWantedUrlName(),
+                $request->getUri()->__toString()
+            );
         }
 
         return new RedirectResponse($uri);
     }
 
     /**
+     * @param AuthorizationEvent $e
+     * @return array
+     */
+    public function getErrorMessages(AuthorizationEvent $e): array
+    {
+        //get whatever messages
+        $messages = [];
+        $error = $e->getError();
+        if (is_array($error) || is_string($error)) {
+            $error = (array)$error;
+            foreach ($error as $e) {
+                if (is_string($e)) {
+                    $messages[] = $e;
+                }
+            }
+        } elseif ($error instanceof \Exception) {
+            if ($this->isDebug() || $error instanceof ForbiddenException) {
+                $messages[] = $error->getMessage();
+            }
+        }
+        return $messages;
+    }
+
+    /**
      * @return boolean
      */
-    public function isDebug()
+    public function isDebug(): bool
     {
         return $this->debug;
     }
 
     /**
      * @param boolean $debug
-     * @return RedirectForbiddenListener
      */
-    public function setDebug($debug)
+    public function setDebug(bool $debug)
     {
         $this->debug = $debug;
-        return $this;
     }
 
-    protected function areUriEqual(UriInterface $uri1, UriInterface $uri2)
+    /**
+     * @param UriInterface $uri1
+     * @param UriInterface $uri2
+     * @return bool
+     */
+    protected function areUriEqual(UriInterface $uri1, UriInterface $uri2): bool
     {
         return $uri1->getScheme() === $uri2->getScheme()
             && $uri1->getHost() === $uri2->getHost()
             && $uri1->getPath() === $uri2->getPath()
             && $uri1->getPort() === $uri2->getPort();
     }
-
 }

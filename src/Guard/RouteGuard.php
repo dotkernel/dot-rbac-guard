@@ -7,7 +7,7 @@
  * Time: 8:46 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Guard;
 
@@ -41,7 +41,7 @@ class RouteGuard extends AbstractGuard
             $this->setRoleService($options['role_service']);
         }
 
-        if (! $this->roleService instanceof RoleServiceInterface) {
+        if (!$this->roleService instanceof RoleServiceInterface) {
             throw new RuntimeException('RoleService is required by this guard and was not set');
         }
     }
@@ -86,7 +86,7 @@ class RouteGuard extends AbstractGuard
      * @param ServerRequestInterface $request
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request) : bool
+    public function isGranted(ServerRequestInterface $request): bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, false);
         //if we dont have a matched route(probably 404 not found) let it go to the final handler

@@ -7,6 +7,8 @@
  * Time: 4:25 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Listener;
 
 use Dot\Authentication\AuthenticationInterface;
@@ -14,7 +16,7 @@ use Dot\Authentication\Exception\UnauthorizedException;
 use Dot\Authorization\Exception\ForbiddenException;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Exception\RuntimeException;
-use Dot\Rbac\Guard\GuardInterface;
+use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
@@ -45,7 +47,7 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
      */
     public function __construct(
         RbacGuardOptions $options,
-        GuardsProviderInterface $guardsProvider = null,
+        GuardsProviderInterface $guardsProvider,
         AuthenticationInterface $authentication = null
     ) {
         $this->authentication = $authentication;
@@ -78,18 +80,11 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
     public function authorize(AuthorizationEvent $e)
     {
         $request = $e->getRequest();
-        $response = $e->getResponse();
 
         //if no route result(a.k.a 404) authorize it and let it go to the final handler
         $routeResult = $request->getAttribute(RouteResult::class, null);
         if (!$routeResult instanceof RouteResult) {
             $e->setAuthorized(true);
-            return;
-        }
-
-        //if config is not provided, authorize according to the policy
-        if (!$this->guardsProvider) {
-            $e->setAuthorized($this->options->getProtectionPolicy() === GuardInterface::POLICY_ALLOW);
             return;
         }
 
@@ -105,7 +100,7 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
             }
 
             //according to the policy, we whitelist or blacklist matched routes
-            $r = $guard->isGranted($request, $response);
+            $r = $guard->isGranted($request);
             if ($r !== $isGranted) {
                 $isGranted = $r;
                 break;
@@ -129,14 +124,14 @@ class DefaultAuthorizationListener extends AbstractListenerAggregate
                 //403 otherwise, resulting in a final handler or redirect, whatever you register as the error handler
                 if (!$this->authentication->hasIdentity()) {
                     throw new UnauthorizedException(
-                        $this->options->getMessagesOptions()->getMessage(MessagesOptions::UNAUTHORIZED_MESSAGE),
+                        $this->options->getMessagesOptions()->getMessage(MessagesOptions::UNAUTHORIZED),
                         401
                     );
                 }
             }
 
             throw new ForbiddenException(
-                $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN_MESSAGE),
+                $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN),
                 403
             );
         }

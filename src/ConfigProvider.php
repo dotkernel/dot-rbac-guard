@@ -7,7 +7,7 @@
  * Time: 12:45 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard;
 
@@ -29,7 +29,7 @@ use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 
 class ConfigProvider
 {
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return [
             'dependencies' => [

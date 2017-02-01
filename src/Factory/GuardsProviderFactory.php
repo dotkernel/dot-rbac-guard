@@ -7,7 +7,7 @@
  * Time: 12:45 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Factory;
 
@@ -31,8 +31,8 @@ class GuardsProviderFactory
     public function __invoke(ContainerInterface $container, $requestedName, array $options = [])
     {
         $options['guard_factory'] = isset($options['guard_factory'])
-            && is_string($options['guard_factory'])
-            && $container->has($options['guard_factory'])
+        && is_string($options['guard_factory'])
+        && $container->has($options['guard_factory'])
             ? $container->get($options['guard_factory'])
             : new Factory($container, $container->get(GuardPluginManager::class));
 

@@ -7,6 +7,8 @@
  * Time: 2:14 AM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authorization\AuthorizationInterface;
@@ -24,9 +26,10 @@ class RbacGuardMiddlewareFactory
 {
     /**
      * @param ContainerInterface $container
+     * @param $requestedName
      * @return RbacGuardMiddleware
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName)
     {
         $eventManager = $container->has(EventManagerInterface::class)
             ? $container->get(EventManagerInterface::class)
@@ -36,7 +39,8 @@ class RbacGuardMiddlewareFactory
         $defaultListener = $container->get(DefaultAuthorizationListener::class);
         $defaultListener->attach($eventManager);
 
-        $middleware = new RbacGuardMiddleware($container->get(AuthorizationInterface::class));
+        /** @var RbacGuardMiddleware $middleware */
+        $middleware = new $requestedName($container->get(AuthorizationInterface::class));
         $middleware->setEventManager($eventManager);
 
         return $middleware;

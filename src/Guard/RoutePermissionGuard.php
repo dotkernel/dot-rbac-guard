@@ -7,7 +7,7 @@
  * Time: 8:46 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Guard;
 
@@ -39,11 +39,12 @@ class RoutePermissionGuard extends AbstractGuard
         parent::__construct($options);
 
         if (isset($options['authorization_service'])
-            && $options['authorization_service'] instanceof AuthorizationInterface) {
+            && $options['authorization_service'] instanceof AuthorizationInterface
+        ) {
             $this->setAuthorizationService($options['authorization_service']);
         }
 
-        if (! $this->authorizationService instanceof AuthorizationInterface) {
+        if (!$this->authorizationService instanceof AuthorizationInterface) {
             throw new RuntimeException('Authorization service is required by this guard and was not set');
         }
     }
@@ -67,26 +68,10 @@ class RoutePermissionGuard extends AbstractGuard
     }
 
     /**
-     * @return AuthorizationInterface
-     */
-    public function getAuthorizationService(): AuthorizationInterface
-    {
-        return $this->authorizationService;
-    }
-
-    /**
-     * @param AuthorizationInterface $authorizationService
-     */
-    public function setAuthorizationService(AuthorizationInterface $authorizationService)
-    {
-        $this->authorizationService = $authorizationService;
-    }
-
-    /**
      * @param ServerRequestInterface $request
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request) : bool
+    public function isGranted(ServerRequestInterface $request): bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, false);
         //if we dont have a matched route(probably 404 not found) let it go to the final handler
@@ -138,5 +123,21 @@ class RoutePermissionGuard extends AbstractGuard
             'Condition must be either "AND" or "OR", %s given',
             is_object($condition) ? get_class($condition) : gettype($condition)
         ));
+    }
+
+    /**
+     * @return AuthorizationInterface
+     */
+    public function getAuthorizationService(): AuthorizationInterface
+    {
+        return $this->authorizationService;
+    }
+
+    /**
+     * @param AuthorizationInterface $authorizationService
+     */
+    public function setAuthorizationService(AuthorizationInterface $authorizationService)
+    {
+        $this->authorizationService = $authorizationService;
     }
 }

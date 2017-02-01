@@ -91,11 +91,17 @@ return [
 
             'redirect_route' => [
                 'route_name' => '',
-                'route_params' => []
+                'route_params' => [],
+                'query_params' => [],
             ],
 
         ],
 
         //overwrite default messages
-        //'messages_options' => [],
+        'messages_options' => [
+            'messages' => [
+                //MessagesOptions::UNAUTHORIZED => 'You must sign in first to access the requested content',
+                //MessagesOptions::FORBIDDEN => 'You don\'t have enough permissions to access the requested content',
+            ]
+        ],
 ];

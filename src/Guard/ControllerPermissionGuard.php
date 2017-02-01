@@ -7,7 +7,7 @@
  * Time: 8:02 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Guard;
 
@@ -39,11 +39,12 @@ class ControllerPermissionGuard extends AbstractGuard
         parent::__construct($options);
 
         if (isset($options['authorization_service'])
-            && $options['authorization_service'] instanceof AuthorizationInterface) {
+            && $options['authorization_service'] instanceof AuthorizationInterface
+        ) {
             $this->setAuthorizationService($options['authorization_service']);
         }
 
-        if (! $this->authorizationService instanceof AuthorizationInterface) {
+        if (!$this->authorizationService instanceof AuthorizationInterface) {
             throw new RuntimeException('Authorization service is required by this guard and was not set');
         }
     }
@@ -73,26 +74,10 @@ class ControllerPermissionGuard extends AbstractGuard
     }
 
     /**
-     * @return AuthorizationInterface
-     */
-    public function getAuthorizationService(): AuthorizationInterface
-    {
-        return $this->authorizationService;
-    }
-
-    /**
-     * @param AuthorizationInterface $authorizationService
-     */
-    public function setAuthorizationService(AuthorizationInterface $authorizationService)
-    {
-        $this->authorizationService = $authorizationService;
-    }
-
-    /**
      * @param ServerRequestInterface $request
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request) : bool
+    public function isGranted(ServerRequestInterface $request): bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
         if (!$routeResult instanceof RouteResult) {
@@ -173,5 +158,21 @@ class ControllerPermissionGuard extends AbstractGuard
 
         //if not an AbstractController, this guard will skip
         return $this->protectionPolicy === self::POLICY_ALLOW;
+    }
+
+    /**
+     * @return AuthorizationInterface
+     */
+    public function getAuthorizationService(): AuthorizationInterface
+    {
+        return $this->authorizationService;
+    }
+
+    /**
+     * @param AuthorizationInterface $authorizationService
+     */
+    public function setAuthorizationService(AuthorizationInterface $authorizationService)
+    {
+        $this->authorizationService = $authorizationService;
     }
 }

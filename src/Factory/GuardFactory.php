@@ -7,7 +7,7 @@
  * Time: 3:39 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Factory;
 
@@ -25,15 +25,15 @@ class GuardFactory
     public function __invoke(ContainerInterface $container, $requestedName, array $options = [])
     {
         $options['role_service'] = isset($options['role_service'])
-            && is_string($options['role_service'])
-            && $container->has($options['role_service'])
+        && is_string($options['role_service'])
+        && $container->has($options['role_service'])
             ? $container->get($options['role_service'])
             : $container->get(RoleServiceInterface::class);
 
         /** @var RbacGuardOptions $moduleOptions */
         $moduleOptions = $container->get(RbacGuardOptions::class);
         $options['protection_policy'] = isset($options['protection_policy'])
-            && in_array($options['protection_policy'], [GuardInterface::POLICY_ALLOW, GuardInterface::POLICY_DENY])
+        && in_array($options['protection_policy'], [GuardInterface::POLICY_ALLOW, GuardInterface::POLICY_DENY])
             ? $options['protection_policy']
             : $moduleOptions->getProtectionPolicy();
 

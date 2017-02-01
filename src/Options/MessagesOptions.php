@@ -6,7 +6,7 @@
  * Time: 8:01 PM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Options;
 
@@ -20,7 +20,7 @@ class MessagesOptions extends AbstractOptions
 
     /** @var array */
     protected $messages = [
-        MessagesOptions::UNAUTHORIZED => 'You have to sign in first to access the requested content',
+        MessagesOptions::UNAUTHORIZED => 'You must sign in first to access the requested content',
         MessagesOptions::FORBIDDEN => 'You don\'t have enough permissions to access the requested content',
     ];
 
@@ -37,7 +37,7 @@ class MessagesOptions extends AbstractOptions
     /**
      * @return array
      */
-    public function getMessages() : array
+    public function getMessages(): array
     {
         return $this->messages;
     }
@@ -51,10 +51,10 @@ class MessagesOptions extends AbstractOptions
     }
 
     /**
-     * @param string $key
+     * @param int $key
      * @return string
      */
-    public function getMessage(string $key) : string
+    public function getMessage(int $key): string
     {
         return $this->messages[$key] ?? '';
     }

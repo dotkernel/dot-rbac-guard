@@ -7,7 +7,7 @@
  * Time: 12:55 AM
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard;
 
@@ -25,7 +25,7 @@ trait ProtectionPolicyTrait
     /**
      * @return string
      */
-    public function getProtectionPolicy() : string
+    public function getProtectionPolicy(): string
     {
         return $this->protectionPolicy;
     }
@@ -38,4 +38,3 @@ trait ProtectionPolicyTrait
         $this->protectionPolicy = $protectionPolicy;
     }
 }
-

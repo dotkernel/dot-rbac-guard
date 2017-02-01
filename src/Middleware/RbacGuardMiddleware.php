@@ -14,17 +14,18 @@ namespace Dot\Rbac\Guard\Middleware;
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\AuthorizationEventTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
+use Dot\Rbac\Guard\Event\AuthorizationEventListenerAwareInterface;
+use Dot\Rbac\Guard\Event\AuthorizationEventListenerAwareTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 
 /**
  * Class RbacGuardMiddleware
  * @package Dot\Rbac\Guard\Middleware
  */
-class RbacGuardMiddleware
+class RbacGuardMiddleware implements AuthorizationEventListenerAwareInterface
 {
-    use EventManagerAwareTrait;
+    use AuthorizationEventListenerAwareTrait;
     use AuthorizationEventTrait;
 
     /** @var AuthorizationInterface */

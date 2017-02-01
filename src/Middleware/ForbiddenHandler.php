@@ -15,17 +15,18 @@ use Dot\Authorization\AuthorizationInterface;
 use Dot\Authorization\Exception\ForbiddenException;
 use Dot\Rbac\Guard\AuthorizationEventTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
+use Dot\Rbac\Guard\Event\AuthorizationEventListenerAwareInterface;
+use Dot\Rbac\Guard\Event\AuthorizationEventListenerAwareTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 
 /**
  * Class ForbiddenHandler
  * @package Dot\Rbac\Guard\Middleware
  */
-class ForbiddenHandler
+class ForbiddenHandler implements AuthorizationEventListenerAwareInterface
 {
-    use EventManagerAwareTrait;
+    use AuthorizationEventListenerAwareTrait;
     use AuthorizationEventTrait;
 
     /** @var  AuthorizationInterface */

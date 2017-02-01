@@ -12,6 +12,8 @@ declare(strict_types = 1);
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authorization\AuthorizationInterface;
+use Dot\Rbac\Guard\AuthorizationEventListenerAwareFactoryTrait;
+use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Listener\DefaultAuthorizationListener;
 use Dot\Rbac\Guard\Middleware\RbacGuardMiddleware;
 use Interop\Container\ContainerInterface;
@@ -24,6 +26,8 @@ use Zend\EventManager\EventManagerInterface;
  */
 class RbacGuardMiddlewareFactory
 {
+    use AuthorizationEventListenerAwareFactoryTrait;
+
     /**
      * @param ContainerInterface $container
      * @param $requestedName
@@ -42,6 +46,7 @@ class RbacGuardMiddlewareFactory
         /** @var RbacGuardMiddleware $middleware */
         $middleware = new $requestedName($container->get(AuthorizationInterface::class));
         $middleware->setEventManager($eventManager);
+        $this->attachEventListeners($container, $middleware, AuthorizationEvent::EVENT_AUTHORIZE);
 
         return $middleware;
     }

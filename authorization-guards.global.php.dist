@@ -6,6 +6,21 @@ return [
         //define how it will treat non-matching guard rules, allow all by default
         'protection_policy' => \Dot\Rbac\Guard\GuardInterface::POLICY_ALLOW,
 
+        'event_listeners' => [
+            AuthorizationEvent::EVENT_AUTHORIZE => [
+                [
+                    'type' => 'class or service name of the listener',
+                    'priority' => 1,
+                ],
+            ],
+            AuthorizationEvent::EVENT_FORBIDDEN => [
+                [
+                    'type' => 'class or service name of the listener',
+                    'priority' => 1,
+                ],
+            ]
+        ],
+
         //define custom guards here
         'guard_manager' => [],
 

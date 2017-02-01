@@ -12,6 +12,7 @@ declare(strict_types = 1);
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authorization\AuthorizationInterface;
+use Dot\Rbac\Guard\AuthorizationEventListenerAwareFactoryTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Listener\RedirectForbiddenListener;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
@@ -26,6 +27,8 @@ use Zend\EventManager\EventManagerInterface;
  */
 class ForbiddenHandlerFactory
 {
+    use AuthorizationEventListenerAwareFactoryTrait;
+
     /**
      * @param ContainerInterface $container
      * @param $requestedName
@@ -49,6 +52,8 @@ class ForbiddenHandlerFactory
         }
 
         $handler->setEventManager($eventManager);
+        $this->attachEventListeners($container, $handler, AuthorizationEvent::EVENT_FORBIDDEN);
+
         return $handler;
     }
 }

@@ -26,6 +26,9 @@ class RbacGuardOptions extends AbstractOptions
     protected $protectionPolicy = GuardInterface::POLICY_ALLOW;
 
     /** @var array */
+    protected $eventListeners = [];
+
+    /** @var array */
     protected $guardsProvider = [];
 
     /** @var bool */
@@ -150,5 +153,21 @@ class RbacGuardOptions extends AbstractOptions
     public function setWantedUrlName(string $wantedUrlName)
     {
         $this->wantedUrlName = $wantedUrlName;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEventListeners(): array
+    {
+        return $this->eventListeners;
+    }
+
+    /**
+     * @param array $eventListeners
+     */
+    public function setEventListeners(array $eventListeners)
+    {
+        $this->eventListeners = $eventListeners;
     }
 }

@@ -7,18 +7,10 @@ return [
         'protection_policy' => \Dot\Rbac\Guard\GuardInterface::POLICY_ALLOW,
 
         'event_listeners' => [
-            AuthorizationEvent::EVENT_AUTHORIZE => [
-                [
-                    'type' => 'class or service name of the listener',
-                    'priority' => 1,
-                ],
+            [
+                'type' => 'class or service name of the listener',
+                'priority' => 1,
             ],
-            AuthorizationEvent::EVENT_FORBIDDEN => [
-                [
-                    'type' => 'class or service name of the listener',
-                    'priority' => 1,
-                ],
-            ]
         ],
 
         //define custom guards here
@@ -92,24 +84,6 @@ return [
                     ]
                 ]
             ],
-        ],
-
-        //enable wanted url appending, used in the redirect on forbidden handler for now
-        'enable_wanted_url' => true,
-
-        //the name of the query param appended for the wanted url
-        'wanted_url_name' => 'redirect'
-
-        //options for the redirect on forbidden handler
-        'redirect_options' => [
-            'enable' => false,
-
-            'redirect_route' => [
-                'route_name' => '',
-                'route_params' => [],
-                'query_params' => [],
-            ],
-
         ],
 
         //overwrite default messages

@@ -11,17 +11,13 @@ declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard;
 
-use Dot\Rbac\Guard\Factory\DefaultAuthorizationListenerFactory;
 use Dot\Rbac\Guard\Factory\ForbiddenHandlerFactory;
 use Dot\Rbac\Guard\Factory\GuardPluginManagerFactory;
 use Dot\Rbac\Guard\Factory\GuardsProviderPluginManagerFactory;
 use Dot\Rbac\Guard\Factory\RbacGuardMiddlewareFactory;
 use Dot\Rbac\Guard\Factory\RbacGuardOptionsFactory;
-use Dot\Rbac\Guard\Factory\RedirectForbiddenListenerFactory;
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Guard\GuardPluginManager;
-use Dot\Rbac\Guard\Listener\DefaultAuthorizationListener;
-use Dot\Rbac\Guard\Listener\RedirectForbiddenListener;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
 use Dot\Rbac\Guard\Middleware\RbacGuardMiddleware;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
@@ -39,8 +35,6 @@ class ConfigProvider
                     RbacGuardOptions::class => RbacGuardOptionsFactory::class,
                     RbacGuardMiddleware::class => RbacGuardMiddlewareFactory::class,
                     ForbiddenHandler::class => ForbiddenHandlerFactory::class,
-                    RedirectForbiddenListener::class => RedirectForbiddenListenerFactory::class,
-                    DefaultAuthorizationListener::class => DefaultAuthorizationListenerFactory::class,
                 ],
             ],
 

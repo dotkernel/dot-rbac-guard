@@ -20,7 +20,7 @@ class MessagesOptions extends AbstractOptions
 
     /** @var array */
     protected $messages = [
-        MessagesOptions::UNAUTHORIZED => 'You must sign in first to access the requested content',
+        MessagesOptions::UNAUTHORIZED => 'You must sign in first in order to access the requested content',
         MessagesOptions::FORBIDDEN => 'You don\'t have enough permissions to access the requested content',
     ];
 

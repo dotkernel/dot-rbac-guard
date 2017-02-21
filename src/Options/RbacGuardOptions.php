@@ -31,15 +31,6 @@ class RbacGuardOptions extends AbstractOptions
     /** @var array */
     protected $guardsProvider = [];
 
-    /** @var bool */
-    protected $enableWantedUrl = true;
-
-    /** @var string */
-    protected $wantedUrlName = 'redirect';
-
-    /** @var  RedirectOptions */
-    protected $redirectOptions;
-
     /** @var  MessagesOptions */
     protected $messagesOptions;
 
@@ -86,25 +77,6 @@ class RbacGuardOptions extends AbstractOptions
     }
 
     /**
-     * @return RedirectOptions
-     */
-    public function getRedirectOptions(): RedirectOptions
-    {
-        if (!$this->redirectOptions) {
-            $this->setRedirectOptions([]);
-        }
-        return $this->redirectOptions;
-    }
-
-    /**
-     * @param array $redirectOptions
-     */
-    public function setRedirectOptions(array $redirectOptions)
-    {
-        $this->redirectOptions = new RedirectOptions($redirectOptions);
-    }
-
-    /**
      * @return MessagesOptions
      */
     public function getMessagesOptions(): MessagesOptions
@@ -121,38 +93,6 @@ class RbacGuardOptions extends AbstractOptions
     public function setMessagesOptions(array $messagesOptions)
     {
         $this->messagesOptions = new MessagesOptions($messagesOptions);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnableWantedUrl(): bool
-    {
-        return $this->enableWantedUrl;
-    }
-
-    /**
-     * @param bool $enableWantedUrl
-     */
-    public function setEnableWantedUrl(bool $enableWantedUrl)
-    {
-        $this->enableWantedUrl = $enableWantedUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWantedUrlName(): string
-    {
-        return $this->wantedUrlName;
-    }
-
-    /**
-     * @param string $wantedUrlName
-     */
-    public function setWantedUrlName(string $wantedUrlName)
-    {
-        $this->wantedUrlName = $wantedUrlName;
     }
 
     /**

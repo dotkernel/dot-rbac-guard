@@ -47,7 +47,7 @@ class Factory
         }
 
         $guardPluginManager = $this->getGuardPluginManager();
-        return $guardPluginManager->get($type, $specs['options'] ?? []);
+        return $guardPluginManager->get($type, $specs['options'] ?? null);
     }
 
     /**

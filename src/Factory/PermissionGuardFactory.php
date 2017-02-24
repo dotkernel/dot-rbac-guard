@@ -22,8 +22,9 @@ use Interop\Container\ContainerInterface;
  */
 class PermissionGuardFactory
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = [])
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $options = $options ?? [];
         $options['authorization_service'] = isset($options['authorization_service'])
         && is_string($options['authorization_service'])
         && $container->has($options['authorization_service'])

@@ -50,7 +50,7 @@ class Factory
             throw new RuntimeException('Guard provider type was not specified');
         }
 
-        return $this->getGuardsProviderPluginManager()->get($type, $specs['options'] ?? []);
+        return $this->getGuardsProviderPluginManager()->get($type, $specs['options'] ?? null);
     }
 
     /**

@@ -22,8 +22,9 @@ use Interop\Container\ContainerInterface;
  */
 class GuardFactory
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = [])
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $options = $options ?? [];
         $options['role_service'] = isset($options['role_service'])
         && is_string($options['role_service'])
         && $container->has($options['role_service'])

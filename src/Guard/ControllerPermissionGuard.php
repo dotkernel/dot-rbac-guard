@@ -34,8 +34,9 @@ class ControllerPermissionGuard extends AbstractGuard
      * ControllerPermissionGuard constructor.
      * @param array $options
      */
-    public function __construct(array $options = [])
+    public function __construct(array $options = null)
     {
+        $options = $options ?? [];
         parent::__construct($options);
 
         if (isset($options['authorization_service'])

@@ -28,8 +28,9 @@ class GuardsProviderFactory
      * @param array $options
      * @return ArrayGuardsProvider
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = [])
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $options = $options ?? [];
         $options['guard_factory'] = isset($options['guard_factory'])
         && is_string($options['guard_factory'])
         && $container->has($options['guard_factory'])

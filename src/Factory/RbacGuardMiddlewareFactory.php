@@ -18,8 +18,6 @@ use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Guard\Provider\Factory;
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 use Interop\Container\ContainerInterface;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class RbacGuardMiddlewareFactory
@@ -53,14 +51,8 @@ class RbacGuardMiddlewareFactory
                 : null
         );
 
-        $eventManager = $container->has(EventManagerInterface::class)
-            ? $container->get(EventManagerInterface::class)
-            : new EventManager();
-
-        $middleware->setEventManager($eventManager);
-        $middleware->attach($eventManager, 1000);
-
-        $this->attachListeners($container, $eventManager);
+        $middleware->attach($middleware->getEventManager(), 1000);
+        $this->attachListeners($container, $middleware->getEventManager());
 
         return $middleware;
     }

@@ -14,8 +14,6 @@ namespace Dot\Rbac\Guard\Factory;
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
 use Interop\Container\ContainerInterface;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class ForbiddenHandlerFactory
@@ -35,14 +33,9 @@ class ForbiddenHandlerFactory
         $authorizationService = $container->get(AuthorizationInterface::class);
         /** @var ForbiddenHandler $handler */
         $handler = new $requestedName($authorizationService);
-        $eventManager = $container->has(EventManagerInterface::class)
-            ? $container->get(EventManagerInterface::class)
-            : new EventManager();
+        $handler->attach($handler->getEventManager(), 1000);
 
-        $handler->setEventManager($eventManager);
-        $handler->attach($eventManager, 1000);
-
-        $this->attachListeners($container, $eventManager);
+        $this->attachListeners($container, $handler->getEventManager());
 
         return $handler;
     }

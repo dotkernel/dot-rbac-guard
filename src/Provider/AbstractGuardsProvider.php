@@ -7,9 +7,12 @@
  * Time: 12:45 AM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Provider;
 
-use Dot\Rbac\Guard\GuardPluginManager;
+use Dot\Rbac\Guard\Exception\RuntimeException;
+use Dot\Rbac\Guard\Guard\Factory;
 
 /**
  * Class AbstractGuardsProvider
@@ -17,33 +20,37 @@ use Dot\Rbac\Guard\GuardPluginManager;
  */
 abstract class AbstractGuardsProvider implements GuardsProviderInterface
 {
-    /** @var  GuardPluginManager */
-    protected $guardManager;
+    /** @var  Factory */
+    protected $guardFactory;
 
     /**
      * AbstractGuardsProvider constructor.
-     * @param GuardPluginManager $manager
+     * @param array $options
      */
-    public function __construct(GuardPluginManager $manager)
+    public function __construct(array $options = [])
     {
-        $this->guardManager = $manager;
+        if (isset($options['guard_factory']) && $options['guard_factory'] instanceof Factory) {
+            $this->setGuardFactory($options['guard_factory']);
+        }
+
+        if (!$this->guardFactory instanceof Factory) {
+            throw new RuntimeException('Guard factory is required and was not set');
+        }
     }
 
     /**
-     * @return GuardPluginManager
+     * @return Factory
      */
-    public function getGuardManager()
+    public function getGuardFactory(): Factory
     {
-        return $this->guardManager;
+        return $this->guardFactory;
     }
 
     /**
-     * @param GuardPluginManager $guardManager
-     * @return AbstractGuardsProvider
+     * @param Factory $guardFactory
      */
-    public function setGuardManager($guardManager)
+    public function setGuardFactory(Factory $guardFactory)
     {
-        $this->guardManager = $guardManager;
-        return $this;
+        $this->guardFactory = $guardFactory;
     }
 }

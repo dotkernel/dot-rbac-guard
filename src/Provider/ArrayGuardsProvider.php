@@ -7,11 +7,11 @@
  * Time: 2:49 AM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Provider;
 
-use Dot\Rbac\Guard\Exception\RuntimeException;
-use Dot\Rbac\Guard\GuardInterface;
-use Dot\Rbac\Guard\GuardPluginManager;
+use Dot\Rbac\Guard\Guard\GuardInterface;
 
 /**
  * Class GuardsProvider
@@ -27,20 +27,23 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
 
     /**
      * ArrayGuardsProvider constructor.
-     * @param GuardPluginManager $manager
-     * @param array $guardsConfig
+     * @param array $options
      */
-    public function __construct(GuardPluginManager $manager, array $guardsConfig = null)
+    public function __construct(array $options = null)
     {
-        $this->guardsConfig = $guardsConfig;
-        parent::__construct($manager);
+        $options = $options ?? [];
+        parent::__construct($options);
+
+        if (isset($options['guards']) && is_array($options['guards'])) {
+            $this->setGuardsConfig($options['guards']);
+        }
     }
 
     /**
      * Gets the  cached guard list or creates it from the config
      * @return GuardInterface[]
      */
-    public function getGuards()
+    public function getGuards(): array
     {
         if ($this->guards) {
             return $this->guards;
@@ -51,12 +54,8 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
         }
 
         $this->guards = [];
-        foreach ($this->guardsConfig as $name => $config) {
-            if ($this->guardManager->has($name)) {
-                $this->guards[] = $this->guardManager->get($name, $config);
-            } else {
-                throw new RuntimeException(sprintf("Guard %s is not registered in the guard plugin manager", $name));
-            }
+        foreach ($this->guardsConfig as $guardConfig) {
+            $this->guards[] = $this->getGuardFactory()->create($guardConfig);
         }
 
         $this->sortGuardsByPriority();
@@ -73,5 +72,21 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
         usort($this->guards, function (GuardInterface $a, GuardInterface $b) {
             return $b->getPriority() - $a->getPriority();
         });
+    }
+
+    /**
+     * @return array
+     */
+    public function getGuardsConfig(): array
+    {
+        return $this->guardsConfig;
+    }
+
+    /**
+     * @param array $guardsConfig
+     */
+    public function setGuardsConfig(array $guardsConfig)
+    {
+        $this->guardsConfig = $guardsConfig;
     }
 }

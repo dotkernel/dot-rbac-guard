@@ -7,16 +7,13 @@
  * Time: 3:45 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authorization\AuthorizationInterface;
-use Dot\Rbac\Guard\Event\AuthorizationEvent;
-use Dot\Rbac\Guard\Listener\RedirectForbiddenListener;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
-use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Interop\Container\ContainerInterface;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class ForbiddenHandlerFactory
@@ -24,27 +21,22 @@ use Zend\EventManager\EventManagerInterface;
  */
 class ForbiddenHandlerFactory
 {
+    use AttachAuthorizationEventListenersTrait;
+
     /**
      * @param ContainerInterface $container
+     * @param $requestedName
      * @return ForbiddenHandler
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName)
     {
-        /** @var RbacGuardOptions $options */
-        $options = $container->get(RbacGuardOptions::class);
         $authorizationService = $container->get(AuthorizationInterface::class);
+        /** @var ForbiddenHandler $handler */
+        $handler = new $requestedName($authorizationService);
+        $handler->attach($handler->getEventManager(), 1000);
 
-        $handler = new ForbiddenHandler($authorizationService);
-        $eventManager = $container->has(EventManagerInterface::class)
-            ? $container->get(EventManagerInterface::class)
-            : new EventManager();
+        $this->attachListeners($container, $handler->getEventManager());
 
-        if ($options->getRedirectOptions()->isEnable()) {
-            $listener = $container->get(RedirectForbiddenListener::class);
-            $eventManager->attach(AuthorizationEvent::EVENT_FORBIDDEN, $listener, 1);
-        }
-
-        $handler->setEventManager($eventManager);
         return $handler;
     }
 }

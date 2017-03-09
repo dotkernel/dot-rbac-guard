@@ -7,15 +7,15 @@
  * Time: 8:02 PM
  */
 
-namespace Dot\Rbac\Guard\Controller;
+declare(strict_types = 1);
+
+namespace Dot\Rbac\Guard\Guard;
 
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Controller\AbstractActionController;
 use Dot\Controller\AbstractController;
 use Dot\Rbac\Guard\Exception\InvalidArgumentException;
-use Dot\Rbac\Guard\GuardInterface;
-use Dot\Rbac\Guard\ProtectionPolicyTrait;
-use Psr\Http\Message\ResponseInterface;
+use Dot\Rbac\Guard\Exception\RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
 
@@ -23,27 +23,31 @@ use Zend\Expressive\Router\RouteResult;
  * Class ControllerPermissionGuard
  * @package Dot\Rbac\Guard\Controller
  */
-class ControllerPermissionGuard implements GuardInterface
+class ControllerPermissionGuard extends AbstractGuard
 {
-    use ProtectionPolicyTrait;
-
     const PRIORITY = 10;
 
     /** @var AuthorizationInterface */
-    protected $authorization;
-
-    /** @var array */
-    protected $rules = [];
+    protected $authorizationService;
 
     /**
      * ControllerPermissionGuard constructor.
-     * @param AuthorizationInterface $authorization
-     * @param array $rules
+     * @param array $options
      */
-    public function __construct(AuthorizationInterface $authorization, array $rules = [])
+    public function __construct(array $options = null)
     {
-        $this->authorization = $authorization;
-        $this->setRules($rules);
+        $options = $options ?? [];
+        parent::__construct($options);
+
+        if (isset($options['authorization_service'])
+            && $options['authorization_service'] instanceof AuthorizationInterface
+        ) {
+            $this->setAuthorizationService($options['authorization_service']);
+        }
+
+        if (!$this->authorizationService instanceof AuthorizationInterface) {
+            throw new RuntimeException('Authorization service is required by this guard and was not set');
+        }
     }
 
     /**
@@ -72,10 +76,9 @@ class ControllerPermissionGuard implements GuardInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    public function isGranted(ServerRequestInterface $request, ResponseInterface $response)
+    public function isGranted(ServerRequestInterface $request): bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
         if (!$routeResult instanceof RouteResult) {
@@ -127,17 +130,12 @@ class ControllerPermissionGuard implements GuardInterface
                 return true;
             }
 
-            $permissions = isset($allowedPermissions['permissions'])
-                ? $allowedPermissions['permissions']
-                : $allowedPermissions;
-
-            $condition = isset($allowedPermissions['condition'])
-                ? $allowedPermissions['condition']
-                : GuardInterface::CONDITION_AND;
+            $permissions = $allowedPermissions['permissions'] ?? $allowedPermissions;
+            $condition = $allowedPermissions['condition'] ?? GuardInterface::CONDITION_AND;
 
             if (GuardInterface::CONDITION_AND === $condition) {
                 foreach ($permissions as $permission) {
-                    if (!$this->authorization->isGranted($permission)) {
+                    if (!$this->getAuthorizationService()->isGranted($permission)) {
                         return false;
                     }
                 }
@@ -146,7 +144,7 @@ class ControllerPermissionGuard implements GuardInterface
 
             if (GuardInterface::CONDITION_OR === $condition) {
                 foreach ($permissions as $permission) {
-                    if ($this->authorization->isGranted($permission)) {
+                    if ($this->getAuthorizationService()->isGranted($permission)) {
                         return true;
                     }
                 }
@@ -164,10 +162,18 @@ class ControllerPermissionGuard implements GuardInterface
     }
 
     /**
-     * @return int
+     * @return AuthorizationInterface
      */
-    public function getPriority()
+    public function getAuthorizationService(): AuthorizationInterface
     {
-        return static::PRIORITY;
+        return $this->authorizationService;
+    }
+
+    /**
+     * @param AuthorizationInterface $authorizationService
+     */
+    public function setAuthorizationService(AuthorizationInterface $authorizationService)
+    {
+        $this->authorizationService = $authorizationService;
     }
 }

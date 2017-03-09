@@ -7,9 +7,10 @@
  * Time: 5:27 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Event;
 
-use Dot\Authorization\AuthorizationInterface;
 use Dot\Event\Event;
 
 /**
@@ -18,69 +19,8 @@ use Dot\Event\Event;
  */
 class AuthorizationEvent extends Event
 {
-    const EVENT_AUTHORIZE = 'event.authorization.authorize';
+    const EVENT_BEFORE_AUTHORIZATION = 'event.beforeAuthorization';
+    const EVENT_AFTER_AUTHORIZATION = 'event.afterAuthorization';
+
     const EVENT_FORBIDDEN = 'event.authorization.forbidden';
-
-    /** @var bool */
-    protected $authorized = false;
-
-    /** @var  AuthorizationInterface */
-    protected $authorizationService;
-
-    /** @var  mixed */
-    protected $error;
-
-    /**
-     * @return boolean
-     */
-    public function isAuthorized()
-    {
-        return $this->authorized;
-    }
-
-    /**
-     * @param boolean $authorized
-     * @return AuthorizationEvent
-     */
-    public function setAuthorized($authorized)
-    {
-        $this->authorized = $authorized;
-        return $this;
-    }
-
-    /**
-     * @return AuthorizationInterface
-     */
-    public function getAuthorizationService()
-    {
-        return $this->authorizationService;
-    }
-
-    /**
-     * @param AuthorizationInterface $authorizationService
-     * @return AuthorizationEvent
-     */
-    public function setAuthorizationService(AuthorizationInterface $authorizationService)
-    {
-        $this->authorizationService = $authorizationService;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getError()
-    {
-        return $this->error;
-    }
-
-    /**
-     * @param mixed $error
-     * @return AuthorizationEvent
-     */
-    public function setError($error)
-    {
-        $this->error = $error;
-        return $this;
-    }
 }

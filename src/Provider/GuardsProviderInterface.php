@@ -7,9 +7,11 @@
  * Time: 10:42 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Provider;
 
-use Dot\Rbac\Guard\GuardInterface;
+use Dot\Rbac\Guard\Guard\GuardInterface;
 
 /**
  * Interface GuardsProviderInterface
@@ -20,5 +22,5 @@ interface GuardsProviderInterface
     /**
      * @return GuardInterface[]
      */
-    public function getGuards();
+    public function getGuards(): array;
 }

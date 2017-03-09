@@ -6,6 +6,8 @@
  * Time: 8:01 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Options;
 
 use Zend\Stdlib\AbstractOptions;
@@ -13,41 +15,47 @@ use Zend\Stdlib\ArrayUtils;
 
 class MessagesOptions extends AbstractOptions
 {
-    const UNAUTHORIZED_MESSAGE = 0;
-    const FORBIDDEN_MESSAGE = 1;
+    const UNAUTHORIZED = 0;
+    const FORBIDDEN = 1;
 
     /** @var array */
     protected $messages = [
-        MessagesOptions::UNAUTHORIZED_MESSAGE => 'You must be authenticated to access the requested content',
-        MessagesOptions::FORBIDDEN_MESSAGE => 'You don\'t have enough permissions to access the requested content',
+        MessagesOptions::UNAUTHORIZED => 'You must sign in first in order to access the requested content',
+        MessagesOptions::FORBIDDEN => 'You don\'t have enough permissions to access the requested content',
     ];
 
-    protected $__strictMode__ = false;
+    /**
+     * MessagesOptions constructor.
+     * @param null $options
+     */
+    public function __construct($options = null)
+    {
+        $this->__strictMode__ = false;
+        parent::__construct($options);
+    }
 
     /**
      * @return array
      */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->messages;
     }
 
     /**
      * @param $messages
-     * @return $this
      */
-    public function setMessages($messages)
+    public function setMessages(array $messages)
     {
         $this->messages = ArrayUtils::merge($this->messages, $messages, true);
-        return $this;
     }
 
     /**
-     * @param $key
-     * @return mixed|string
+     * @param int $key
+     * @return string
      */
-    public function getMessage($key)
+    public function getMessage(int $key): string
     {
-        return isset($this->messages[$key]) ? $this->messages[$key] : null;
+        return $this->messages[$key] ?? '';
     }
 }

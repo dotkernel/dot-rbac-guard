@@ -7,24 +7,27 @@
  * Time: 9:23 PM
  */
 
+declare(strict_types = 1);
+
 namespace Dot\Rbac\Guard\Middleware;
 
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Authorization\Exception\ForbiddenException;
-use Dot\Rbac\Guard\AuthorizationEventTrait;
 use Dot\Rbac\Guard\Event\AuthorizationEvent;
+use Dot\Rbac\Guard\Event\AuthorizationEventListenerInterface;
+use Dot\Rbac\Guard\Event\AuthorizationEventListenerTrait;
+use Dot\Rbac\Guard\Event\DispatchAuthorizationEventTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 
 /**
  * Class ForbiddenHandler
  * @package Dot\Rbac\Guard\Middleware
  */
-class ForbiddenHandler
+class ForbiddenHandler implements AuthorizationEventListenerInterface
 {
-    use EventManagerAwareTrait;
-    use AuthorizationEventTrait;
+    use DispatchAuthorizationEventTrait;
+    use AuthorizationEventListenerTrait;
 
     /** @var  AuthorizationInterface */
     protected $authorizationService;
@@ -54,28 +57,18 @@ class ForbiddenHandler
         ServerRequestInterface $request,
         ResponseInterface $response,
         callable $next = null
-    ) {
+    ): ResponseInterface {
         //check for forbidden errors
         if ($error instanceof \Exception && in_array($error->getCode(), $this->authorizationStatusCodes)
             || in_array($response->getStatusCode(), $this->authorizationStatusCodes)
         ) {
-            $event = $this->createAuthorizationEventWithError(
-                $this->authorizationService,
-                $error,
-                AuthorizationEvent::EVENT_FORBIDDEN,
-                [],
-                $request,
-                $response
-            );
-
-            $result = $this->getEventManager()->triggerEventUntil(function ($r) {
-                return ($r instanceof ResponseInterface);
-            }, $event);
-
-            $result = $result->last();
-
-            if ($result instanceof ResponseInterface) {
-                return $result;
+            $event = $this->dispatchEvent(AuthorizationEvent::EVENT_FORBIDDEN, [
+                'request' => $request,
+                'authorizationService' => $this->authorizationService,
+                'error' => $error
+            ]);
+            if ($event instanceof ResponseInterface) {
+                return $event;
             }
 
             //if no handler or not a response, use pass-trough strategy

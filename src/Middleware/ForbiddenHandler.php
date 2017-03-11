@@ -1,10 +1,8 @@
 <?php
 /**
- * @copyright: DotKernel
- * @library: dotkernel/dot-rbac-guard
- * @author: n3vrax
- * Date: 5/21/2016
- * Time: 9:23 PM
+ * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
+ * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
+ * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
  */
 
 declare(strict_types = 1);

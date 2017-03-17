@@ -12,7 +12,7 @@ namespace Dot\Rbac\Guard\Factory;
 use Dot\Rbac\Guard\Event\AuthorizationEventListenerInterface;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Zend\EventManager\EventManagerInterface;
 
 /**

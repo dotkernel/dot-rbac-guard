@@ -11,7 +11,8 @@ namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
-use Interop\Container\ContainerInterface;
+use Dot\Rbac\Guard\Options\RbacGuardOptions;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class ForbiddenHandlerFactory
@@ -29,8 +30,10 @@ class ForbiddenHandlerFactory
     public function __invoke(ContainerInterface $container, $requestedName)
     {
         $authorizationService = $container->get(AuthorizationInterface::class);
+        $moduleOptions = $container->get(RbacGuardOptions::class);
+
         /** @var ForbiddenHandler $handler */
-        $handler = new $requestedName($authorizationService);
+        $handler = new $requestedName($authorizationService, $moduleOptions);
         $handler->attach($handler->getEventManager(), 1000);
 
         $this->attachListeners($container, $handler->getEventManager());

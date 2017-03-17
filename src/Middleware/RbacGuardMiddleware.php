@@ -22,6 +22,8 @@ use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
@@ -30,7 +32,7 @@ use Zend\Expressive\Router\RouteResult;
  * Class RbacGuardMiddleware
  * @package Dot\Rbac\Guard\Middleware
  */
-class RbacGuardMiddleware implements AuthorizationEventListenerInterface
+class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventListenerInterface
 {
     use DispatchAuthorizationEventTrait;
     use AuthorizationEventListenerTrait;
@@ -68,17 +70,13 @@ class RbacGuardMiddleware implements AuthorizationEventListenerInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable|null $next
+     * @param DelegateInterface $delegate
      * @return ResponseInterface
      * @throws ForbiddenException
      * @throws UnauthorizedException
      */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next = null
-    ): ResponseInterface {
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    {
         $event = $this->dispatchEvent(AuthorizationEvent::EVENT_BEFORE_AUTHORIZATION, [
             'request' => $request,
             'authorizationService' => $this->authorizationService
@@ -87,6 +85,7 @@ class RbacGuardMiddleware implements AuthorizationEventListenerInterface
             return $event;
         }
 
+        $request = $event->getParam('request');
         $routeResult = $request->getAttribute(RouteResult::class, null);
         if ($routeResult instanceof RouteResult) {
             $guards = $this->guardsProvider->getGuards();
@@ -118,6 +117,7 @@ class RbacGuardMiddleware implements AuthorizationEventListenerInterface
             return $event;
         }
 
+        $request = $event->getParam('request');
         $isGranted = $event->getParam('authorized', true);
         if (!$isGranted) {
             if ($this->authentication) {
@@ -137,6 +137,6 @@ class RbacGuardMiddleware implements AuthorizationEventListenerInterface
             );
         }
 
-        return $next($request, $response);
+        return $delegate->process($request);
     }
 }

@@ -12,7 +12,7 @@ namespace Dot\Rbac\Guard\Factory;
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class PermissionGuardFactory

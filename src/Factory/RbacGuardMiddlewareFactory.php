@@ -15,7 +15,7 @@ use Dot\Rbac\Guard\Middleware\RbacGuardMiddleware;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Guard\Provider\Factory;
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class RbacGuardMiddlewareFactory

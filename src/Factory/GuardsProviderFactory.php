@@ -12,7 +12,7 @@ namespace Dot\Rbac\Guard\Factory;
 use Dot\Rbac\Guard\Guard\Factory;
 use Dot\Rbac\Guard\Guard\GuardPluginManager;
 use Dot\Rbac\Guard\Provider\ArrayGuardsProvider;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class ArrayGuardsProviderFactory

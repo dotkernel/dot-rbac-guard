@@ -10,7 +10,7 @@ declare(strict_types = 1);
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class RbacGuardOptionsFactory

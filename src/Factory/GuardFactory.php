@@ -12,7 +12,7 @@ namespace Dot\Rbac\Guard\Factory;
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Role\RoleServiceInterface;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class GuardFactory

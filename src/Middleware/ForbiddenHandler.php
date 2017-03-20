@@ -21,6 +21,9 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Expressive\Template\TemplateRendererInterface;
 
 /**
  * Class ForbiddenHandler
@@ -31,6 +34,8 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
     use DispatchAuthorizationEventTrait;
     use AuthorizationEventListenerTrait;
 
+    const TEMPLATE_DEFAULT = 'error::403';
+
     /** @var  AuthorizationInterface */
     protected $authorizationService;
 
@@ -40,15 +45,32 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
     /** @var  RbacGuardOptions */
     protected $options;
 
+    /** @var  TemplateRendererInterface */
+    protected $renderer;
+
+    /** @var  string */
+    protected $template;
+
+    /** @var bool */
+    protected $debug = false;
+
     /**
      * ForbiddenHandler constructor.
      * @param AuthorizationInterface $authorizationService
      * @param RbacGuardOptions $options
+     * @param TemplateRendererInterface|null $templateRenderer
+     * @param string|null $template
      */
-    public function __construct(AuthorizationInterface $authorizationService, RbacGuardOptions $options)
-    {
+    public function __construct(
+        AuthorizationInterface $authorizationService,
+        RbacGuardOptions $options,
+        TemplateRendererInterface $templateRenderer = null,
+        string $template = self::TEMPLATE_DEFAULT
+    ) {
+        $this->renderer = $templateRenderer;
         $this->authorizationService = $authorizationService;
         $this->options = $options;
+        $this->template = $template;
     }
 
     /**
@@ -97,11 +119,55 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
             return $event;
         }
 
+        $request = $event->getParam('request');
         $message = $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN);
-        if ($error instanceof ForbiddenException) {
+        if ($error instanceof ForbiddenException ||
+            ($this->isDebug() && ($error instanceof \Exception || $error instanceof \Throwable))
+        ) {
             $message = $error->getMessage();
         }
-        // if no listener handled the event, throw an exception to be handled by expressive's error handler
-        throw new \Exception($message, 403);
+
+        // if this package is not installed within a template renderer context, re-throw the ForbiddenException
+        // to be caught by the outer most error handler(default expressive handler, whoops in development)
+        if (!$this->renderer) {
+            throw new ForbiddenException($message);
+        }
+
+        $response = new Response();
+        /** @var ResponseInterface $response */
+        $response = $response->withStatus(403);
+        $templateData = [
+            'request' => $request,
+            'uri' => $request->getUri(),
+            'message' => $message,
+            'status' => $response->getStatusCode(),
+            'reason' => $response->getReasonPhrase()
+        ];
+        if ($this->isDebug()) {
+            $templateData += [
+                'error' => $error
+            ];
+        }
+
+        return new HtmlResponse(
+            $this->renderer->render($this->template, $templateData),
+            403
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDebug(): bool
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param bool $debug
+     */
+    public function setDebug(bool $debug)
+    {
+        $this->debug = $debug;
     }
 }

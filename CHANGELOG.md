@@ -1,4 +1,4 @@
-## 0.2.0 - 2017-03-17
+## 0.2.0 - unreleased
 
 ZE2 migration
 

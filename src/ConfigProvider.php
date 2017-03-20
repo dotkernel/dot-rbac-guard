@@ -36,16 +36,6 @@ class ConfigProvider
                 ],
             ],
 
-            'middleware_pipeline' => [
-                'error' => [
-                    'middleware' => [
-                        ForbiddenHandler::class,
-                    ],
-                    'error' => true,
-                    'priority' => -10000,
-                ],
-            ],
-
             'dot_authorization' => [
 
                 'protection_policy' => GuardInterface::POLICY_ALLOW,

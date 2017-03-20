@@ -21,6 +21,8 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Expressive\Template\TemplateRendererInterface;
 
 /**
  * Class ForbiddenHandler
@@ -40,13 +42,24 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
     /** @var  RbacGuardOptions */
     protected $options;
 
+    /** @var  TemplateRendererInterface */
+    protected $renderer;
+
+    /** @var bool  */
+    protected $debug = false;
+
     /**
      * ForbiddenHandler constructor.
      * @param AuthorizationInterface $authorizationService
+     * @param TemplateRendererInterface $templateRenderer
      * @param RbacGuardOptions $options
      */
-    public function __construct(AuthorizationInterface $authorizationService, RbacGuardOptions $options)
-    {
+    public function __construct(
+        AuthorizationInterface $authorizationService,
+        RbacGuardOptions $options,
+        TemplateRendererInterface $templateRenderer = null
+    ) {
+        $this->renderer = $templateRenderer;
         $this->authorizationService = $authorizationService;
         $this->options = $options;
     }
@@ -101,7 +114,32 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
         if ($error instanceof ForbiddenException) {
             $message = $error->getMessage();
         }
-        // if no listener handled the event, throw an exception to be handled by expressive's error handler
-        throw new \Exception($message, 403);
+
+        if (empty($this->options->getForbiddenTemplateName()) || empty($this->renderer)) {
+            throw new ForbiddenException($message);
+        }
+
+        return new HtmlResponse($this->renderer->render($this->options->getForbiddenTemplateName(), [
+            'request' => $request,
+            'error' => $error,
+            'isDebug' => $this->isDebug(),
+            'message' => $message
+        ]), 403);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDebug(): bool
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param bool $debug
+     */
+    public function setDebug(bool $debug)
+    {
+        $this->debug = $debug;
     }
 }

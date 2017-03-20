@@ -29,6 +29,9 @@ class RbacGuardOptions extends AbstractOptions
     /** @var array */
     protected $guardsProvider = [];
 
+    /** @var string  */
+    protected $forbiddenTemplateName = '';
+
     /** @var  MessagesOptions */
     protected $messagesOptions;
 
@@ -107,5 +110,21 @@ class RbacGuardOptions extends AbstractOptions
     public function setEventListeners(array $eventListeners)
     {
         $this->eventListeners = $eventListeners;
+    }
+
+    /**
+     * @return string
+     */
+    public function getForbiddenTemplateName(): string
+    {
+        return $this->forbiddenTemplateName ?? '';
+    }
+
+    /**
+     * @param string $forbiddenTemplateName
+     */
+    public function setForbiddenTemplateName(string $forbiddenTemplateName)
+    {
+        $this->forbiddenTemplateName = $forbiddenTemplateName;
     }
 }

@@ -38,8 +38,6 @@ class ConfigProvider
 
             'dot_authorization' => [
 
-                'forbidden_template_name' => '',
-
                 'protection_policy' => GuardInterface::POLICY_ALLOW,
 
                 'guards_provider_manager' => [],

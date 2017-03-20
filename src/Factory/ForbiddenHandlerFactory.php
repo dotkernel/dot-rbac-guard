@@ -35,12 +35,17 @@ class ForbiddenHandlerFactory
 
         $authorizationService = $container->get(AuthorizationInterface::class);
         $moduleOptions = $container->get(RbacGuardOptions::class);
+
+        $template = isset($config['zend-expressive']['error_handler']['template_403'])
+            ? $config['zend-expressive']['error_handler']['template_403']
+            : ForbiddenHandler::TEMPLATE_DEFAULT;
+
         $renderer = $container->has(TemplateRendererInterface::class)
             ? $container->get(TemplateRendererInterface::class)
             : null;
 
         /** @var ForbiddenHandler $handler */
-        $handler = new $requestedName($authorizationService, $moduleOptions, $renderer);
+        $handler = new $requestedName($authorizationService, $moduleOptions, $renderer, $template);
         $handler->setDebug($debug);
         $handler->attach($handler->getEventManager(), 1000);
 

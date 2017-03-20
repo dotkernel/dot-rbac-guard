@@ -34,6 +34,8 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
     use DispatchAuthorizationEventTrait;
     use AuthorizationEventListenerTrait;
 
+    const TEMPLATE_DEFAULT = 'error::403';
+
     /** @var  AuthorizationInterface */
     protected $authorizationService;
 
@@ -46,23 +48,29 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
     /** @var  TemplateRendererInterface */
     protected $renderer;
 
+    /** @var  string */
+    protected $template;
+
     /** @var bool */
     protected $debug = false;
 
     /**
      * ForbiddenHandler constructor.
      * @param AuthorizationInterface $authorizationService
-     * @param TemplateRendererInterface $templateRenderer
      * @param RbacGuardOptions $options
+     * @param TemplateRendererInterface|null $templateRenderer
+     * @param string|null $template
      */
     public function __construct(
         AuthorizationInterface $authorizationService,
         RbacGuardOptions $options,
-        TemplateRendererInterface $templateRenderer = null
+        TemplateRendererInterface $templateRenderer = null,
+        string $template = self::TEMPLATE_DEFAULT
     ) {
         $this->renderer = $templateRenderer;
         $this->authorizationService = $authorizationService;
         $this->options = $options;
+        $this->template = $template;
     }
 
     /**
@@ -121,7 +129,7 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
 
         // if this package is not installed within a template renderer context, re-throw the ForbiddenException
         // to be caught by the outer most error handler(default expressive handler, whoops in development)
-        if (empty($this->options->getForbiddenTemplateName()) || empty($this->renderer)) {
+        if (!$this->renderer) {
             throw new ForbiddenException($message);
         }
 
@@ -142,7 +150,7 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
         }
 
         return new HtmlResponse(
-            $this->renderer->render($this->options->getForbiddenTemplateName(), $templateData),
+            $this->renderer->render($this->template, $templateData),
             403
         );
     }

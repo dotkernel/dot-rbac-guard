@@ -13,10 +13,6 @@ return [
             ],
         ],
 
-        // name of the default template to render on forbidden errors
-        // leave empty if you want to re-throw an exception instead
-        'forbidden_template_name' => '',
-
         //define custom guards here
         'guard_manager' => [],
 

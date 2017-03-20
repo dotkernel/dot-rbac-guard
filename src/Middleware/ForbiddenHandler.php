@@ -21,6 +21,7 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
@@ -45,7 +46,7 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
     /** @var  TemplateRendererInterface */
     protected $renderer;
 
-    /** @var bool  */
+    /** @var bool */
     protected $debug = false;
 
     /**
@@ -110,21 +111,40 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
             return $event;
         }
 
+        $request = $event->getParam('request');
         $message = $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN);
-        if ($error instanceof ForbiddenException) {
+        if ($error instanceof ForbiddenException ||
+            ($this->isDebug() && ($error instanceof \Exception || $error instanceof \Throwable))
+        ) {
             $message = $error->getMessage();
         }
 
+        // if this package is not installed within a template renderer context, re-throw the ForbiddenException
+        // to be caught by the outer most error handler(default expressive handler, whoops in development)
         if (empty($this->options->getForbiddenTemplateName()) || empty($this->renderer)) {
             throw new ForbiddenException($message);
         }
 
-        return new HtmlResponse($this->renderer->render($this->options->getForbiddenTemplateName(), [
+        $response = new Response();
+        /** @var ResponseInterface $response */
+        $response = $response->withStatus(403);
+        $templateData = [
             'request' => $request,
-            'error' => $error,
-            'isDebug' => $this->isDebug(),
-            'message' => $message
-        ]), 403);
+            'uri' => $request->getUri(),
+            'message' => $message,
+            'status' => $response->getStatusCode(),
+            'reason' => $response->getReasonPhrase()
+        ];
+        if ($this->isDebug()) {
+            $templateData += [
+                'error' => $error
+            ];
+        }
+
+        return new HtmlResponse(
+            $this->renderer->render($this->options->getForbiddenTemplateName(), $templateData),
+            403
+        );
     }
 
     /**

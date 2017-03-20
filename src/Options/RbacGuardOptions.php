@@ -29,7 +29,7 @@ class RbacGuardOptions extends AbstractOptions
     /** @var array */
     protected $guardsProvider = [];
 
-    /** @var string  */
+    /** @var string */
     protected $forbiddenTemplateName = '';
 
     /** @var  MessagesOptions */

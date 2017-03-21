@@ -9,7 +9,6 @@ declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Guard;
 
-use Dot\Controller\AbstractActionController;
 use Dot\Controller\AbstractController;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Role\RoleServiceInterface;
@@ -95,51 +94,31 @@ class ControllerGuard extends AbstractGuard
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        /**
-         * check if at least one Controller is in the middleware stack
-         */
-        $middleware = $routeResult->getMatchedMiddleware();
-        $controller = null;
-        if (is_array($middleware)) {
-            foreach ($middleware as $m) {
-                if (is_subclass_of($m, AbstractActionController::class)) {
-                    $controller = $m;
-                    break;
-                }
-            }
+        $route = strtolower($routeResult->getMatchedRouteName());
+
+        if (!isset($this->rules[$route])) {
+            return $this->protectionPolicy === self::POLICY_ALLOW;
+        }
+
+        $params = $routeResult->getMatchedParams();
+        $action = isset($params['action']) && !empty($params['action'])
+            ? $params['action']
+            : 'index';
+
+        $action = AbstractController::getMethodFromAction($action);
+
+        if (isset($this->rules[$route][$action])) {
+            $allowedRoles = $this->rules[$route][$action];
+        } elseif (isset($this->rules[$route][0])) {
+            $allowedRoles = $this->rules[$route][0];
         } else {
-            $controller = is_subclass_of($middleware, AbstractActionController::class) ? $middleware : null;
+            return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        if ($controller) {
-            $route = strtolower($routeResult->getMatchedRouteName());
-            $params = $routeResult->getMatchedParams();
-            $action = isset($params['action']) && !empty($params['action'])
-                ? $params['action']
-                : 'index';
-
-            $action = AbstractController::getMethodFromAction($action);
-
-            if (!isset($this->rules[$route])) {
-                return $this->protectionPolicy === self::POLICY_ALLOW;
-            }
-
-            if (isset($this->rules[$route][$action])) {
-                $allowedRoles = $this->rules[$route][$action];
-            } elseif (isset($this->rules[$route][0])) {
-                $allowedRoles = $this->rules[$route][0];
-            } else {
-                return $this->protectionPolicy === self::POLICY_ALLOW;
-            }
-
-            if (in_array('*', $allowedRoles)) {
-                return true;
-            }
-
-            return $this->roleService->matchIdentityRoles($allowedRoles);
+        if (in_array('*', $allowedRoles)) {
+            return true;
         }
 
-        //if not an AbstractController, this guard will skip
-        return $this->protectionPolicy === self::POLICY_ALLOW;
+        return $this->roleService->matchIdentityRoles($allowedRoles);
     }
 }

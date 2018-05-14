@@ -5,18 +5,17 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "n3vrax",
-      "email": "tibi@apidemia.com"
+      "name": "DotKernel Team",
+      "email": "team@dotkernel.com"
     }
   ],
   "require": {
     "php": "^7.1",
     "psr/http-message": "^1.0",
-    "http-interop/http-middleware": "^0.4.1",
-    "zendframework/zend-expressive-router": "^2.0",
-    "zendframework/zend-expressive-template": "^1.0",
+    "psr/http-server-middleware": "^1.0",
+    "zendframework/zend-expressive-router": "^3.0",
+    "zendframework/zend-expressive-template": "^2.0",
     "zendframework/zend-servicemanager": "^3.3.0",
-
     "dotkernel/dot-rbac": "^0.2"
   },
   "require-dev": {
@@ -26,9 +25,9 @@
     "zendframework/zend-diactoros": "^1.3",
     "zendframework/zend-stdlib": "^3.0",
 
-    "dotkernel/dot-controller": "^0.2",
-    "dotkernel/dot-authentication": "^0.1",
-    "dotkernel/dot-flashmessenger": "^0.2"
+    "dotkernel/dot-controller": "^1.0",
+    "dotkernel/dot-authentication": "^1.0",
+    "dotkernel/dot-flashmessenger": "^1.0"
   },
   "autoload": {
     "psr-4": {

@@ -17,10 +17,10 @@ use Dot\Rbac\Guard\Event\AuthorizationEventListenerTrait;
 use Dot\Rbac\Guard\Event\DispatchAuthorizationEventTrait;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Expressive\Template\TemplateRendererInterface;
@@ -80,10 +80,10 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
      * @throws \Exception
      * @throws \Throwable
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
-            $response = $delegate->process($request);
+            $response = $handler->handle($request);
             return $response;
         } catch (ForbiddenException $e) {
             return $this->handleForbiddenError($e, $request);

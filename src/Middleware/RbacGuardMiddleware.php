@@ -22,10 +22,10 @@ use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Expressive\Router\RouteResult;
 
 /**
@@ -75,7 +75,7 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
      * @throws ForbiddenException
      * @throws UnauthorizedException
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $event = $this->dispatchEvent(AuthorizationEvent::EVENT_BEFORE_AUTHORIZATION, [
             'request' => $request,
@@ -137,6 +137,6 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
             );
         }
 
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }

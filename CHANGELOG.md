@@ -1,3 +1,23 @@
+## 1.0.0 - 2018-05-14
+
+ZE3 migration
+
+### Changed
+* updated middleware implementation
+
+### Added
+* Nothing
+
+### Deprecated
+* Nothing
+
+### Removed
+* Nothing
+
+### Fixed
+* Nothing
+
+
 ## 0.2.0 - 2017-03-22
 
 ZE2 migration

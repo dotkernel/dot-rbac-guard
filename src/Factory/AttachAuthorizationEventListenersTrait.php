@@ -13,7 +13,7 @@ use Dot\Rbac\Guard\Event\AuthorizationEventListenerInterface;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Psr\Container\ContainerInterface;
-use Zend\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventManagerInterface;
 
 /**
  * Class AttachAuthorizationEventListenersTrait

@@ -9,8 +9,8 @@ declare(strict_types = 1);
 
 namespace Dot\Rbac\Guard\Options;
 
-use Zend\Stdlib\AbstractOptions;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\AbstractOptions;
+use Laminas\Stdlib\ArrayUtils;
 
 class MessagesOptions extends AbstractOptions
 {

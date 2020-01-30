@@ -14,7 +14,7 @@ use Dot\Controller\AbstractController;
 use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Expressive\Router\RouteResult;
+use Mezzio\Router\RouteResult;
 
 /**
  * Class ControllerPermissionGuard

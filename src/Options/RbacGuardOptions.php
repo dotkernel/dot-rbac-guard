@@ -10,7 +10,7 @@ declare(strict_types = 1);
 namespace Dot\Rbac\Guard\Options;
 
 use Dot\Rbac\Guard\Guard\GuardInterface;
-use Zend\Stdlib\AbstractOptions;
+use Laminas\Stdlib\AbstractOptions;
 
 /**
  * Class RbacGuardOptions

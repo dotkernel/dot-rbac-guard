@@ -13,7 +13,7 @@ use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Psr\Container\ContainerInterface;
-use Zend\Expressive\Template\TemplateRendererInterface;
+use Mezzio\Template\TemplateRendererInterface;
 
 /**
  * Class ForbiddenHandlerFactory
@@ -36,8 +36,8 @@ class ForbiddenHandlerFactory
         $authorizationService = $container->get(AuthorizationInterface::class);
         $moduleOptions = $container->get(RbacGuardOptions::class);
 
-        $template = isset($config['zend-expressive']['error_handler']['template_403'])
-            ? $config['zend-expressive']['error_handler']['template_403']
+        $template = isset($config['mezzio']['error_handler']['template_403'])
+            ? $config['mezzio']['error_handler']['template_403']
             : ForbiddenHandler::TEMPLATE_DEFAULT;
 
         $renderer = $container->has(TemplateRendererInterface::class)

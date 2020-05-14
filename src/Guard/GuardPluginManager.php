@@ -11,7 +11,7 @@ namespace Dot\Rbac\Guard\Guard;
 
 use Dot\Rbac\Guard\Factory\GuardFactory;
 use Dot\Rbac\Guard\Factory\PermissionGuardFactory;
-use Zend\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\AbstractPluginManager;
 
 /**
  * Class GuardPluginManager

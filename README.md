@@ -7,6 +7,9 @@ Usually, you'll want to use both methods in an application for additional securi
 ## Installation
 
 Run the following command in your project's root directory
+
+Requires PHP version >= 7.4
+
 ```bash
 $ composer require dotkernel/dot-rbac-guard
 ```

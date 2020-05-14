@@ -10,7 +10,7 @@ declare(strict_types = 1);
 namespace Dot\Rbac\Guard\Provider;
 
 use Dot\Rbac\Guard\Factory\GuardsProviderFactory;
-use Zend\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\AbstractPluginManager;
 
 /**
  * Class GuardsProviderPluginManager

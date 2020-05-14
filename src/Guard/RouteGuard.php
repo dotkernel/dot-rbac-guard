@@ -12,7 +12,7 @@ namespace Dot\Rbac\Guard\Guard;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Role\RoleServiceInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Expressive\Router\RouteResult;
+use Mezzio\Router\RouteResult;
 
 /**
  * Class RouteGuard

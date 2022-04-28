@@ -1,14 +1,20 @@
 # dot-rbac-guard
 
-Defines authorization guards that authorize users to certain parts of an application based on various criteria.
+Defines authorization guards that authorize users to access certain parts of an application based on various criteria.
 If the authorization service can be used to check authorization on a narrow level, the guards are meant to work as gateways to bigger parts of an application.
 Usually, you'll want to use both methods in an application for additional security.
+
+![OSS Lifecycle](https://img.shields.io/osslifecycle/dotkernel/dot-rbac-guard)
+![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.2.0)
+
+[![GitHub issues](https://img.shields.io/github/issues/dotkernel/dot-form)](https://github.com/dotkernel/dot-rbac-guard/issues)
+[![GitHub forks](https://img.shields.io/github/forks/dotkernel/dot-form)](https://github.com/dotkernel/dot-rbac-guard/network)
+[![GitHub stars](https://img.shields.io/github/stars/dotkernel/dot-form)](https://github.com/dotkernel/dot-rbac-guard/stargazers)
+[![GitHub license](https://img.shields.io/github/license/dotkernel/dot-form)](https://github.com/dotkernel/dot-rbac-guard/blob/3.2.0/LICENSE.md)
 
 ## Installation
 
 Run the following command in your project's root directory
-
-Requires PHP version >= 7.4
 
 ```bash
 $ composer require dotkernel/dot-rbac-guard

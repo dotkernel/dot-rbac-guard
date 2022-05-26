@@ -74,7 +74,7 @@ class RoutePermissionGuard extends AbstractGuard
     {
         $routeResult = $request->getAttribute(RouteResult::class, false);
         //if we dont have a matched route(probably 404 not found) let it go to the final handler
-        if (!$routeResult instanceof RouteResult) {
+        if (!$routeResult instanceof RouteResult || !$routeResult->getMatchedRouteName()) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 

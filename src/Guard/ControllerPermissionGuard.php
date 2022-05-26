@@ -78,7 +78,7 @@ class ControllerPermissionGuard extends AbstractGuard
     public function isGranted(ServerRequestInterface $request): bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, null);
-        if (!$routeResult instanceof RouteResult) {
+        if (!$routeResult instanceof RouteResult || !$routeResult->getMatchedRouteName()) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 

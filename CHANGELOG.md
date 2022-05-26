@@ -1,3 +1,37 @@
+## 3.2.1 - 2022-05-26
+
+### Changed
+* Nothing
+
+### Added
+* Nothing
+
+### Deprecated
+* Nothing
+
+### Removed
+* Nothing
+
+### Fixed
+* Updated validation for routeResult
+
+## 3.2.0 - 2022-04-29
+
+### Changed
+* Added PHP 8.0 and 8.1 compatibility.
+
+### Added
+* Nothing
+
+### Deprecated
+* Nothing
+
+### Removed
+* Nothing
+
+### Fixed
+* Nothing
+
 ## 3.1.0 - 2020-11-03
 
 ### Changed

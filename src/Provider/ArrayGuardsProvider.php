@@ -1,20 +1,20 @@
 <?php
+
 /**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
+ * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
+ * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
+ * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Provider;
 
 use Dot\Rbac\Guard\Guard\GuardInterface;
 
-/**
- * Class GuardsProvider
- * @package Dot\Rbac\Guard\Provider
- */
+use function is_array;
+use function usort;
+
 class ArrayGuardsProvider extends AbstractGuardsProvider
 {
     /** @var array */
@@ -24,10 +24,9 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
     protected $guards;
 
     /**
-     * ArrayGuardsProvider constructor.
-     * @param array $options
+     * @param array|null $options
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         $options = $options ?? [];
         parent::__construct($options);
@@ -39,6 +38,7 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
 
     /**
      * Gets the  cached guard list or creates it from the config
+     *
      * @return GuardInterface[]
      */
     public function getGuards(): array

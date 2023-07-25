@@ -1,28 +1,36 @@
 <?php
+
 /**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
+ * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
+ * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
+ * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Dot\Rbac\Role\RoleServiceInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-/**
- * Class GuardFactory
- * @package Dot\Rbac\Guard\Factory
- */
+use function in_array;
+use function is_array;
+use function is_string;
+
 class GuardFactory
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    /**
+     * @return mixed
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null)
     {
-        $options = $options ?? [];
+        $options                 = $options ?? [];
         $options['role_service'] = isset($options['role_service'])
         && is_string($options['role_service'])
         && $container->has($options['role_service'])
@@ -30,7 +38,7 @@ class GuardFactory
             : $container->get(RoleServiceInterface::class);
 
         /** @var RbacGuardOptions $moduleOptions */
-        $moduleOptions = $container->get(RbacGuardOptions::class);
+        $moduleOptions                = $container->get(RbacGuardOptions::class);
         $options['protection_policy'] = isset($options['protection_policy'])
         && in_array($options['protection_policy'], [GuardInterface::POLICY_ALLOW, GuardInterface::POLICY_DENY])
             ? $options['protection_policy']

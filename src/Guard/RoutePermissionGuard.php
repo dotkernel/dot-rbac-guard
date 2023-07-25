@@ -1,49 +1,49 @@
 <?php
+
 /**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
+ * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
+ * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
+ * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
 
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\Exception\RuntimeException;
-use Psr\Http\Message\ServerRequestInterface;
 use Mezzio\Router\RouteResult;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Class RoutePermissionGuard
- * @package Dot\Rbac\Guard\Route
- */
+use function array_keys;
+use function gettype;
+use function in_array;
+use function is_int;
+use function is_object;
+use function sprintf;
+use function strtolower;
+
 class RoutePermissionGuard extends AbstractGuard
 {
-    const PRIORITY = 70;
+    public const PRIORITY = 70;
 
-    /**
-     * @var AuthorizationInterface
-     */
+    /** @var AuthorizationInterface */
     protected $authorizationService;
 
-    /**\
-     * RoutePermissionGuard constructor.
-     * @param array $options
-     */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         $options = $options ?? [];
         parent::__construct($options);
 
-        if (isset($options['authorization_service'])
+        if (
+            isset($options['authorization_service'])
             && $options['authorization_service'] instanceof AuthorizationInterface
         ) {
             $this->setAuthorizationService($options['authorization_service']);
         }
 
-        if (!$this->authorizationService instanceof AuthorizationInterface) {
+        if (! $this->authorizationService instanceof AuthorizationInterface) {
             throw new RuntimeException('Authorization service is required by this guard and was not set');
         }
     }
@@ -56,29 +56,25 @@ class RoutePermissionGuard extends AbstractGuard
         $this->rules = [];
         foreach ($rules as $key => $value) {
             if (is_int($key)) {
-                $routeName = strtolower($value);
+                $routeName   = strtolower($value);
                 $permissions = [];
             } else {
-                $routeName = strtolower($key);
-                $permissions = (array)$value;
+                $routeName   = strtolower($key);
+                $permissions = (array) $value;
             }
             $this->rules[$routeName] = $permissions;
         }
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return bool
-     */
     public function isGranted(ServerRequestInterface $request): bool
     {
         $routeResult = $request->getAttribute(RouteResult::class, false);
         //if we dont have a matched route(probably 404 not found) let it go to the final handler
-        if (!$routeResult instanceof RouteResult || !$routeResult->getMatchedRouteName()) {
+        if (! $routeResult instanceof RouteResult || ! $routeResult->getMatchedRouteName()) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        $matchedRouteName = strtolower($routeResult->getMatchedRouteName());
+        $matchedRouteName   = strtolower($routeResult->getMatchedRouteName());
         $allowedPermissions = null;
 
         foreach (array_keys($this->rules) as $routeName) {
@@ -98,11 +94,11 @@ class RoutePermissionGuard extends AbstractGuard
         }
 
         $permissions = $allowedPermissions['permissions'] ?? $allowedPermissions;
-        $condition = $allowedPermissions['condition'] ?? GuardInterface::CONDITION_AND;
+        $condition   = $allowedPermissions['condition'] ?? GuardInterface::CONDITION_AND;
 
         if (GuardInterface::CONDITION_AND === $condition) {
             foreach ($permissions as $permission) {
-                if (!$this->getAuthorizationService()->isGranted($permission)) {
+                if (! $this->getAuthorizationService()->isGranted($permission)) {
                     return false;
                 }
             }
@@ -120,21 +116,15 @@ class RoutePermissionGuard extends AbstractGuard
 
         throw new InvalidArgumentException(sprintf(
             'Condition must be either "AND" or "OR", %s given',
-            is_object($condition) ? get_class($condition) : gettype($condition)
+            is_object($condition) ? $condition::class : gettype($condition)
         ));
     }
 
-    /**
-     * @return AuthorizationInterface
-     */
     public function getAuthorizationService(): AuthorizationInterface
     {
         return $this->authorizationService;
     }
 
-    /**
-     * @param AuthorizationInterface $authorizationService
-     */
     public function setAuthorizationService(AuthorizationInterface $authorizationService)
     {
         $this->authorizationService = $authorizationService;

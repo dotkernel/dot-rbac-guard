@@ -1,11 +1,12 @@
 <?php
+
 /**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
+ * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
+ * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
+ * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard;
 
@@ -26,28 +27,22 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
+            'dependencies'      => [
                 'factories' => [
-                    GuardPluginManager::class => GuardPluginManagerFactory::class,
+                    GuardPluginManager::class          => GuardPluginManagerFactory::class,
                     GuardsProviderPluginManager::class => GuardsProviderPluginManagerFactory::class,
-                    RbacGuardOptions::class => RbacGuardOptionsFactory::class,
-                    RbacGuardMiddleware::class => RbacGuardMiddlewareFactory::class,
-                    ForbiddenHandler::class => ForbiddenHandlerFactory::class,
+                    RbacGuardOptions::class            => RbacGuardOptionsFactory::class,
+                    RbacGuardMiddleware::class         => RbacGuardMiddlewareFactory::class,
+                    ForbiddenHandler::class            => ForbiddenHandlerFactory::class,
                 ],
             ],
-
             'dot_authorization' => [
-
-                'protection_policy' => GuardInterface::POLICY_ALLOW,
-
+                'protection_policy'       => GuardInterface::POLICY_ALLOW,
                 'guards_provider_manager' => [],
-
-                'guard_manager' => [],
-
-                'guards_provider' => [],
-
-                'messages_options' => [],
-            ]
+                'guard_manager'           => [],
+                'guards_provider'         => [],
+                'messages_options'        => [],
+            ],
         ];
     }
 }

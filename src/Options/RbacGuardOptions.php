@@ -1,26 +1,22 @@
 <?php
+
 /**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
+ * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
+ * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
+ * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Options;
 
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Laminas\Stdlib\AbstractOptions;
+use Traversable;
 
-/**
- * Class RbacGuardOptions
- * @package Dot\Rbac\Guard\Options
- */
 class RbacGuardOptions extends AbstractOptions
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $protectionPolicy = GuardInterface::POLICY_ALLOW;
 
     /** @var array */
@@ -33,8 +29,7 @@ class RbacGuardOptions extends AbstractOptions
     protected $messagesOptions;
 
     /**
-     * ModuleOptions constructor.
-     * @param array|null|\Traversable $options
+     * @param array|null|Traversable $options
      */
     public function __construct($options)
     {
@@ -42,17 +37,11 @@ class RbacGuardOptions extends AbstractOptions
         parent::__construct($options);
     }
 
-    /**
-     * @return string
-     */
     public function getProtectionPolicy(): string
     {
         return $this->protectionPolicy;
     }
 
-    /**
-     * @param string $protectionPolicy
-     */
     public function setProtectionPolicy(string $protectionPolicy)
     {
         $this->protectionPolicy = $protectionPolicy;
@@ -74,12 +63,9 @@ class RbacGuardOptions extends AbstractOptions
         $this->guardsProvider = $guardsProvider;
     }
 
-    /**
-     * @return MessagesOptions
-     */
     public function getMessagesOptions(): MessagesOptions
     {
-        if (!$this->messagesOptions) {
+        if (! $this->messagesOptions) {
             $this->setMessagesOptions([]);
         }
         return $this->messagesOptions;

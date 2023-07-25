@@ -31,7 +31,7 @@ class RoutePermissionGuardTest extends TestCase
     public function setUp(): void
     {
         $this->mockAuthorizationInterface = new class implements AuthorizationInterface {
-            public function isGranted(string $permission, array $roles = [], ?string $context = null): bool
+            public function isGranted(string $permission, array $roles = [], mixed $context = null): bool
             {
                 return true;
             }

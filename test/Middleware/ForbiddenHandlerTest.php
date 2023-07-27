@@ -37,10 +37,9 @@ class ForbiddenHandlerTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testProcessForbiddenException()
+    public function testProcessForbiddenException(): void
     {
         $request = new ServerRequest();
         $handler = new class implements RequestHandlerInterface {
@@ -56,10 +55,9 @@ class ForbiddenHandlerTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testProcessException()
+    public function testProcessException(): void
     {
         $request = new ServerRequest();
         $handler = new class implements RequestHandlerInterface {
@@ -75,10 +73,9 @@ class ForbiddenHandlerTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testProcess()
+    public function testProcess(): void
     {
         $request = new ServerRequest();
         $handler = new class implements RequestHandlerInterface {
@@ -92,7 +89,7 @@ class ForbiddenHandlerTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $result);
     }
 
-    public function testIsDebug()
+    public function testIsDebug(): void
     {
         $this->subject->setDebug(true);
         $result = $this->subject->isDebug();

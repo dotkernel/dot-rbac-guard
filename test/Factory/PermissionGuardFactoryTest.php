@@ -11,15 +11,18 @@ use Dot\Rbac\Guard\Guard\RoutePermissionGuard;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class PermissionGuardFactoryTest extends TestCase
 {
     /**
-     * @return void
      * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function testWillNotCreateWithoutRoleService()
+    public function testWillNotCreateWithoutRoleService(): void
     {
         $options       = [
             'authorization_service' => 'noAuthorizationService',

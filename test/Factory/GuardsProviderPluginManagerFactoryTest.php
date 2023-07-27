@@ -8,15 +8,18 @@ use Dot\Rbac\Guard\Factory\GuardsProviderPluginManagerFactory;
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class GuardsProviderPluginManagerFactoryTest extends TestCase
 {
     /**
-     * @return void
      * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function testCanCreateService()
+    public function testCanCreateService(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $config    = [

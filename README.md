@@ -13,6 +13,7 @@ Usually, you'll want to use both methods in an application for additional securi
 [![GitHub license](https://img.shields.io/github/license/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/blob/3.4.0/LICENSE.md)
 
 [![Build Static](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml/badge.svg?branch=3.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml)
+
 [![SymfonyInsight](https://insight.symfony.com/projects/ebbe47ef-852a-47bd-94d4-9e1725a85377/big.svg)](https://insight.symfony.com/projects/ebbe47ef-852a-47bd-94d4-9e1725a85377)
 
 ## Installation
@@ -158,5 +159,3 @@ You MUST insert this middleware between the routing middleware and the dispatch 
 
 //...
 ```
-
-@TODO: more documentation

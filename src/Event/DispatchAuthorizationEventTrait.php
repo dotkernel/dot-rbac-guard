@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Event;
@@ -18,11 +12,11 @@ trait DispatchAuthorizationEventTrait
 {
     use EventManagerAwareTrait;
 
-    /**
-     * @return AuthorizationEvent|ResponseCollection
-     */
-    public function dispatchEvent(string $name, array $params = [], mixed $target = null)
-    {
+    public function dispatchEvent(
+        string $name,
+        array $params = [],
+        mixed $target = null
+    ): AuthorizationEvent|ResponseCollection {
         if ($target === null) {
             $target = $this;
         }

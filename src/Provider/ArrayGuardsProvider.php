@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Provider;
@@ -17,11 +11,9 @@ use function usort;
 
 class ArrayGuardsProvider extends AbstractGuardsProvider
 {
-    /** @var array */
-    protected $guardsConfig = [];
+    protected array $guardsConfig = [];
 
-    /** @var GuardInterface[] */
-    protected $guards;
+    protected array $guards = [];
 
     /**
      * @param array|null $options
@@ -37,7 +29,7 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
     }
 
     /**
-     * Gets the  cached guard list or creates it from the config
+     * Gets the cached guard list or creates it from the config
      *
      * @return GuardInterface[]
      */
@@ -62,28 +54,20 @@ class ArrayGuardsProvider extends AbstractGuardsProvider
 
     /**
      * Sort the guards list internally
-     *
-     * @return void
      */
-    protected function sortGuardsByPriority()
+    protected function sortGuardsByPriority(): void
     {
         usort($this->guards, function (GuardInterface $a, GuardInterface $b) {
             return $b->getPriority() - $a->getPriority();
         });
     }
 
-    /**
-     * @return array
-     */
     public function getGuardsConfig(): array
     {
         return $this->guardsConfig;
     }
 
-    /**
-     * @param array $guardsConfig
-     */
-    public function setGuardsConfig(array $guardsConfig)
+    public function setGuardsConfig(array $guardsConfig): void
     {
         $this->guardsConfig = $guardsConfig;
     }

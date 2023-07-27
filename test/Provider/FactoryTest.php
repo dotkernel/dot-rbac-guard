@@ -9,14 +9,18 @@ use Dot\Rbac\Guard\Provider\Factory;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 class FactoryTest extends TestCase
 {
-    protected Factory $subject;
-    protected ContainerInterface $container;
+    protected Factory|MockObject $subject;
+    protected ContainerInterface|MockObject $container;
 
+    /**
+     * @throws Exception
+     */
     public function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);
@@ -24,7 +28,7 @@ class FactoryTest extends TestCase
         $this->subject = new Factory($this->container);
     }
 
-    public function testCreateRuntimeException()
+    public function testCreateRuntimeException(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Guard provider type was not specified');
@@ -32,10 +36,9 @@ class FactoryTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $type                        = 'arrayGuardsProvider';
         $guardsProviderPluginManager = $this->createMock(GuardsProviderPluginManager::class);
@@ -59,9 +62,9 @@ class FactoryTest extends TestCase
         $this->assertInstanceOf(GuardsProviderInterface::class, $result);
     }
 
-    public function testGetGuardsProviderPluginManager()
+    public function testGetGuardsProviderPluginManager(): void
     {
-        $guardsProviderPluginManager = new GuardsProviderPluginManager();
+        $guardsProviderPluginManager = new GuardsProviderPluginManager($this->container);
         $subject                     = new Factory($this->container, $guardsProviderPluginManager);
 
         $result = $subject->getGuardsProviderPluginManager();

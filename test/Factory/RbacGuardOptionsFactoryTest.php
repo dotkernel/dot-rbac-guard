@@ -8,15 +8,18 @@ use Dot\Rbac\Guard\Factory\RbacGuardOptionsFactory;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class RbacGuardOptionsFactoryTest extends TestCase
 {
     /**
-     * @return void
      * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function testCanCreateService()
+    public function testCanCreateService(): void
     {
         $container     = $this->createMock(ContainerInterface::class);
         $requestedName = RbacGuardOptions::class;

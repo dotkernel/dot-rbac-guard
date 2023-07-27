@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Provider;
@@ -15,11 +9,9 @@ use Psr\Container\ContainerInterface;
 
 class Factory
 {
-    /** @var  ContainerInterface */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /** @var  GuardsProviderPluginManager */
-    protected $guardsProviderPluginManager;
+    protected ?GuardsProviderPluginManager $guardsProviderPluginManager;
 
     public function __construct(
         ContainerInterface $container,

@@ -16,10 +16,9 @@ use RuntimeException;
 class FactoryTest extends TestCase
 {
     /**
-     * @return void
      * @throws Exception
      */
-    public function testCreateRuntimeException()
+    public function testCreateRuntimeException(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $subject   = new Factory($container);
@@ -30,10 +29,9 @@ class FactoryTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $container           = $this->createMock(ContainerInterface::class);
         $guardsPluginManager = $this->createMock(GuardPluginManager::class);
@@ -59,10 +57,9 @@ class FactoryTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testGetGuardPluginManager()
+    public function testGetGuardPluginManager(): void
     {
         $container           = $this->createMock(ContainerInterface::class);
         $guardsPluginManager = $this->createMock(GuardPluginManager::class);

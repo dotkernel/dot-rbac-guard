@@ -60,13 +60,13 @@ class RouteGuardTest extends TestCase
         );
     }
 
-    public function testSetRules()
+    public function testSetRules(): void
     {
         $this->subject->setRules($this->rules);
         $this->assertIsArray($this->subject->getRules());
     }
 
-    public function testSetRoleService()
+    public function testSetRoleService(): void
     {
         $this->subject->setRoleService($this->mockRoleServiceClass);
         $result = $this->subject->getRoleService();
@@ -74,10 +74,9 @@ class RouteGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsNotGrantedRulesNotSet()
+    public function testIsNotGrantedRulesNotSet(): void
     {
         $request = $this->createMock(ServerRequest::class);
 
@@ -86,10 +85,9 @@ class RouteGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsNotGrantedNullAllowedRoles()
+    public function testIsNotGrantedNullAllowedRoles(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);
@@ -107,10 +105,9 @@ class RouteGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsGrantedEverything()
+    public function testIsGrantedEverything(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);
@@ -129,10 +126,9 @@ class RouteGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsGranted()
+    public function testIsGranted(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);

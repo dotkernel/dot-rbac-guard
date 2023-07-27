@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Middleware;
@@ -34,17 +28,13 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
     use AuthorizationEventListenerTrait;
     use DispatchAuthorizationEventTrait;
 
-    /** @var AuthorizationInterface */
-    protected $authorizationService;
+    protected AuthorizationInterface $authorizationService;
 
-    /** @var  RbacGuardOptions */
-    protected $options;
+    protected RbacGuardOptions $options;
 
-    /** @var  GuardsProviderInterface */
-    protected $guardsProvider;
+    protected GuardsProviderInterface $guardsProvider;
 
-    /** @var  AuthenticationInterface */
-    protected $authentication;
+    protected ?AuthenticationInterface $authentication;
 
     public function __construct(
         AuthorizationInterface $authorizationService,
@@ -78,7 +68,7 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
             $guards = $this->guardsProvider->getGuards();
 
             //iterate over guards, which are sorted by priority
-            //break on the first one that does not grants access
+            //break on the first one that does not grant access
 
             $isGranted = $this->options->getProtectionPolicy() === GuardInterface::POLICY_ALLOW;
             foreach ($guards as $guard) {

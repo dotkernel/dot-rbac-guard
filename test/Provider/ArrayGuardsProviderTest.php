@@ -8,6 +8,7 @@ use Dot\Rbac\Guard\Guard\Factory;
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Provider\ArrayGuardsProvider;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -15,7 +16,7 @@ class ArrayGuardsProviderTest extends TestCase
 {
     protected ArrayGuardsProvider $subject;
 
-    protected Factory $mockFactory;
+    protected Factory|MockObject $mockFactory;
 
     /**
      * @throws Exception
@@ -27,14 +28,14 @@ class ArrayGuardsProviderTest extends TestCase
         $this->subject = new ArrayGuardsProvider(['guard_factory' => $this->mockFactory]);
     }
 
-    public function testGetGuardsEmptyGuards()
+    public function testGetGuardsEmptyGuards(): void
     {
         $result = $this->subject->getGuards();
 
-        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
-    public function testGetGuards()
+    public function testGetGuards(): void
     {
         $this->mockFactory->expects($this->once())
         ->method('create')
@@ -51,16 +52,14 @@ class ArrayGuardsProviderTest extends TestCase
             }
         });
         $this->subject->setGuardsConfig([['test']]);
-        $result = $this->subject->getGuards();
 
-        $this->assertIsArray($result);
+        $this->assertCount(1, $this->subject->getGuards());
     }
 
-    public function testGetGuardsConfig()
+    public function testGetGuardsConfig(): void
     {
         $this->subject->setGuardsConfig(['test' => 'config']);
-        $result = $this->subject->getGuardsConfig();
 
-        $this->assertIsArray($result);
+        $this->assertCount(1, $this->subject->getGuardsConfig());
     }
 }

@@ -5,42 +5,27 @@ declare(strict_types=1);
 namespace DotTest\Rbac\Guard\Guard;
 
 use Dot\Authorization\AuthorizationInterface;
-use Dot\Rbac\Guard\Guard\ControllerPermissionGuard;
+use Dot\Rbac\Guard\Guard\RoutePermissionGuard;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-class ControllerPermissionGuardTest extends TestCase
+class RoutePermissionGuardTest extends TestCase
 {
-    protected ControllerPermissionGuard $subject;
+    protected RoutePermissionGuard $subject;
 
     protected AuthorizationInterface $mockAuthorizationInterface;
 
     protected array $rules = [
-        [
-            'route'       => 'account',
-            'actions'     => [
-                'avatar',
-                'details',
-                'changePassword',
-                'deleteAccount',
-                'index',
-            ],
-            'permissions' => ['*'],
-            'roles'       => ['*'],
+        'actions' => [
+            'avatar',
+            'details',
+            'changePassword',
+            'deleteAccount',
+            'index',
         ],
-        [
-            'route'       => 'page',
-            'actions'     => [
-                'premium-content',
-                'index',
-            ],
-            'permissions' => ['premium'],
-        ],
-        [
-            'route' => 'invalidRoute',
-        ],
+        'test'    => ['*'],
     ];
 
     public function setUp(): void
@@ -52,20 +37,20 @@ class ControllerPermissionGuardTest extends TestCase
             }
         };
 
-        $this->subject = new ControllerPermissionGuard(
+        $this->subject = new RoutePermissionGuard(
             [
                 'authorization_service' => $this->mockAuthorizationInterface,
             ]
         );
     }
 
-    public function testSetRules()
+    public function testSetRules(): void
     {
         $this->subject->setRules($this->rules);
         $this->assertIsArray($this->subject->getRules());
     }
 
-    public function testIsNotGrantedProtectionPolicy()
+    public function testIsNotGrantedProtectionPolicy(): void
     {
         $request = new ServerRequest();
         $result  = $this->subject->isGranted($request);
@@ -73,10 +58,9 @@ class ControllerPermissionGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsNotGrantedRulesNotSet()
+    public function testIsNotGrantedNullAllowedRoles(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);
@@ -94,10 +78,9 @@ class ControllerPermissionGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsNotGrantedRulesInvalid()
+    public function testIsGrantedEverything(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);
@@ -106,50 +89,19 @@ class ControllerPermissionGuardTest extends TestCase
             ->method('getAttribute')
             ->with(RouteResult::class)
             ->willReturn($routeResult);
-        $routeResult->expects($this->once())
-            ->method('getMatchedParams')
-            ->willReturn([]);
         $routeResult->expects($this->atLeastOnce())
             ->method('getMatchedRouteName')
-            ->willReturn('invalidroute');
+            ->willReturn('test');
 
         $this->subject->setRules($this->rules);
-
-        $result = $this->subject->isGranted($request);
-        $this->assertFalse($result);
-    }
-
-    /**
-     * @return void
-     * @throws Exception
-     */
-    public function testIsGrantedEverything()
-    {
-        $request     = $this->createMock(ServerRequest::class);
-        $routeResult = $this->createMock(RouteResult::class);
-
-        $request->expects($this->once())
-            ->method('getAttribute')
-            ->with(RouteResult::class)
-            ->willReturn($routeResult);
-        $routeResult->expects($this->once())
-            ->method('getMatchedParams')
-            ->willReturn([]);
-        $routeResult->expects($this->atLeastOnce())
-            ->method('getMatchedRouteName')
-            ->willReturn('account');
-
-        $this->subject->setRules($this->rules);
-
         $result = $this->subject->isGranted($request);
         $this->assertTrue($result);
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsGrantedPremium()
+    public function testIsGranted(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);
@@ -158,23 +110,12 @@ class ControllerPermissionGuardTest extends TestCase
             ->method('getAttribute')
             ->with(RouteResult::class)
             ->willReturn($routeResult);
-        $routeResult->expects($this->once())
-            ->method('getMatchedParams')
-            ->willReturn([]);
         $routeResult->expects($this->atLeastOnce())
             ->method('getMatchedRouteName')
-            ->willReturn('page');
+            ->willReturn('actions');
 
         $this->subject->setRules($this->rules);
-
         $result = $this->subject->isGranted($request);
         $this->assertTrue($result);
-    }
-
-    public function testSetAuthorizationService()
-    {
-        $this->subject->setAuthorizationService($this->mockAuthorizationInterface);
-        $result = $this->subject->getAuthorizationService();
-        $this->assertInstanceOf(AuthorizationInterface::class, $result);
     }
 }

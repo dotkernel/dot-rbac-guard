@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Options;
@@ -19,8 +13,7 @@ class MessagesOptions extends AbstractOptions
     public const UNAUTHORIZED = 0;
     public const FORBIDDEN    = 1;
 
-    /** @var array */
-    protected $messages = [
+    protected array $messages = [
         self::UNAUTHORIZED => 'You must sign in first in order to access the requested content',
         self::FORBIDDEN    => 'You don\'t have enough permissions to access the requested content',
     ];
@@ -34,15 +27,12 @@ class MessagesOptions extends AbstractOptions
         parent::__construct($options);
     }
 
-    /**
-     * @return array
-     */
     public function getMessages(): array
     {
         return $this->messages;
     }
 
-    public function setMessages(array $messages)
+    public function setMessages(array $messages): void
     {
         $this->messages = ArrayUtils::merge($this->messages, $messages, true);
     }

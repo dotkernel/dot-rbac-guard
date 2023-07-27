@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
@@ -28,8 +22,7 @@ class RoutePermissionGuard extends AbstractGuard
 {
     public const PRIORITY = 70;
 
-    /** @var AuthorizationInterface */
-    protected $authorizationService;
+    protected ?AuthorizationInterface $authorizationService = null;
 
     public function __construct(?array $options = null)
     {
@@ -48,10 +41,7 @@ class RoutePermissionGuard extends AbstractGuard
         }
     }
 
-    /**
-     * @param array $rules
-     */
-    public function setRules(array $rules)
+    public function setRules(array $rules): void
     {
         $this->rules = [];
         foreach ($rules as $key => $value) {
@@ -120,12 +110,12 @@ class RoutePermissionGuard extends AbstractGuard
         ));
     }
 
-    public function getAuthorizationService(): AuthorizationInterface
+    public function getAuthorizationService(): ?AuthorizationInterface
     {
         return $this->authorizationService;
     }
 
-    public function setAuthorizationService(AuthorizationInterface $authorizationService)
+    public function setAuthorizationService(AuthorizationInterface $authorizationService): void
     {
         $this->authorizationService = $authorizationService;
     }

@@ -1,17 +1,17 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Event;
 
+use ArrayAccess;
 use Dot\Event\Event;
 
+/**
+ * @template TTarget of object|string|null
+ * @template TParams of array|ArrayAccess|object
+ * @extends Event<TTarget, TParams>
+ */
 class AuthorizationEvent extends Event
 {
     public const EVENT_BEFORE_AUTHORIZATION = 'event.beforeAuthorization';

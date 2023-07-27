@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Middleware;
@@ -37,23 +31,17 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
 
     public const TEMPLATE_DEFAULT = 'error::403';
 
-    /** @var  AuthorizationInterface */
-    protected $authorizationService;
+    protected AuthorizationInterface $authorizationService;
 
-    /** @var array */
-    protected $authorizationStatusCodes = [403];
+    protected array $authorizationStatusCodes = [403];
 
-    /** @var  RbacGuardOptions */
-    protected $options;
+    protected RbacGuardOptions $options;
 
-    /** @var  TemplateRendererInterface */
-    protected $renderer;
+    protected ?TemplateRendererInterface $renderer;
 
-    /** @var  string */
-    protected $template;
+    protected string $template;
 
-    /** @var bool */
-    protected $debug = false;
+    protected bool $debug = false;
 
     public function __construct(
         AuthorizationInterface $authorizationService,
@@ -115,8 +103,7 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
             throw new ForbiddenException($message);
         }
 
-        $response = new Response();
-        /** @var ResponseInterface $response */
+        $response     = new Response();
         $response     = $response->withStatus(403);
         $templateData = [
             'request' => $request,
@@ -142,7 +129,7 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
         return $this->debug;
     }
 
-    public function setDebug(bool $debug)
+    public function setDebug(bool $debug): void
     {
         $this->debug = $debug;
     }

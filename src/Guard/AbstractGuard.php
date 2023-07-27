@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
@@ -21,8 +15,7 @@ abstract class AbstractGuard implements GuardInterface
 
     public const PRIORITY = 1;
 
-    /** @var array */
-    protected $rules = [];
+    protected array $rules = [];
 
     public function __construct(array $options = [])
     {
@@ -38,17 +31,11 @@ abstract class AbstractGuard implements GuardInterface
         }
     }
 
-    /**
-     * @return array
-     */
     public function getRules(): array
     {
         return $this->rules;
     }
 
-    /**
-     * @param array $rules
-     */
     abstract public function setRules(array $rules);
 
     public function getPriority(): int

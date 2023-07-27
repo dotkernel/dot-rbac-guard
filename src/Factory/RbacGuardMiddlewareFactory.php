@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Factory;
@@ -25,16 +19,14 @@ class RbacGuardMiddlewareFactory
     use AttachAuthorizationEventListenersTrait;
 
     /**
-     * @return RbacGuardMiddleware
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container, string $requestedName)
+    public function __invoke(ContainerInterface $container, string $requestedName): RbacGuardMiddleware
     {
         /** @var RbacGuardOptions $options */
         $options = $container->get(RbacGuardOptions::class);
 
-        /** @var Factory $guardsProviderFactory */
         $guardsProviderFactory = new Factory($container, $container->get(GuardsProviderPluginManager::class));
         $guardsProvider        = $guardsProviderFactory->create($options->getGuardsProvider());
 

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Options;
@@ -16,17 +10,13 @@ use Traversable;
 
 class RbacGuardOptions extends AbstractOptions
 {
-    /** @var string */
-    protected $protectionPolicy = GuardInterface::POLICY_ALLOW;
+    protected string $protectionPolicy = GuardInterface::POLICY_ALLOW;
 
-    /** @var array */
-    protected $eventListeners = [];
+    protected array $eventListeners = [];
 
-    /** @var array */
-    protected $guardsProvider = [];
+    protected array $guardsProvider = [];
 
-    /** @var  MessagesOptions */
-    protected $messagesOptions;
+    protected ?MessagesOptions $messagesOptions = null;
 
     /**
      * @param array|null|Traversable $options
@@ -42,39 +32,31 @@ class RbacGuardOptions extends AbstractOptions
         return $this->protectionPolicy;
     }
 
-    public function setProtectionPolicy(string $protectionPolicy)
+    public function setProtectionPolicy(string $protectionPolicy): void
     {
         $this->protectionPolicy = $protectionPolicy;
     }
 
-    /**
-     * @return array
-     */
     public function getGuardsProvider(): array
     {
         return $this->guardsProvider;
     }
 
-    /**
-     * @param array $guardsProvider
-     */
-    public function setGuardsProvider(array $guardsProvider)
+    public function setGuardsProvider(array $guardsProvider): void
     {
         $this->guardsProvider = $guardsProvider;
     }
 
-    public function getMessagesOptions(): MessagesOptions
+    public function getMessagesOptions(): ?MessagesOptions
     {
-        if (! $this->messagesOptions) {
+        if (empty($this->messagesOptions)) {
             $this->setMessagesOptions([]);
         }
+
         return $this->messagesOptions;
     }
 
-    /**
-     * @param array $messagesOptions
-     */
-    public function setMessagesOptions(array $messagesOptions)
+    public function setMessagesOptions(array $messagesOptions): void
     {
         $this->messagesOptions = new MessagesOptions($messagesOptions);
     }
@@ -87,10 +69,7 @@ class RbacGuardOptions extends AbstractOptions
         return $this->eventListeners;
     }
 
-    /**
-     * @param array $eventListeners
-     */
-    public function setEventListeners(array $eventListeners)
+    public function setEventListeners(array $eventListeners): void
     {
         $this->eventListeners = $eventListeners;
     }

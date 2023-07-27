@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Provider;
@@ -15,8 +9,7 @@ use Dot\Rbac\Guard\Guard\Factory;
 
 abstract class AbstractGuardsProvider implements GuardsProviderInterface
 {
-    /** @var  Factory */
-    protected $guardFactory;
+    protected ?Factory $guardFactory = null;
 
     public function __construct(array $options = [])
     {
@@ -29,12 +22,12 @@ abstract class AbstractGuardsProvider implements GuardsProviderInterface
         }
     }
 
-    public function getGuardFactory(): Factory
+    public function getGuardFactory(): ?Factory
     {
         return $this->guardFactory;
     }
 
-    public function setGuardFactory(Factory $guardFactory)
+    public function setGuardFactory(Factory $guardFactory): void
     {
         $this->guardFactory = $guardFactory;
     }

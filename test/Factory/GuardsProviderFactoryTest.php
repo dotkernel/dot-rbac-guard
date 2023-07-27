@@ -10,15 +10,18 @@ use Dot\Rbac\Guard\Guard\GuardPluginManager;
 use Dot\Rbac\Guard\Provider\ArrayGuardsProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class GuardsProviderFactoryTest extends TestCase
 {
     /**
-     * @return void
      * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function testWillNotCreateWithoutGuardFactory()
+    public function testWillNotCreateWithoutGuardFactory(): void
     {
         $container     = $this->createMock(ContainerInterface::class);
         $options       = [
@@ -41,10 +44,11 @@ class GuardsProviderFactoryTest extends TestCase
     }
 
     /**
-     * @return void
+     * @throws ContainerExceptionInterface
      * @throws Exception
+     * @throws NotFoundExceptionInterface
      */
-    public function testCanCreateService()
+    public function testCanCreateService(): void
     {
         $container     = $this->createMock(ContainerInterface::class);
         $requestedName = ArrayGuardsProvider::class;
@@ -52,7 +56,7 @@ class GuardsProviderFactoryTest extends TestCase
         $container->expects($this->once())
             ->method('get')
             ->with(GuardPluginManager::class)
-            ->willReturn(new GuardPluginManager());
+            ->willReturn(new GuardPluginManager($container));
 
         $service = (new GuardsProviderFactory())($container, $requestedName);
         $this->assertInstanceOf(ArrayGuardsProvider::class, $service);

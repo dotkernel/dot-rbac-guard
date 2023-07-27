@@ -1,11 +1,5 @@
 <?php
 
-/**
- * see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
-
 declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
@@ -24,8 +18,7 @@ class RouteGuard extends AbstractGuard
 {
     public const PRIORITY = 100;
 
-    /** @var RoleServiceInterface */
-    protected $roleService;
+    protected ?RoleServiceInterface $roleService = null;
 
     public function __construct(?array $options = null)
     {
@@ -41,10 +34,7 @@ class RouteGuard extends AbstractGuard
         }
     }
 
-    /**
-     * @param array $rules
-     */
-    public function setRules(array $rules)
+    public function setRules(array $rules): void
     {
         $this->rules = [];
 
@@ -61,12 +51,12 @@ class RouteGuard extends AbstractGuard
         }
     }
 
-    public function getRoleService(): RoleServiceInterface
+    public function getRoleService(): ?RoleServiceInterface
     {
         return $this->roleService;
     }
 
-    public function setRoleService(RoleServiceInterface $roleService)
+    public function setRoleService(RoleServiceInterface $roleService): void
     {
         $this->roleService = $roleService;
     }

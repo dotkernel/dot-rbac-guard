@@ -36,9 +36,11 @@ class ControllerGuardTest extends TestCase
                 'premium-content',
             ],
             'permissions' => ['premium'],
+            'roles'       => [],
         ],
         [
             'route' => 'invalidRoute',
+            'roles' => [],
         ],
     ];
 
@@ -74,20 +76,20 @@ class ControllerGuardTest extends TestCase
         );
     }
 
-    public function testSetRules()
+    public function testSetRules(): void
     {
         $this->subject->setRules($this->rules);
         $this->assertIsArray($this->subject->getRules());
     }
 
-    public function testSetRoleService()
+    public function testSetRoleService(): void
     {
         $this->subject->setRoleService($this->mockRoleServiceClass);
         $result = $this->subject->getRoleService();
         $this->assertInstanceOf(RoleServiceInterface::class, $result);
     }
 
-    public function testIsNotGrantedProtectionPolicy()
+    public function testIsNotGrantedProtectionPolicy(): void
     {
         $request = new ServerRequest();
         $result  = $this->subject->isGranted($request);
@@ -95,10 +97,9 @@ class ControllerGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsNotGrantedRulesNotSet()
+    public function testIsNotGrantedRulesNotSet(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);
@@ -116,10 +117,9 @@ class ControllerGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsNotGrantedRulesInvalid()
+    public function testIsNotGrantedRulesInvalid(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);
@@ -142,10 +142,9 @@ class ControllerGuardTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    public function testIsGranted()
+    public function testIsGranted(): void
     {
         $request     = $this->createMock(ServerRequest::class);
         $routeResult = $this->createMock(RouteResult::class);

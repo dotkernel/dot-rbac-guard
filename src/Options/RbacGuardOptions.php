@@ -61,9 +61,6 @@ class RbacGuardOptions extends AbstractOptions
         $this->messagesOptions = new MessagesOptions($messagesOptions);
     }
 
-    /**
-     * @return array
-     */
     public function getEventListeners(): array
     {
         return $this->eventListeners;

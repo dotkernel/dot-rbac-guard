@@ -36,7 +36,7 @@ abstract class AbstractGuard implements GuardInterface
         return $this->rules;
     }
 
-    abstract public function setRules(array $rules);
+    abstract public function setRules(array $rules): void;
 
     public function getPriority(): int
     {

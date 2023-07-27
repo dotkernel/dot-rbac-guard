@@ -90,15 +90,12 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
 
         $request = $event->getParam('request');
         $message = $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN);
-        if (
-            $error instanceof ForbiddenException ||
-            ($this->isDebug() && ($error instanceof Exception || $error instanceof Throwable))
-        ) {
+        if ($error instanceof ForbiddenException || ($this->isDebug() && $error instanceof Throwable)) {
             $message = $error->getMessage();
         }
 
         // if this package is not installed within a template renderer context, re-throw the ForbiddenException
-        // to be caught by the outer most error handler(default expressive handler, whoops in development)
+        // to be caught by the outermost error handler(default expressive handler, whoops in development)
         if (! $this->renderer) {
             throw new ForbiddenException($message);
         }

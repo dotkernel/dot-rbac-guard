@@ -15,7 +15,6 @@ use Psr\Container\ContainerInterface;
 
 class FactoryTest extends TestCase
 {
-    protected Factory|MockObject $subject;
     protected ContainerInterface|MockObject $container;
 
     /**
@@ -24,15 +23,14 @@ class FactoryTest extends TestCase
     public function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);
-
-        $this->subject = new Factory($this->container);
     }
 
     public function testCreateRuntimeException(): void
     {
+        $subject = new Factory($this->container);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Guard provider type was not specified');
-        $this->subject->create([]);
+        $subject->create([]);
     }
 
     /**

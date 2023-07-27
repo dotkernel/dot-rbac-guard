@@ -1,11 +1,6 @@
 <?php
-/**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
 
@@ -13,51 +8,46 @@ use Dot\Authorization\AuthorizationInterface;
 use Dot\Controller\AbstractController;
 use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\Exception\RuntimeException;
-use Psr\Http\Message\ServerRequestInterface;
 use Mezzio\Router\RouteResult;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Class ControllerPermissionGuard
- * @package Dot\Rbac\Guard\Controller
- */
+use function gettype;
+use function in_array;
+use function is_object;
+use function sprintf;
+use function strtolower;
+
 class ControllerPermissionGuard extends AbstractGuard
 {
-    const PRIORITY = 10;
+    public const PRIORITY = 10;
 
-    /** @var AuthorizationInterface */
-    protected $authorizationService;
+    protected ?AuthorizationInterface $authorizationService = null;
 
-    /**
-     * ControllerPermissionGuard constructor.
-     * @param array $options
-     */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         $options = $options ?? [];
         parent::__construct($options);
 
-        if (isset($options['authorization_service'])
+        if (
+            isset($options['authorization_service'])
             && $options['authorization_service'] instanceof AuthorizationInterface
         ) {
             $this->setAuthorizationService($options['authorization_service']);
         }
 
-        if (!$this->authorizationService instanceof AuthorizationInterface) {
+        if (! $this->authorizationService instanceof AuthorizationInterface) {
             throw new RuntimeException('Authorization service is required by this guard and was not set');
         }
     }
 
-    /**
-     * @param array $rules
-     */
-    public function setRules(array $rules)
+    public function setRules(array $rules): void
     {
         $this->rules = [];
 
         foreach ($rules as $rule) {
-            $route = strtolower($rule['route']);
-            $actions = isset($rule['actions']) ? (array)$rule['actions'] : [];
-            $permissions = (array)$rule['permissions'];
+            $route       = strtolower($rule['route']);
+            $actions     = isset($rule['actions']) ? (array) $rule['actions'] : [];
+            $permissions = (array) $rule['permissions'];
 
             if (empty($actions)) {
                 $this->rules[$route][0] = $permissions;
@@ -65,31 +55,26 @@ class ControllerPermissionGuard extends AbstractGuard
             }
 
             foreach ($actions as $action) {
-                $action = AbstractController::getMethodFromAction($action);
+                $action                       = AbstractController::getMethodFromAction($action);
                 $this->rules[$route][$action] = $permissions;
             }
         }
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return bool
-     */
     public function isGranted(ServerRequestInterface $request): bool
     {
-        $routeResult = $request->getAttribute(RouteResult::class, null);
-        if (!$routeResult instanceof RouteResult || !$routeResult->getMatchedRouteName()) {
+        $routeResult = $request->getAttribute(RouteResult::class);
+        if (! $routeResult instanceof RouteResult || ! $routeResult->getMatchedRouteName()) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
         $route = $routeResult->getMatchedRouteName();
-
-        if (!isset($this->rules[$route])) {
+        if (! isset($this->rules[$route])) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
         $params = $routeResult->getMatchedParams();
-        $action = isset($params['action']) && !empty($params['action'])
+        $action = ! empty($params['action'])
             ? $params['action']
             : 'index';
 
@@ -112,11 +97,11 @@ class ControllerPermissionGuard extends AbstractGuard
         }
 
         $permissions = $allowedPermissions['permissions'] ?? $allowedPermissions;
-        $condition = $allowedPermissions['condition'] ?? GuardInterface::CONDITION_AND;
+        $condition   = $allowedPermissions['condition'] ?? GuardInterface::CONDITION_AND;
 
         if (GuardInterface::CONDITION_AND === $condition) {
             foreach ($permissions as $permission) {
-                if (!$this->getAuthorizationService()->isGranted($permission)) {
+                if (! $this->getAuthorizationService()->isGranted($permission)) {
                     return false;
                 }
             }
@@ -134,22 +119,16 @@ class ControllerPermissionGuard extends AbstractGuard
 
         throw new InvalidArgumentException(sprintf(
             'Condition must be either "AND" or "OR", %s given',
-            is_object($condition) ? get_class($condition) : gettype($condition)
+            is_object($condition) ? $condition::class : gettype($condition)
         ));
     }
 
-    /**
-     * @return AuthorizationInterface
-     */
-    public function getAuthorizationService(): AuthorizationInterface
+    public function getAuthorizationService(): ?AuthorizationInterface
     {
         return $this->authorizationService;
     }
 
-    /**
-     * @param AuthorizationInterface $authorizationService
-     */
-    public function setAuthorizationService(AuthorizationInterface $authorizationService)
+    public function setAuthorizationService(AuthorizationInterface $authorizationService): void
     {
         $this->authorizationService = $authorizationService;
     }

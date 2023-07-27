@@ -1,38 +1,33 @@
 <?php
-/**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Rbac\Guard\Event\AuthorizationEventListenerInterface;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Psr\Container\ContainerInterface;
 use Laminas\EventManager\EventManagerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-/**
- * Class AttachAuthorizationEventListenersTrait
- * @package Dot\Rbac\Guard\Factory
- */
+use function class_exists;
+use function is_array;
+use function is_string;
+
 trait AttachAuthorizationEventListenersTrait
 {
     /**
-     * @param ContainerInterface $container
-     * @param EventManagerInterface $eventManager
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    protected function attachListeners(ContainerInterface $container, EventManagerInterface $eventManager)
+    protected function attachListeners(ContainerInterface $container, EventManagerInterface $eventManager): void
     {
         /** @var RbacGuardOptions $options */
         $options = $container->get(RbacGuardOptions::class);
 
-        if (!empty($options->getEventListeners())
-            && is_array($options->getEventListeners())
-        ) {
+        if (! empty($options->getEventListeners())) {
             $listeners = $options->getEventListeners();
             foreach ($listeners as $listener) {
                 if (is_string($listener)) {
@@ -51,9 +46,8 @@ trait AttachAuthorizationEventListenersTrait
     }
 
     /**
-     * @param ContainerInterface $container
-     * @param string $listener
-     * @return AuthorizationEventListenerInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getListenerObject(
         ContainerInterface $container,
@@ -67,7 +61,7 @@ trait AttachAuthorizationEventListenersTrait
             $listener = new $listener();
         }
 
-        if (!$listener instanceof AuthorizationEventListenerInterface) {
+        if (! $listener instanceof AuthorizationEventListenerInterface) {
             throw new RuntimeException('Authorization event listener is not an instance of '
                 . AuthorizationEventListenerInterface::class);
         }

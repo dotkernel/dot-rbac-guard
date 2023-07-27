@@ -1,42 +1,24 @@
 <?php
-/**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
+
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
 
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Psr\Container\ContainerInterface;
 
-/**
- * Class Factory
- * @package Dot\Rbac\Guard\Guard
- */
 class Factory
 {
-    /** @var  ContainerInterface */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /** @var  GuardPluginManager */
-    protected $guardPluginManager;
+    protected ?GuardPluginManager $guardPluginManager;
 
-    /**
-     * Factory constructor.
-     * @param ContainerInterface $container
-     * @param GuardPluginManager|null $guardPluginManager
-     */
-    public function __construct(ContainerInterface $container, GuardPluginManager $guardPluginManager = null)
+    public function __construct(ContainerInterface $container, ?GuardPluginManager $guardPluginManager = null)
     {
-        $this->container = $container;
+        $this->container          = $container;
         $this->guardPluginManager = $guardPluginManager;
     }
 
-    /**
-     * @param array $specs
-     * @return GuardInterface
-     */
     public function create(array $specs): GuardInterface
     {
         $type = $specs['type'] ?? '';
@@ -48,12 +30,9 @@ class Factory
         return $guardPluginManager->get($type, $specs['options'] ?? null);
     }
 
-    /**
-     * @return GuardPluginManager
-     */
     public function getGuardPluginManager(): GuardPluginManager
     {
-        if (!$this->guardPluginManager) {
+        if (! $this->guardPluginManager) {
             $this->guardPluginManager = new GuardPluginManager($this->container, []);
         }
 

@@ -1,44 +1,36 @@
 <?php
-/**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Middleware\ForbiddenHandler;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
-use Psr\Container\ContainerInterface;
 use Mezzio\Template\TemplateRendererInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-/**
- * Class ForbiddenHandlerFactory
- * @package Dot\Rbac\Guard\Factory
- */
+use function is_bool;
+
 class ForbiddenHandlerFactory
 {
     use AttachAuthorizationEventListenersTrait;
 
     /**
-     * @param ContainerInterface $container
-     * @param $requestedName
-     * @return ForbiddenHandler
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName)
+    public function __invoke(ContainerInterface $container, string $requestedName): ForbiddenHandler
     {
         $config = $container->get('config');
-        $debug = (bool)$config['debug'] ?? false;
+        $debug  = is_bool($config['debug']) && $config['debug'];
 
         $authorizationService = $container->get(AuthorizationInterface::class);
-        $moduleOptions = $container->get(RbacGuardOptions::class);
+        $moduleOptions        = $container->get(RbacGuardOptions::class);
 
-        $template = isset($config['mezzio']['error_handler']['template_403'])
-            ? $config['mezzio']['error_handler']['template_403']
-            : ForbiddenHandler::TEMPLATE_DEFAULT;
+        $template = $config['mezzio']['error_handler']['template_403'] ?? ForbiddenHandler::TEMPLATE_DEFAULT;
 
         $renderer = $container->has(TemplateRendererInterface::class)
             ? $container->get(TemplateRendererInterface::class)

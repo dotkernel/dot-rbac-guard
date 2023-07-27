@@ -1,28 +1,21 @@
 <?php
-/**
- * @see https://github.com/dotkernel/dot-rbac-guard/ for the canonical source repository
- * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/dot-rbac-guard/blob/master/LICENSE.md MIT License
- */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Factory;
 
 use Dot\Rbac\Guard\Guard\GuardPluginManager;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-/**
- * Class GuardPluginManagerFactory
- * @package Dot\Rbac\Guard\Factory
- */
 class GuardPluginManagerFactory
 {
     /**
-     * @param ContainerInterface $container
-     * @return GuardPluginManager
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): GuardPluginManager
     {
         $config = $container->get('config');
         $config = $config['dot_authorization']['guard_manager'];

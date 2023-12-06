@@ -6,8 +6,12 @@ namespace Dot\Rbac\Guard\Options;
 
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Laminas\Stdlib\AbstractOptions;
+use Laminas\Stdlib\ParameterObjectInterface;
 use Traversable;
 
+/**
+ * @extends AbstractOptions<ParameterObjectInterface>
+ */
 class RbacGuardOptions extends AbstractOptions
 {
     protected string $protectionPolicy = GuardInterface::POLICY_ALLOW;

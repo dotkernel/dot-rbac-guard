@@ -6,8 +6,12 @@ namespace Dot\Rbac\Guard\Options;
 
 use Laminas\Stdlib\AbstractOptions;
 use Laminas\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ParameterObjectInterface;
 use Traversable;
 
+/**
+ * @extends AbstractOptions<ParameterObjectInterface>
+ */
 class MessagesOptions extends AbstractOptions
 {
     public const UNAUTHORIZED = 0;

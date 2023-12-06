@@ -5,7 +5,7 @@ If the authorization service can be used to check authorization on a narrow leve
 Usually, you'll want to use both methods in an application for additional security.
 
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/dotkernel/dot-rbac-guard)
-![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.4.1)
+![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.4.2)
 
 [![GitHub issues](https://img.shields.io/github/issues/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/issues)
 [![GitHub forks](https://img.shields.io/github/forks/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/network)

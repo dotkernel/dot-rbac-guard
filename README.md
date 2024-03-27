@@ -1,5 +1,13 @@
 # dot-rbac-guard
 
+## Note
+
+> **dot-rbac-guard**  is in **maintenance** mode.
+
+> This package is considered feature-complete, and is now in **security-only** maintenance mode.
+
+![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/2.9.3)
+
 Defines authorization guards that authorize users to certain parts of an application based on various criteria.
 If the authorization service can be used to check authorization on a narrow level, the guards are meant to work as gateways to bigger parts of an application.
 Usually, you'll want to use both methods in an application for additional security.

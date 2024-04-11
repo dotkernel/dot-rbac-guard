@@ -5,7 +5,7 @@
 
 | Version | Supported          | PHP Version                                                                                                      |
 |---------|--------------------|------------------------------------------------------------------------------------------------------------------|
-| 3.x     | :white_check_mark: | ![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac/3.4.3) |
+| 3.x     | :white_check_mark: | ![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.4.3) |
 | <= 2.x  | :x:                |                                                                                                                  |
 
 

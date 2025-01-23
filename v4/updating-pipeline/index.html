@@ -18,11 +18,11 @@
         <meta name="docsearch:component" content="dot-rbac-guard">
 
         
-        <link rel="canonical" href="https://docs.dotkernel.org/dot-rbac-guard/">
+        <link rel="canonical" href="https://docs.dotkernel.org/dot-rbac-guard/v4/updating-pipeline/">
         
         <link rel="shortcut icon" href="https://docs.dotkernel.org/img/dk_docs_favicon_white.svg">
 
-        <title>dot-rbac-guard - DotKernel Documentation</title>
+        <title>Updating the Pipeline - dot-rbac-guard - DotKernel Documentation</title>
 
         <link rel="stylesheet" href="https://docs.dotkernel.org/css/bootstrap.css">
         <link rel="stylesheet" href="https://docs.dotkernel.org/css/bootstrap-icons.min.css">
@@ -142,7 +142,7 @@
         <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" aria-labelledby="version-selector-dropdown">
             
                 
-                    <a href="v4/installation/" class="dropdown-item">
+                    <a href="../installation/" class="dropdown-item active">
                         
                             v4 (latest)
                         
@@ -150,7 +150,7 @@
                 
             
                 
-                    <a href="v3/installation/" class="dropdown-item">
+                    <a href="../../v3/installation/" class="dropdown-item">
                         
                             v3
                         
@@ -176,7 +176,16 @@
                 
 
                 
-                    <li class="breadcrumb-item">dot-rbac-guard</li>
+                    <li class="breadcrumb-item"><a href="../..">dot-rbac-guard</a></li>
+
+                    
+                        
+                            
+                            
+                        
+                    
+
+                    <li class="breadcrumb-item active" aria-current="page">Updating the Pipeline</li>
                 
             
         </ol>
@@ -191,7 +200,7 @@
                     
     <div class="subnavigation hidden-print">
 <!--        <h4 class="subnavigation__title">-->
-<!--            <a href=".">dot-rbac-guard</a>-->
+<!--            <a href="../..">dot-rbac-guard</a>-->
 <!--        </h4>-->
 
         <h5 class="subnavigation__title">Table of Contents</h5>
@@ -204,19 +213,19 @@
                     
                         
 <li class="subnavigation__list-item ">
-    <a href="v4/installation/" class="subnavigation__link">Installation</a>
+    <a href="../installation/" class="subnavigation__link">Installation</a>
 </li>
 
                     
                         
 <li class="subnavigation__list-item ">
-    <a href="v4/configuration/" class="subnavigation__link">Configuration</a>
+    <a href="../configuration/" class="subnavigation__link">Configuration</a>
 </li>
 
                     
                         
-<li class="subnavigation__list-item ">
-    <a href="v4/updating-pipeline/" class="subnavigation__link">Updating the Pipeline</a>
+<li class="subnavigation__list-item subnavigation__list-item--active">
+    <a href="./" class="subnavigation__link">Updating the Pipeline</a>
 </li>
 
                     
@@ -237,6 +246,24 @@
 
                     
                     
+                    
+    
+
+    
+    
+        <div class="toc">
+            <h6 class="toc__headline">On this page</h6>
+            <ul class="toc__list">
+            
+                <li class="toc__entry">
+                    <a href="#middleware-pipelineglobalphp" class="toc__link nav-link">middleware-pipeline.global.php</a>
+                </li>
+            
+            </ul>
+        </div>
+    
+
+                    
                 </div>
                 <div class="col-lg-9 main_docs">
                     
@@ -244,22 +271,33 @@
 
 
 
+
     
-    <h1>dot-rbac-guard</h1>
-    <p>The rbac authorization guards service authorizes users for accessing certain parts of an application based on various criteria</p>
-    <h2>Installation</h2>
-    <h3>Using Composer</h3>
-    <pre class="highlight line-numbers">
-        <i class="bi bi-copy copy_btn" onclick="copy(this)"></i>
-        <code class="language-bash">composer require dotkernel/dot-rbac-guard</code>
-    </pre>
+    
 
+    <h1 id="register-the-rbacguardmiddleware-in-the-pipeline">Register the RbacGuardMiddleware in the pipeline</h1>
+<p>The last step in order to use this package is to register the middleware.
+This middleware triggers the authorization event.
+You MUST insert this middleware between the routing middleware and the dispatch middleware of the application, because the guards need the <code>RouteResult</code> in order to get the matched route and params.</p>
+<h2 id="middleware-pipelineglobalphp">middleware-pipeline.global.php</h2>
+<pre class="highlight"><code class="language-php">//...
 
-<h2>Support</h2>
-<ul>
-    <li>Issues: <a href="https://github.com/dotkernel/dot-rbac-guard/issues">github.com/dotkernel/dot-rbac-guard/issues</a></li>
-    <li>Source: <a href="https://github.com/dotkernel/dot-rbac-guard">github.com/dotkernel/dot-rbac-guard</a></li>
-</ul>
+'routing' =&gt; [
+    'middleware' =&gt; [
+        ApplicationFactory::ROUTING_MIDDLEWARE,
+
+        //...
+
+        \Dot\Rbac\Guard\Middleware\RbacGuardMiddleware::class,
+
+        //...
+
+        ApplicationFactory::DISPATCH_MIDDLEWARE,
+    ],
+    'priority' =&gt; 1,
+],
+
+//...</code></pre>
 
 
 
@@ -269,12 +307,17 @@
         
         <li class="col text-nowrap text-md-start">
             
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../configuration/">
+                    <i class="bi bi-chevron-left"></i>
+                    Configuration
+                </a>
+            
         </li>
 
         
         <li class="col text-nowrap text-md-end pe-0">
             
-                <a rel="next" class="page-nav__link page-nav__link--next" href="v4/installation/">
+                <a rel="next" class="page-nav__link page-nav__link--next" href="../../v3/installation/">
                     Installation
                     <i class="bi bi-chevron-right"></i>
                 </a>
@@ -398,7 +441,7 @@
 </footer>
 
         <script>
-            let base_url = '.',
+            let base_url = '../..',
                 project  = "packages",
                 siteName = 'dot-rbac-guard';
 
@@ -431,8 +474,3 @@
 </div>-->
     </body>
 </html>
-
-<!--
-MkDocs version : 1.6.1
-Build Date UTC : 2025-01-23 13:05:18.829687+00:00
--->

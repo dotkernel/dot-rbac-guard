@@ -18,11 +18,11 @@
         <meta name="docsearch:component" content="dot-rbac-guard">
 
         
-        <link rel="canonical" href="https://docs.dotkernel.org/dot-rbac-guard/">
+        <link rel="canonical" href="https://docs.dotkernel.org/dot-rbac-guard/v4/installation/">
         
         <link rel="shortcut icon" href="https://docs.dotkernel.org/img/dk_docs_favicon_white.svg">
 
-        <title>dot-rbac-guard - DotKernel Documentation</title>
+        <title>Installation - dot-rbac-guard - DotKernel Documentation</title>
 
         <link rel="stylesheet" href="https://docs.dotkernel.org/css/bootstrap.css">
         <link rel="stylesheet" href="https://docs.dotkernel.org/css/bootstrap-icons.min.css">
@@ -142,7 +142,7 @@
         <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" aria-labelledby="version-selector-dropdown">
             
                 
-                    <a href="v4/installation/" class="dropdown-item">
+                    <a href="./" class="dropdown-item active">
                         
                             v4 (latest)
                         
@@ -150,7 +150,7 @@
                 
             
                 
-                    <a href="v3/installation/" class="dropdown-item">
+                    <a href="../../v3/installation/" class="dropdown-item">
                         
                             v3
                         
@@ -176,7 +176,16 @@
                 
 
                 
-                    <li class="breadcrumb-item">dot-rbac-guard</li>
+                    <li class="breadcrumb-item"><a href="../..">dot-rbac-guard</a></li>
+
+                    
+                        
+                            
+                            
+                        
+                    
+
+                    <li class="breadcrumb-item active" aria-current="page">Installation</li>
                 
             
         </ol>
@@ -191,7 +200,7 @@
                     
     <div class="subnavigation hidden-print">
 <!--        <h4 class="subnavigation__title">-->
-<!--            <a href=".">dot-rbac-guard</a>-->
+<!--            <a href="../..">dot-rbac-guard</a>-->
 <!--        </h4>-->
 
         <h5 class="subnavigation__title">Table of Contents</h5>
@@ -203,20 +212,20 @@
                 
                     
                         
-<li class="subnavigation__list-item ">
-    <a href="v4/installation/" class="subnavigation__link">Installation</a>
+<li class="subnavigation__list-item subnavigation__list-item--active">
+    <a href="./" class="subnavigation__link">Installation</a>
 </li>
 
                     
                         
 <li class="subnavigation__list-item ">
-    <a href="v4/configuration/" class="subnavigation__link">Configuration</a>
+    <a href="../configuration/" class="subnavigation__link">Configuration</a>
 </li>
 
                     
                         
 <li class="subnavigation__list-item ">
-    <a href="v4/updating-pipeline/" class="subnavigation__link">Updating the Pipeline</a>
+    <a href="../updating-pipeline/" class="subnavigation__link">Updating the Pipeline</a>
 </li>
 
                     
@@ -237,6 +246,13 @@
 
                     
                     
+                    
+    
+
+    
+    
+
+                    
                 </div>
                 <div class="col-lg-9 main_docs">
                     
@@ -244,22 +260,13 @@
 
 
 
+
     
-    <h1>dot-rbac-guard</h1>
-    <p>The rbac authorization guards service authorizes users for accessing certain parts of an application based on various criteria</p>
-    <h2>Installation</h2>
-    <h3>Using Composer</h3>
-    <pre class="highlight line-numbers">
-        <i class="bi bi-copy copy_btn" onclick="copy(this)"></i>
-        <code class="language-bash">composer require dotkernel/dot-rbac-guard</code>
-    </pre>
+    
 
-
-<h2>Support</h2>
-<ul>
-    <li>Issues: <a href="https://github.com/dotkernel/dot-rbac-guard/issues">github.com/dotkernel/dot-rbac-guard/issues</a></li>
-    <li>Source: <a href="https://github.com/dotkernel/dot-rbac-guard">github.com/dotkernel/dot-rbac-guard</a></li>
-</ul>
+    <h1 id="installation">Installation</h1>
+<p>Run the following command in your project root directory:</p>
+<pre class="highlight"><code class="language-shell">composer require dotkernel/dot-rbac-guard</code></pre>
 
 
 
@@ -269,13 +276,18 @@
         
         <li class="col text-nowrap text-md-start">
             
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../..">
+                    <i class="bi bi-chevron-left"></i>
+                    Home
+                </a>
+            
         </li>
 
         
         <li class="col text-nowrap text-md-end pe-0">
             
-                <a rel="next" class="page-nav__link page-nav__link--next" href="v4/installation/">
-                    Installation
+                <a rel="next" class="page-nav__link page-nav__link--next" href="../configuration/">
+                    Configuration
                     <i class="bi bi-chevron-right"></i>
                 </a>
             
@@ -398,7 +410,7 @@
 </footer>
 
         <script>
-            let base_url = '.',
+            let base_url = '../..',
                 project  = "packages",
                 siteName = 'dot-rbac-guard';
 
@@ -431,8 +443,3 @@
 </div>-->
     </body>
 </html>
-
-<!--
-MkDocs version : 1.6.1
-Build Date UTC : 2025-01-23 13:05:18.829687+00:00
--->

@@ -2,22 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://docs.dotkernel.org/dot-rbac-guard/</loc>
-         <lastmod>2024-05-03</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-01-23</lastmod>
     </url>
     <url>
          <loc>https://docs.dotkernel.org/dot-rbac-guard/v3/configuration/</loc>
-         <lastmod>2024-05-03</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-01-23</lastmod>
     </url>
     <url>
          <loc>https://docs.dotkernel.org/dot-rbac-guard/v3/installation/</loc>
-         <lastmod>2024-05-03</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-01-23</lastmod>
     </url>
     <url>
          <loc>https://docs.dotkernel.org/dot-rbac-guard/v3/updating-pipeline/</loc>
-         <lastmod>2024-05-03</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-01-23</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.dotkernel.org/dot-rbac-guard/v4/configuration/</loc>
+         <lastmod>2025-01-23</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.dotkernel.org/dot-rbac-guard/v4/installation/</loc>
+         <lastmod>2025-01-23</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.dotkernel.org/dot-rbac-guard/v4/updating-pipeline/</loc>
+         <lastmod>2025-01-23</lastmod>
     </url>
 </urlset>

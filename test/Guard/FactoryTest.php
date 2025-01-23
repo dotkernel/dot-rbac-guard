@@ -9,6 +9,7 @@ use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Guard\GuardPluginManager;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -16,6 +17,7 @@ use RuntimeException;
 class FactoryTest extends TestCase
 {
     /**
+     * @throws ContainerExceptionInterface
      * @throws Exception
      */
     public function testCreateRuntimeException(): void
@@ -29,6 +31,7 @@ class FactoryTest extends TestCase
     }
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws Exception
      */
     public function testCreate(): void
@@ -37,7 +40,7 @@ class FactoryTest extends TestCase
         $guardsPluginManager = $this->createMock(GuardPluginManager::class);
 
         $guardsPluginManager->expects($this->once())
-            ->method('get')
+            ->method('build')
             ->with('testType', null)
             ->willReturn(new class implements GuardInterface {
                 public function isGranted(ServerRequestInterface $request): bool

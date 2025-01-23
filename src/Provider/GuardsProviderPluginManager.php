@@ -6,6 +6,11 @@ namespace Dot\Rbac\Guard\Provider;
 
 use Dot\Rbac\Guard\Factory\GuardsProviderFactory;
 use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\Exception\InvalidServiceException;
+
+use function gettype;
+use function is_object;
+use function sprintf;
 
 /**
  * @template T
@@ -13,16 +18,13 @@ use Laminas\ServiceManager\AbstractPluginManager;
  */
 class GuardsProviderPluginManager extends AbstractPluginManager
 {
-    /** @var string */
-    protected $instanceOf = GuardsProviderInterface::class;
+    protected string $instanceOf = GuardsProviderInterface::class;
 
-    /** @var string[] */
-    protected $factories = [
+    protected array $factories = [
         ArrayGuardsProvider::class => GuardsProviderFactory::class,
     ];
 
-    /** @var string[] */
-    protected $aliases = [
+    protected array $aliases = [
         'arrayguardsprovider' => ArrayGuardsProvider::class,
         'arrayGuardsProvider' => ArrayGuardsProvider::class,
         'ArrayGuardsProvider' => ArrayGuardsProvider::class,
@@ -30,4 +32,16 @@ class GuardsProviderPluginManager extends AbstractPluginManager
         'arrayGuards'         => ArrayGuardsProvider::class,
         'ArrayGuards'         => ArrayGuardsProvider::class,
     ];
+
+    public function validate(mixed $instance): void
+    {
+        if (! $instance instanceof $this->instanceOf) {
+            throw new InvalidServiceException(sprintf(
+                '%s can only create instances of %s; %s is invalid',
+                static::class,
+                $this->instanceOf,
+                is_object($instance) ? $instance::class : gettype($instance)
+            ));
+        }
+    }
 }

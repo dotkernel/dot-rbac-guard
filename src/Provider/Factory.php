@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dot\Rbac\Guard\Provider;
 
 use Dot\Rbac\Guard\Exception\RuntimeException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 class Factory
@@ -21,6 +22,9 @@ class Factory
         $this->guardsProviderPluginManager = $guardsProviderPluginManager;
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     */
     public function create(array $specs): GuardsProviderInterface
     {
         $type = $specs['type'] ?? '';
@@ -28,7 +32,7 @@ class Factory
             throw new RuntimeException('Guard provider type was not specified');
         }
 
-        return $this->getGuardsProviderPluginManager()->get($type, $specs['options'] ?? null);
+        return $this->getGuardsProviderPluginManager()->build($type, $specs['options'] ?? null);
     }
 
     public function getGuardsProviderPluginManager(): GuardsProviderPluginManager

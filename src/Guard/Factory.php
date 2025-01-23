@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dot\Rbac\Guard\Guard;
 
 use Dot\Rbac\Guard\Exception\RuntimeException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 class Factory
@@ -19,6 +20,9 @@ class Factory
         $this->guardPluginManager = $guardPluginManager;
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     */
     public function create(array $specs): GuardInterface
     {
         $type = $specs['type'] ?? '';
@@ -27,7 +31,7 @@ class Factory
         }
 
         $guardPluginManager = $this->getGuardPluginManager();
-        return $guardPluginManager->get($type, $specs['options'] ?? null);
+        return $guardPluginManager->build($type, $specs['options'] ?? null);
     }
 
     public function getGuardPluginManager(): GuardPluginManager

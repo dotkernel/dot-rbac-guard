@@ -3,10 +3,11 @@
 ## Supported Versions
 
 
-| Version | Supported          | PHP Version                                                                                                      |
-|---------|--------------------|------------------------------------------------------------------------------------------------------------------|
-| 3.x     | :white_check_mark: | ![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.4.3) |
-| <= 2.x  | :x:                |                                                                                                                  |
+| Version | Supported          | PHP Version                                                                                                    |
+|---------|--------------------|----------------------------------------------------------------------------------------------------------------|
+| 4.x     | :white_check_mark: | ![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/4.0.0) |
+| 3.x     | :x:                | ![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.4.3) |
+| <= 2.x  | :x:                |                                                                                                                |
 
 
 ## Reporting Potential Security Issues

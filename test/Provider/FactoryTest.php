@@ -11,6 +11,7 @@ use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 class FactoryTest extends TestCase
@@ -25,6 +26,9 @@ class FactoryTest extends TestCase
         $this->container = $this->createMock(ContainerInterface::class);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     */
     public function testCreateRuntimeException(): void
     {
         $subject = new Factory($this->container);
@@ -34,6 +38,7 @@ class FactoryTest extends TestCase
     }
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws Exception
      */
     public function testCreate(): void
@@ -41,7 +46,7 @@ class FactoryTest extends TestCase
         $type                        = 'arrayGuardsProvider';
         $guardsProviderPluginManager = $this->createMock(GuardsProviderPluginManager::class);
         $guardsProviderPluginManager->expects($this->once())
-            ->method('get')
+            ->method('build')
             ->with($type, null)
             ->willReturn(new class implements GuardsProviderInterface {
                 public function getGuards(): array

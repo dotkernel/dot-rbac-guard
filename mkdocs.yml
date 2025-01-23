@@ -2,11 +2,16 @@ docs_dir: docs/book
 site_dir: docs/html
 extra:
   project: Packages
-  current_version: v3
+  current_version: v4
   versions:
+    - v4
     - v3
 nav:
   - Home: index.md
+  - v4:
+      - Installation: v4/installation.md
+      - Configuration: v4/configuration.md
+      - "Updating the Pipeline": v4/updating-pipeline.md
   - v3:
       - Installation: v3/installation.md
       - Configuration: v3/configuration.md

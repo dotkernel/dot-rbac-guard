@@ -86,7 +86,7 @@ class ForbiddenHandlerTest extends TestCase
         };
 
         $result = $this->subject->process($request, $handler);
-        $this->assertSame(ResponseInterface::class, $result::class);
+        $this->assertContainsOnlyInstancesOf(ResponseInterface::class, [$result]);
     }
 
     public function testIsDebug(): void

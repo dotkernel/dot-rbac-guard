@@ -57,7 +57,7 @@ class FactoryTest extends TestCase
             ]
         );
 
-        $this->assertSame(GuardsProviderInterface::class, $result::class);
+        $this->assertContainsOnlyInstancesOf(GuardsProviderInterface::class, [$result]);
     }
 
     public function testGetGuardsProviderPluginManager(): void
@@ -66,6 +66,6 @@ class FactoryTest extends TestCase
         $subject                     = new Factory($this->container, $guardsProviderPluginManager);
 
         $result = $subject->getGuardsProviderPluginManager();
-        $this->assertSame(GuardsProviderPluginManager::class, $result::class);
+        $this->assertContainsOnlyInstancesOf(GuardsProviderPluginManager::class, [$result]);
     }
 }

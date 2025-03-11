@@ -34,6 +34,6 @@ class GuardPluginManagerFactoryTest extends TestCase
             ->willReturn($config);
 
         $service = (new GuardPluginManagerFactory())($container);
-        $this->assertInstanceOf(GuardPluginManager::class, $service);
+        $this->assertSame(GuardPluginManager::class, $service::class);
     }
 }

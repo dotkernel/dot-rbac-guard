@@ -9,6 +9,7 @@ extra:
 nav:
   - Home: index.md
   - v4:
+      - Overview: v4/overview.md
       - Installation: v4/installation.md
       - Configuration: v4/configuration.md
       - "Updating the Pipeline": v4/updating-pipeline.md

@@ -4,8 +4,14 @@ Defines authorization guards that authorize users for accessing certain parts of
 If the authorization service can be used to check authorization on a narrow level, the guards are meant to work as gateways to bigger parts of an application.
 Usually, you'll want to use both methods in an application for increased security.
 
+## Documentation
+
+Documentation is available at: https://docs.dotkernel.org/dot-rbac-guard/.
+
+## Badges
+
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/dotkernel/dot-rbac-guard)
-![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/4.0.1)
+![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/4.1.0)
 
 [![GitHub issues](https://img.shields.io/github/issues/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/issues)
 [![GitHub forks](https://img.shields.io/github/forks/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/network)
@@ -14,6 +20,7 @@ Usually, you'll want to use both methods in an application for increased securit
 
 [![Build Static](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml/badge.svg?branch=4.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml)
 [![codecov](https://codecov.io/gh/dotkernel/dot-rbac-guard/graph/badge.svg?token=HB718GSIKS)](https://codecov.io/gh/dotkernel/dot-rbac-guard)
+[![PHPStan](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml/badge.svg?branch=4.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml)
 
 ## Installation
 

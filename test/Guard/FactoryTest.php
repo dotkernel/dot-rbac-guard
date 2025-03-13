@@ -56,7 +56,7 @@ class FactoryTest extends TestCase
         $subject = new Factory($container, $guardsPluginManager);
 
         $result = $subject->create(['type' => 'testType']);
-        $this->assertInstanceOf(GuardInterface::class, $result);
+        $this->assertContainsOnlyInstancesOf(GuardInterface::class, [$result]);
     }
 
     /**
@@ -70,6 +70,6 @@ class FactoryTest extends TestCase
         $subject = new Factory($container, $guardsPluginManager);
 
         $result = $subject->getGuardPluginManager();
-        $this->assertInstanceOf(GuardPluginManager::class, $result);
+        $this->assertContainsOnlyInstancesOf(GuardPluginManager::class, [$result]);
     }
 }

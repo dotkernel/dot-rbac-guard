@@ -14,6 +14,7 @@ nav:
       - Configuration: v4/configuration.md
       - "Updating the Pipeline": v4/updating-pipeline.md
   - v3:
+      - Overview: v3/overview.md
       - Installation: v3/installation.md
       - Configuration: v3/configuration.md
       - "Updating the Pipeline": v3/updating-pipeline.md

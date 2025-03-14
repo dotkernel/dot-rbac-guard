@@ -1,7 +1,7 @@
 {
     "name": "dotkernel/dot-rbac-guard",
     "type": "library",
-    "description": "DotKernel RBAC guards component",
+    "description": "Dotkernel RBAC guards component",
     "license": "MIT",
     "homepage": "https://github.com/dotkernel/dot-rbac-guard",
     "keywords": [
@@ -12,7 +12,7 @@
     ],
     "authors": [
         {
-            "name": "DotKernel Team",
+            "name": "Dotkernel Team",
             "email": "team@dotkernel.com"
         }
     ],
@@ -30,9 +30,10 @@
         "dotkernel/dot-controller": "^3.4.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.5.9",
-        "laminas/laminas-coding-standard": "^2.5",
-        "vimeo/psalm": "^5.20"
+        "laminas/laminas-coding-standard": "^3.0",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^10.5.9"
     },
     "autoload": {
         "psr-4": {
@@ -54,12 +55,12 @@
     "scripts": {
         "check": [
             "@cs-check",
-            "@test"
+            "@test",
+            "@static-analysis"
         ],
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit --colors=always",
-        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
-        "static-analysis": "psalm --shepherd --stats"
+        "static-analysis": "phpstan analyse --memory-limit 1G"
     }
 }

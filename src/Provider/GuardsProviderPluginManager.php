@@ -13,7 +13,7 @@ use Laminas\ServiceManager\AbstractPluginManager;
  */
 class GuardsProviderPluginManager extends AbstractPluginManager
 {
-    /** @var string */
+    /** @var null|class-string<T> $instanceOf */
     protected $instanceOf = GuardsProviderInterface::class;
 
     /** @var string[] */

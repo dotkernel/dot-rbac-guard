@@ -1,19 +1,26 @@
 # dot-rbac-guard
 
-Defines authorization guards that authorize users for accessing certain parts of an application based on various criteria. If the authorization service can be used to check authorization on a narrow level, the guards are meant to work as gateways to bigger parts of an application. Usually, you'll want to use both methods in an application for increased security.
+Defines authorization guards that authorize users for accessing certain parts of an application based on various criteria.
+If the authorization service can be used to check authorization on a narrow level, the guards are meant to work as gateways to bigger parts of an application.
+Usually, you'll want to use both methods in an application for increased security.
+
+## Documentation
+
+Documentation is available at: https://docs.dotkernel.org/dot-rbac-guard/.
+
+## Badges
 
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/dotkernel/dot-rbac-guard)
-![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.4.3)
+![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/3.6.0)
 
 [![GitHub issues](https://img.shields.io/github/issues/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/issues)
 [![GitHub forks](https://img.shields.io/github/forks/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/network)
 [![GitHub stars](https://img.shields.io/github/stars/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/stargazers)
-[![GitHub license](https://img.shields.io/github/license/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/blob/3.4.0/LICENSE.md)
+[![GitHub license](https://img.shields.io/github/license/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/blob/3.0/LICENSE.md)
 
 [![Build Static](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml/badge.svg?branch=3.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml)
 [![codecov](https://codecov.io/gh/dotkernel/dot-rbac-guard/graph/badge.svg?token=HB718GSIKS)](https://codecov.io/gh/dotkernel/dot-rbac-guard)
-
-[![SymfonyInsight](https://insight.symfony.com/projects/ebbe47ef-852a-47bd-94d4-9e1725a85377/big.svg)](https://insight.symfony.com/projects/ebbe47ef-852a-47bd-94d4-9e1725a85377)
+[![PHPStan](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml/badge.svg?branch=3.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml)
 
 ## Installation
 
@@ -27,7 +34,7 @@ Please note that this module is built around the authorization service defined i
 
 ## Configuration
 
-As with many DotKernel modules, we focus on the configuration based approach of customizing the module for your needs.
+As with many Dotkernel modules, we focus on the configuration based approach of customizing the module for your needs.
 
 After installing, merge the module's `ConfigProvider` with your application's config to make sure required dependencies and default module configuration are registered. Create a configuration file for this module in your 'config/autoload' folder.
 

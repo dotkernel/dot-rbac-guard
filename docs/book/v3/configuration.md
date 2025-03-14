@@ -1,6 +1,6 @@
 # Configuration
 
-As with many DotKernel modules, we focus on the configuration based approach of customizing the module for your needs.
+As with many Dotkernel modules, we focus on the configuration based approach of customizing the module for your needs.
 
 After installing, merge the module's `ConfigProvider` with your application's config to make sure required dependencies and default module configuration are registered. Create a configuration file for this module in your 'config/autoload' folder.
 

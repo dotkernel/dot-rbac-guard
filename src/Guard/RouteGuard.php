@@ -12,6 +12,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use function array_keys;
 use function in_array;
 use function is_int;
+use function preg_match;
+use function sprintf;
+use function str_contains;
+use function str_replace;
 use function strtolower;
 
 class RouteGuard extends AbstractGuard
@@ -19,6 +23,8 @@ class RouteGuard extends AbstractGuard
     public const PRIORITY = 100;
 
     protected ?RoleServiceInterface $roleService = null;
+
+    protected array $rules = [];
 
     public function __construct(?array $options = null)
     {
@@ -36,8 +42,6 @@ class RouteGuard extends AbstractGuard
 
     public function setRules(array $rules): void
     {
-        $this->rules = [];
-
         foreach ($rules as $key => $value) {
             if (is_int($key)) {
                 $routeName = strtolower($value);
@@ -73,9 +77,23 @@ class RouteGuard extends AbstractGuard
         $allowedRoles     = null;
 
         foreach (array_keys($this->rules) as $routeName) {
-            if ($routeName === $matchedRouteName) {
-                $allowedRoles = $this->rules[$routeName];
-                break;
+            if (str_contains($routeName, '*')) {
+                $routePattern = sprintf(
+                    "/^%s$/",
+                    str_replace('*', '[\w\-]+', $routeName)
+                );
+
+                $routeMatched = preg_match($routePattern, $matchedRouteName);
+
+                if ($routeMatched === 1) {
+                    $allowedRoles = $this->rules[$routeName];
+                    break;
+                }
+            } else {
+                if ($routeName === $matchedRouteName) {
+                    $allowedRoles = $this->rules[$routeName];
+                    break;
+                }
             }
         }
 

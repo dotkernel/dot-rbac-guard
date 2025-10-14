@@ -11,10 +11,14 @@ use Dot\Rbac\Guard\Exception\RuntimeException;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function array_keys;
 use function gettype;
 use function in_array;
 use function is_object;
+use function preg_match;
 use function sprintf;
+use function str_contains;
+use function str_replace;
 use function strtolower;
 
 class ControllerPermissionGuard extends AbstractGuard
@@ -22,6 +26,8 @@ class ControllerPermissionGuard extends AbstractGuard
     public const PRIORITY = 10;
 
     protected ?AuthorizationInterface $authorizationService = null;
+
+    protected array $rules = [];
 
     public function __construct(?array $options = null)
     {
@@ -42,8 +48,6 @@ class ControllerPermissionGuard extends AbstractGuard
 
     public function setRules(array $rules): void
     {
-        $this->rules = [];
-
         foreach ($rules as $rule) {
             $route       = strtolower($rule['route']);
             $actions     = isset($rule['actions']) ? (array) $rule['actions'] : [];
@@ -69,6 +73,23 @@ class ControllerPermissionGuard extends AbstractGuard
         }
 
         $route = $routeResult->getMatchedRouteName();
+
+        foreach (array_keys($this->rules) as $routeName) {
+            if (str_contains($routeName, '*')) {
+                $routePattern = sprintf(
+                    "/^%s$/",
+                    str_replace('*', '[\w\-]+', $routeName)
+                );
+
+                $routeMatched = preg_match($routePattern, $route);
+
+                if ($routeMatched === 1) {
+                    $route = $routeName;
+                    break;
+                }
+            }
+        }
+
         if (! isset($this->rules[$route])) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }

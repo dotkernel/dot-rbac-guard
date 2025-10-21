@@ -15,7 +15,10 @@ use function gettype;
 use function in_array;
 use function is_int;
 use function is_object;
+use function preg_match;
 use function sprintf;
+use function str_contains;
+use function str_replace;
 use function strtolower;
 
 class RoutePermissionGuard extends AbstractGuard
@@ -23,6 +26,8 @@ class RoutePermissionGuard extends AbstractGuard
     public const PRIORITY = 70;
 
     protected ?AuthorizationInterface $authorizationService = null;
+
+    protected array $rules = [];
 
     public function __construct(?array $options = null)
     {
@@ -43,7 +48,6 @@ class RoutePermissionGuard extends AbstractGuard
 
     public function setRules(array $rules): void
     {
-        $this->rules = [];
         foreach ($rules as $key => $value) {
             if (is_int($key)) {
                 $routeName   = strtolower($value);
@@ -68,9 +72,23 @@ class RoutePermissionGuard extends AbstractGuard
         $allowedPermissions = null;
 
         foreach (array_keys($this->rules) as $routeName) {
-            if ($matchedRouteName === $routeName) {
-                $allowedPermissions = $this->rules[$routeName];
-                break;
+            if (str_contains($routeName, '*')) {
+                $routePattern = sprintf(
+                    "/^%s$/",
+                    str_replace('*', '[\w\-]+', $routeName)
+                );
+
+                $routeMatched = preg_match($routePattern, $matchedRouteName);
+
+                if ($routeMatched === 1) {
+                    $allowedPermissions = $this->rules[$routeName];
+                    break;
+                }
+            } else {
+                if ($matchedRouteName === $routeName) {
+                    $allowedPermissions = $this->rules[$routeName];
+                    break;
+                }
             }
         }
 

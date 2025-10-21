@@ -63,7 +63,7 @@ return [
                                    'route' => 'controller route name',
                                    'actions' => [], //list of actions to apply, or empty array for all actions,
                                    // by default, authorization passes if all permissions are present(AND)
-                                   'roles' => [], //list of roles to allow,
+                                   'roles' => ['admin'], //list of roles to allow,
                                ],
                             ],
                         ],
@@ -76,14 +76,14 @@ return [
                                     'route' => 'controller route name',
                                     'actions' => [], //list of actions to apply, or empty array for all actions,
                                     // by default, authorization passes if all permissions are present(AND)
-                                    'permissions' => [], //list of permissions to allow,
+                                    'permissions' => ['authenticated'], //list of permissions to allow,
                                 ],
                                 [
                                     'route' => 'controller route name',
                                     'actions' => [], //list of actions to apply, or empty array for all actions,
                                     'permissions' => [
                                         //permission can be defined in this way too, for all permission type guards
-                                        'permissions' => [], //list of permissions,
+                                        'permissions' => ['authenticated'], //list of permissions,
                                         'condition' => \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
                                     ],
                                 ]
@@ -105,10 +105,14 @@ return [
 ];
 ```
 
+> It is **strongly recommended** to explicitly define permissions or roles and not leave the values empty, especially if using `GuardInterface::POLICY_DENY`!
+
 ## Route Name Placeholders
 
 Route **names** are allowed to contain `*` as placeholders, allowing more compact specifications.
 This feature is available for all types of guards.
+
+> Note that route rules are verified in order of their writing, take care of the order when using placeholder routes, as not to overwrite any specific routes!
 
 ```php
 [

@@ -165,7 +165,7 @@ class ControllerGuardTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function rulesProvider(): array
+    public static function rulesProvider(): array
     {
         return [
             'valid-placeholder'             => [

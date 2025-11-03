@@ -1,6 +1,6 @@
 # dot-rbac-guard
 
-Defines authorization guards that authorize users for accessing certain parts of an application based on various criteria.
+Defines authorization guards that authorize users to access certain parts of an application based on various criteria.
 If the authorization service can be used to check authorization on a narrow level, the guards are meant to work as gateways to bigger parts of an application.
 Usually, you'll want to use both methods in an application for increased security.
 
@@ -11,7 +11,7 @@ Documentation is available at: https://docs.dotkernel.org/dot-rbac-guard/.
 ## Badges
 
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/dotkernel/dot-rbac-guard)
-![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/4.1.0)
+![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/4.2.0)
 
 [![GitHub issues](https://img.shields.io/github/issues/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/issues)
 [![GitHub forks](https://img.shields.io/github/forks/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/network)
@@ -36,7 +36,7 @@ You'll have to first configure dot-rbac before using this module.
 
 ## Configuration
 
-As with many Dotkernel modules, we focus on the configuration based approach of customizing the module for your needs.
+As with many Dotkernel modules, we focus on the configuration-based approach of customizing the module for your needs.
 
 After installing, merge the module's `ConfigProvider` with your application's config to make sure required dependencies and default module configuration are registered.
 Create a configuration file for this module in your 'config/autoload' folder.
@@ -63,8 +63,8 @@ return [
         //register custom guards providers here
         'guards_provider_manager' => [],
         
-        //define which guards provider to use, along with its configuration
-        //the guards provider should know how to build a list of GuardInterfaces based on its configuration
+        //define which guard provider to use, along with its configuration
+        //the guard provider should know how to build a list of GuardInterfaces based on its configuration
         'guards_provider' => [
             'type' => 'ArrayGuards',
             'options' => [
@@ -97,9 +97,11 @@ return [
                             'rules' => [
                                 [
                                    'route' => 'controller route name',
-                                   'actions' => [//list of actions to apply, or empty array for all actions],
-                                   //by default, authorization pass if all permissions are present(AND)
-                                   'roles' => [//list of roles to allow],
+                                   //list of actions to apply, or empty array for all actions
+                                   'actions' => [],
+                                   //by default, authorization pass if all permissions are present (AND)
+                                   //list of roles to allow
+                                   'roles' => [],
                                ],
                             ]
                         ]
@@ -110,16 +112,20 @@ return [
                             'rules' => [
                                 [
                                     'route' => 'controller route name',
-                                    'actions' => [//list of actions to apply, or empty array for all actions],
-                                    //by default, authorization pass if all permissions are present(AND)
-                                    'permissions' => [//list of permissions to allow],
+                                    //list of actions to apply, or empty array for all actions
+                                    'actions' => [],
+                                    //by default, authorization pass if all permissions are present (AND)
+                                    //list of permissions to allow
+                                    'permissions' => [],
                                 ],
                                 [
                                     'route' => 'controller route name',
-                                    'actions' => [//list of actions to apply, or empty array for all actions],
+                                    //list of actions to apply, or empty array for all actions
+                                    'actions' => [],
                                     'permissions' => [
                                         //permission can be defined in this way too, for all permission type guards
-                                        'permissions' => [//list of permissions],
+                                        //list of permissions
+                                        'permissions' => [],
                                         'condition' => \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
                                     ]
                                 ]
@@ -143,7 +149,7 @@ return [
 
 ## Register the RbacGuardMiddleware in the pipe
 
-The last step in order to use this package is to register the middleware.
+The last step to use this package is to register the middleware.
 This middleware triggers the authorization event.
 You MUST insert this middleware between the routing middleware and the dispatch middleware of the application, because the guards need the `RouteResult` in order to get the matched route and params.
 

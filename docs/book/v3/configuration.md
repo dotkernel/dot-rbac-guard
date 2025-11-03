@@ -1,6 +1,6 @@
 # Configuration
 
-As with many Dotkernel modules, we focus on the configuration based approach of customizing the module for your needs.
+As with many Dotkernel modules, we focus on the configuration-based approach of customizing the module for your needs.
 
 After installing, merge the module's `ConfigProvider` with your application's config to make sure required dependencies and default module configuration are registered.
 Create a configuration file for this module in your 'config/autoload' folder.
@@ -27,8 +27,8 @@ return [
         //register custom guards providers here
         'guards_provider_manager' => [],
         
-        //define which guards provider to use, along with its configuration
-        //the guards provider should know how to build a list of GuardInterfaces based on its configuration
+        //define which guard provider to use, along with its configuration
+        //the guard provider should know how to build a list of GuardInterfaces based on its configuration
         'guards_provider' => [
             'type' => 'ArrayGuards',
             'options' => [
@@ -61,9 +61,11 @@ return [
                             'rules' => [
                                 [
                                    'route' => 'controller route name',
-                                   'actions' => [//list of actions to apply, or empty array for all actions],
-                                   //by default, authorization pass if all permissions are present(AND)
-                                   'roles' => [//list of roles to allow],
+                                   //list of actions to apply, or empty array for all actions
+                                   'actions' => [],
+                                   //by default, authorization pass if all permissions are present (AND)
+                                   //list of roles to allow
+                                   'roles' => [],
                                ],
                             ]
                         ]
@@ -74,16 +76,20 @@ return [
                             'rules' => [
                                 [
                                     'route' => 'controller route name',
-                                    'actions' => [//list of actions to apply, or empty array for all actions],
-                                    //by default, authorization pass if all permissions are present(AND)
-                                    'permissions' => [//list of permissions to allow],
+                                    //list of actions to apply, or empty array for all actions
+                                    'actions' => [],
+                                    //by default, authorization pass if all permissions are present (AND)
+                                    //list of permissions to allow
+                                    'permissions' => [],
                                 ],
                                 [
                                     'route' => 'controller route name',
-                                    'actions' => [//list of actions to apply, or empty array for all actions],
+                                    //list of actions to apply, or empty array for all actions
+                                    'actions' => [],
                                     'permissions' => [
                                         //permission can be defined in this way too, for all permission type guards
-                                        'permissions' => [//list of permissions],
+                                        //list of permissions
+                                        'permissions' => [],
                                         'condition' => \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
                                     ]
                                 ]

@@ -27,9 +27,9 @@
         <link rel="stylesheet" href="https://docs.dotkernel.org/css/bootstrap.css">
         <link rel="stylesheet" href="https://docs.dotkernel.org/css/bootstrap-icons.min.css">
         <link rel="stylesheet" href="https://docs.dotkernel.org/css/docs.css">
-        <script src="https://docs.dotkernel.org//js/bootstrap.js" defer></script>
-        <script src="https://docs.dotkernel.org//js/docs.js" defer></script>
-        <script src="https://docs.dotkernel.org//js/scripts.js" defer></script>
+        <script src="https://docs.dotkernel.org/js/bootstrap.js" defer></script>
+        <script src="https://docs.dotkernel.org/js/docs.js" defer></script>
+        <script src="https://docs.dotkernel.org/js/scripts.js" defer></script>
     </head>
     <body data-bs-spy="scroll" data-bs-target=".toc" data-bs-offset="100">
 
@@ -51,60 +51,72 @@
                         
                         <li class="dropdown-item ">
                             <a href="https://docs.dotkernel.org/api-documentation/" class="nav-link d-flex gap-4 align-items-center">
-                                <img alt="Dotkernel Logo" class="d-inline-block align-text-top" height="50" src="https://docs.dotkernel.org/img/dk_logomark.svg" width="45" />
-                                <div>
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
                                     <span class="fw-bold d-block">API</span>
-                                    <span>Dotkernel API</span>
                                 </div>
                             </a>
                         </li>
                         
                         <li class="dropdown-item ">
                             <a href="https://docs.dotkernel.org/admin-documentation/" class="nav-link d-flex gap-4 align-items-center">
-                                <img alt="Dotkernel Logo" class="d-inline-block align-text-top" height="50" src="https://docs.dotkernel.org/img/dk_logomark.svg" width="45" />
-                                <div>
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
                                     <span class="fw-bold d-block">Admin</span>
-                                    <span>Dotkernel Admin</span>
                                 </div>
                             </a>
                         </li>
                         
                         <li class="dropdown-item ">
                             <a href="https://docs.dotkernel.org/frontend-documentation/" class="nav-link d-flex gap-4 align-items-center">
-                                <img alt="Dotkernel Logo" class="d-inline-block align-text-top" height="50" src="https://docs.dotkernel.org/img/dk_logomark.svg" width="45" />
-                                <div>
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
                                     <span class="fw-bold d-block">Frontend</span>
-                                    <span>Dotkernel Frontend</span>
                                 </div>
                             </a>
                         </li>
                         
                         <li class="dropdown-item ">
                             <a href="https://docs.dotkernel.org/light-documentation/" class="nav-link d-flex gap-4 align-items-center">
-                                <img alt="Dotkernel Logo" class="d-inline-block align-text-top" height="50" src="https://docs.dotkernel.org/img/dk_logomark.svg" width="45" />
-                                <div>
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
                                     <span class="fw-bold d-block">Light</span>
-                                    <span>Dotkernel Light</span>
                                 </div>
                             </a>
                         </li>
                         
-                        <li class="dropdown-item bg-light">
+                        <li class="dropdown-item ">
+                            <a href="https://docs.dotkernel.org/queue-documentation/" class="nav-link d-flex gap-4 align-items-center">
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
+                                    <span class="fw-bold d-block">Queue</span>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="dropdown-item bg-dark-subtle">
                             <a href="https://docs.dotkernel.org/packages/" class="nav-link d-flex gap-4 align-items-center">
-                                <img alt="Dotkernel Logo" class="d-inline-block align-text-top" height="50" src="https://docs.dotkernel.org/img/dk_logomark.svg" width="45" />
-                                <div>
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
                                     <span class="fw-bold d-block">Packages</span>
-                                    <span>Dotkernel packages</span>
                                 </div>
                             </a>
                         </li>
                         
                         <li class="dropdown-item ">
                             <a href="https://docs.dotkernel.org/development/" class="nav-link d-flex gap-4 align-items-center">
-                                <img alt="Dotkernel Logo" class="d-inline-block align-text-top" height="50" src="https://docs.dotkernel.org/img/dk_logomark.svg" width="45" />
-                                <div>
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
                                     <span class="fw-bold d-block">Development</span>
-                                    <span>WSL2 Development Environment</span>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="dropdown-item ">
+                            <a href="https://docs.dotkernel.org/headless-documentation/" class="nav-link d-flex gap-4 align-items-center">
+                                <i class="bi bi-arrow-return-right text-primary"></i>
+                                <div class="py-1">
+                                    <span class="fw-bold d-block">Headless Platform</span>
                                 </div>
                             </a>
                         </li>
@@ -132,34 +144,36 @@
                 </li>
                 <li class="nav-item">
                     
-<div class="version-selector">
-    <div class="btn-group">
-        <button type="button" class="btn dropdown-toggle bg-light" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" id="version-selector-dropdown">
-            
-                v3
-            
-        </button>
-        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" aria-labelledby="version-selector-dropdown">
-            
+    
+    <div class="version-selector">
+        <div class="btn-group">
+            <button type="button" class="btn dropdown-toggle bg-light" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" id="version-selector-dropdown">
                 
-                    <a href="../../v4/overview/" class="dropdown-item">
-                        
-                            v4 (latest)
-                        
-                    </a>
+                    v3
                 
-            
+            </button>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" aria-labelledby="version-selector-dropdown">
                 
-                    <a href="../overview/" class="dropdown-item active">
-                        
-                            v3
-                        
-                    </a>
                 
-            
+                <a href="../../v4/overview/" class="dropdown-item">
+                    
+                        v4 (latest)
+                    
+                </a>
+                
+                
+                
+                <a href="../overview/" class="dropdown-item active">
+                    
+                        v3
+                    
+                </a>
+                
+                
+            </div>
         </div>
     </div>
-</div>
+    
 
                 </li>
             </ul>
@@ -289,7 +303,7 @@
     
 
     <h1 id="configuration">Configuration</h1>
-<p>As with many Dotkernel modules, we focus on the configuration based approach of customizing the module for your needs.</p>
+<p>As with many Dotkernel modules, we focus on the configuration-based approach of customizing the module for your needs.</p>
 <p>After installing, merge the module's <code>ConfigProvider</code> with your application's config to make sure required dependencies and default module configuration are registered.
 Create a configuration file for this module in your 'config/autoload' folder.</p>
 <h2 id="authorization-guardsglobalphp">authorization-guards.global.php</h2>
@@ -312,8 +326,8 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
         //register custom guards providers here
         'guards_provider_manager' =&gt; [],
 
-        //define which guards provider to use, along with its configuration
-        //the guards provider should know how to build a list of GuardInterfaces based on its configuration
+        //define which guard provider to use, along with its configuration
+        //the guard provider should know how to build a list of GuardInterfaces based on its configuration
         'guards_provider' =&gt; [
             'type' =&gt; 'ArrayGuards',
             'options' =&gt; [
@@ -346,9 +360,11 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                             'rules' =&gt; [
                                 [
                                    'route' =&gt; 'controller route name',
-                                   'actions' =&gt; [//list of actions to apply, or empty array for all actions],
-                                   //by default, authorization pass if all permissions are present(AND)
-                                   'roles' =&gt; [//list of roles to allow],
+                                   //list of actions to apply, or empty array for all actions
+                                   'actions' =&gt; [],
+                                   //by default, authorization pass if all permissions are present (AND)
+                                   //list of roles to allow
+                                   'roles' =&gt; [],
                                ],
                             ]
                         ]
@@ -359,16 +375,20 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                             'rules' =&gt; [
                                 [
                                     'route' =&gt; 'controller route name',
-                                    'actions' =&gt; [//list of actions to apply, or empty array for all actions],
-                                    //by default, authorization pass if all permissions are present(AND)
-                                    'permissions' =&gt; [//list of permissions to allow],
+                                    //list of actions to apply, or empty array for all actions
+                                    'actions' =&gt; [],
+                                    //by default, authorization pass if all permissions are present (AND)
+                                    //list of permissions to allow
+                                    'permissions' =&gt; [],
                                 ],
                                 [
                                     'route' =&gt; 'controller route name',
-                                    'actions' =&gt; [//list of actions to apply, or empty array for all actions],
+                                    //list of actions to apply, or empty array for all actions
+                                    'actions' =&gt; [],
                                     'permissions' =&gt; [
                                         //permission can be defined in this way too, for all permission type guards
-                                        'permissions' =&gt; [//list of permissions],
+                                        //list of permissions
+                                        'permissions' =&gt; [],
                                         'condition' =&gt; \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
                                     ]
                                 ]
@@ -514,6 +534,11 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                             <i class="bi bi-rss-fill"></i> Feed
                         </a>
                     </li>
+                    <li class="support__list-item col-lg-6 mb-md-3">
+                        <a href="https://github.com/orgs/dotkernel/discussions" class="support__link" title="Blog feed" target="_blank">
+                            <i class="bi bi-chat-left-text"></i> Discussions
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -521,7 +546,7 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
         <hr class="mt-5" />
 
         <div class="footer_copy">
-            &#169; Copyright Dotkernel 2024. All rights reserved.
+            &#169; Copyright Dotkernel <span id="current-year"></span>. All rights reserved.
         </div>
     </div>
 </footer>

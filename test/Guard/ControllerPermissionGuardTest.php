@@ -175,7 +175,7 @@ class ControllerPermissionGuardTest extends TestCase
         $this->assertInstanceOf(AuthorizationInterface::class, $result);
     }
 
-    public function rulesProvider(): array
+    public static function rulesProvider(): array
     {
         return [
             'valid-placeholder'             => [

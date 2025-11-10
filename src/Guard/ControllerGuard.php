@@ -10,7 +10,12 @@ use Dot\Rbac\Role\RoleServiceInterface;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function array_keys;
 use function in_array;
+use function preg_match;
+use function sprintf;
+use function str_contains;
+use function str_replace;
 use function strtolower;
 
 class ControllerGuard extends AbstractGuard
@@ -18,6 +23,8 @@ class ControllerGuard extends AbstractGuard
     public const PRIORITY = 40;
 
     protected ?RoleServiceInterface $roleService = null;
+
+    protected array $rules = [];
 
     public function __construct(?array $options = null)
     {
@@ -34,8 +41,6 @@ class ControllerGuard extends AbstractGuard
 
     public function setRules(array $rules): void
     {
-        $this->rules = [];
-
         foreach ($rules as $rule) {
             $route   = strtolower($rule['route']);
             $actions = isset($rule['actions']) ? (array) $rule['actions'] : [];
@@ -71,6 +76,22 @@ class ControllerGuard extends AbstractGuard
         }
 
         $route = strtolower($routeResult->getMatchedRouteName());
+
+        foreach (array_keys($this->rules) as $routeName) {
+            if (str_contains($routeName, '*')) {
+                $routePattern = sprintf(
+                    "/^%s$/",
+                    str_replace('*', '[\w\-]+', $routeName)
+                );
+
+                $routeMatched = preg_match($routePattern, $route);
+
+                if ($routeMatched === 1) {
+                    $route = $routeName;
+                    break;
+                }
+            }
+        }
 
         if (! isset($this->rules[$route])) {
             return $this->protectionPolicy === self::POLICY_ALLOW;

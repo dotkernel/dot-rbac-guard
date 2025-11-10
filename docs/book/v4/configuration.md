@@ -42,8 +42,8 @@ return [
                                 'logout' => ['admin', 'user', 'viewer'],
                                 'account' => ['admin', 'user'],
                                 'home' => ['*'],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                     [
                         'type' => 'RoutePermission',
@@ -52,8 +52,8 @@ return [
                                 'premium' => ['premium'],
                                 'account' => ['my-account'],
                                 'logout' => ['only-logged'],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                     [
                         'type' => 'Controller',
@@ -63,12 +63,12 @@ return [
                                    'route' => 'controller route name',
                                    //list of actions to apply, or empty array for all actions
                                    'actions' => [],
-                                   //by default, authorization pass if all permissions are present (AND)
+                                   //by default, authorization passes if all permissions are present (AND)
                                    //list of roles to allow
-                                   'roles' => [],
+                                   'roles' => ['admin'],
                                ],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                     [
                         'type' => 'ControllerPermission',
@@ -78,9 +78,9 @@ return [
                                     'route' => 'controller route name',
                                     //list of actions to apply, or empty array for all actions
                                     'actions' => [],
-                                    //by default, authorization pass if all permissions are present (AND)
+                                    //by default, authorization passes if all permissions are present (AND)
                                     //list of permissions to allow
-                                    'permissions' => [],
+                                    'permissions' => ['authenticated'],
                                 ],
                                 [
                                     'route' => 'controller route name',
@@ -89,9 +89,9 @@ return [
                                     'permissions' => [
                                         //permission can be defined in this way too, for all permission type guards
                                         //list of permissions
-                                        'permissions' => [],
+                                        'permissions' => ['authenticated'],
                                         'condition' => \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
-                                    ]
+                                    ],
                                 ]
                             ]
                         ]
@@ -109,4 +109,72 @@ return [
         ],
     ],
 ];
+```
+
+> It is **strongly recommended** to explicitly define permissions or roles and not leave the values empty, especially if using `GuardInterface::POLICY_DENY`!
+
+## Route Name Placeholders
+
+Route **names** are allowed to contain `*` as placeholders, allowing more compact specifications.
+This feature is available for all types of guards.
+
+> Note that route rules are verified in order of their writing, take care of the order when using placeholder routes, as not to overwrite any specific routes!
+
+```php
+[
+    'type' => 'Route',
+    'options' => [
+        'rules' => [
+            'account-create-form' => ['admin'],
+            'account-update-form' => ['admin'],
+            'account-delete-form' => ['admin'],
+        ]
+    ],
+    [
+        'type' => 'Controller',
+        'options' => [
+            'rules' => [
+                [
+                   'route' => 'admin-create',
+                   'actions' => [],
+                   'roles' => ['admin'],
+               ],
+               [
+                   'route' => 'admin-edit',
+                   'actions' => [],
+                   'roles' => ['admin'],
+               ],
+               [
+                   'route' => 'admin-view',
+                   'actions' => [],
+                   'roles' => ['admin'],
+               ],
+            ]
+        ]
+    ],
+],
+
+
+// Can be written as:
+
+[
+    'type' => 'Route',
+    'options' => [
+        'rules' => [
+            'account-*-form' => ['admin'],
+        ]
+    ],
+        [
+        'type' => 'Controller',
+        'options' => [
+            'rules' => [
+                [
+                   'route' => 'admin-*',
+                   'actions' => [],
+                   'roles' => ['admin'],
+               ],
+            ]
+        ]
+    ],
+]
 ```

@@ -8,6 +8,7 @@ use Dot\Rbac\Guard\Guard\RouteGuard;
 use Dot\Rbac\Role\RoleServiceInterface;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -144,5 +145,71 @@ class RouteGuardTest extends TestCase
         $this->subject->setRules($this->rules);
         $result = $this->subject->isGranted($request);
         $this->assertTrue($result);
+    }
+
+    public static function rulesProvider(): array
+    {
+        return [
+            'valid-placeholder'             => [
+                [
+                    'account-*'    => [
+                        'view',
+                        'create',
+                    ],
+                    'account-view' => [],
+                ],
+                'account-view',
+                true,
+            ],
+            'invalid-placeholder'           => [
+                [
+                    'account-*' => [
+                        'view',
+                        'create',
+                    ],
+                ],
+                'different-account-route',
+                false,
+            ],
+            'valid-composite-placeholder'   => [
+                [
+                    'user-*-form' => [
+                        'user-create-form',
+                        'user-edit-form',
+                    ],
+                ],
+                'user-create-form',
+                true,
+            ],
+            'invalid-composite-placeholder' => [
+                [
+                    'user-*-form' => [
+                        'user-create-form',
+                        'user-edit-form',
+                    ],
+                ],
+                'user-create-avatar',
+                false,
+            ],
+        ];
+    }
+
+    #[DataProvider('rulesProvider')]
+    public function testPlaceholderRoutes(array $rules, string $matchedRoute, bool $isValid): void
+    {
+        $request     = $this->createMock(ServerRequest::class);
+        $routeResult = $this->createMock(RouteResult::class);
+
+        $this->subject->setRules($rules);
+
+        $request->expects($this->once())
+            ->method('getAttribute')
+            ->with(RouteResult::class)
+            ->willReturn($routeResult);
+        $routeResult->expects($this->atLeastOnce())
+            ->method('getMatchedRouteName')
+            ->willReturn($matchedRoute);
+
+        $this->assertEquals($isValid, $this->subject->isGranted($request));
     }
 }

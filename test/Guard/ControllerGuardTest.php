@@ -8,6 +8,7 @@ use Dot\Rbac\Guard\Guard\ControllerGuard;
 use Dot\Rbac\Role\RoleServiceInterface;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -19,24 +20,22 @@ class ControllerGuardTest extends TestCase
 
     protected array $rules = [
         [
-            'route'       => 'account',
-            'actions'     => [
+            'route'   => 'account',
+            'actions' => [
                 'avatar',
                 'details',
                 'changePassword',
                 'deleteAccount',
                 'index',
             ],
-            'permissions' => ['unauthenticated'],
-            'roles'       => ['*'],
+            'roles'   => ['*'],
         ],
         [
-            'route'       => 'page',
-            'actions'     => [
+            'route'   => 'page',
+            'actions' => [
                 'premium-content',
             ],
-            'permissions' => ['premium'],
-            'roles'       => [],
+            'roles'   => [],
         ],
         [
             'route' => 'invalidRoute',
@@ -164,5 +163,82 @@ class ControllerGuardTest extends TestCase
 
         $result = $this->subject->isGranted($request);
         $this->assertTrue($result);
+    }
+
+    public static function rulesProvider(): array
+    {
+        return [
+            'valid-placeholder'             => [
+                [
+                    [
+                        'route'   => 'account-*',
+                        'actions' => [],
+                        'roles'   => ['*'],
+                    ],
+                    [
+                        'route'   => 'account-view',
+                        'actions' => [],
+                        'roles'   => ['*'],
+                    ],
+                ],
+                'account-view',
+                true,
+            ],
+            'invalid-placeholder'           => [
+                [
+                    [
+                        'route'   => 'account-*',
+                        'actions' => [],
+                        'roles'   => ['*'],
+                    ],
+                ],
+                'different-account-route',
+                false,
+            ],
+            'valid-composite-placeholder'   => [
+                [
+                    [
+                        'route'   => 'user-*-form',
+                        'actions' => [],
+                        'roles'   => ['*'],
+                    ],
+                ],
+                'user-create-form',
+                true,
+            ],
+            'invalid-composite-placeholder' => [
+                [
+                    [
+                        'route'   => 'user-*-form',
+                        'actions' => [],
+                        'roles'   => ['*'],
+                    ],
+                ],
+                'user-create-avatar',
+                false,
+            ],
+        ];
+    }
+
+    #[DataProvider('rulesProvider')]
+    public function testPlaceholderRoutes(array $rules, string $matchedRoute, bool $isValid): void
+    {
+        $request     = $this->createMock(ServerRequest::class);
+        $routeResult = $this->createMock(RouteResult::class);
+
+        $this->subject->setRules($rules);
+
+        $request->expects($this->once())
+            ->method('getAttribute')
+            ->with(RouteResult::class)
+            ->willReturn($routeResult);
+        $routeResult->expects($this->any())
+            ->method('getMatchedParams')
+            ->willReturn([]);
+        $routeResult->expects($this->atLeastOnce())
+            ->method('getMatchedRouteName')
+            ->willReturn($matchedRoute);
+
+        $this->assertEquals($isValid, $this->subject->isGranted($request));
     }
 }

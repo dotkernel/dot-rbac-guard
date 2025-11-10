@@ -8,6 +8,7 @@ use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Guard\ControllerPermissionGuard;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +29,6 @@ class ControllerPermissionGuardTest extends TestCase
                 'index',
             ],
             'permissions' => ['*'],
-            'roles'       => ['*'],
         ],
         [
             'route'       => 'page',
@@ -173,5 +173,82 @@ class ControllerPermissionGuardTest extends TestCase
         $this->subject->setAuthorizationService($this->mockAuthorizationInterface);
         $result = $this->subject->getAuthorizationService();
         $this->assertInstanceOf(AuthorizationInterface::class, $result);
+    }
+
+    public static function rulesProvider(): array
+    {
+        return [
+            'valid-placeholder'             => [
+                [
+                    [
+                        'route'       => 'account-*',
+                        'actions'     => [],
+                        'permissions' => ['*'],
+                    ],
+                    [
+                        'route'       => 'account-view',
+                        'actions'     => [],
+                        'permissions' => ['*'],
+                    ],
+                ],
+                'account-view',
+                true,
+            ],
+            'invalid-placeholder'           => [
+                [
+                    [
+                        'route'       => 'account-*',
+                        'actions'     => [],
+                        'permissions' => ['*'],
+                    ],
+                ],
+                'different-account-route',
+                false,
+            ],
+            'valid-composite-placeholder'   => [
+                [
+                    [
+                        'route'       => 'user-*-form',
+                        'actions'     => [],
+                        'permissions' => ['*'],
+                    ],
+                ],
+                'user-create-form',
+                true,
+            ],
+            'invalid-composite-placeholder' => [
+                [
+                    [
+                        'route'       => 'user-*-form',
+                        'actions'     => [],
+                        'permissions' => ['*'],
+                    ],
+                ],
+                'user-create-avatar',
+                false,
+            ],
+        ];
+    }
+
+    #[DataProvider('rulesProvider')]
+    public function testPlaceholderRoutes(array $rules, string $matchedRoute, bool $isValid): void
+    {
+        $request     = $this->createMock(ServerRequest::class);
+        $routeResult = $this->createMock(RouteResult::class);
+
+        $this->subject->setRules($rules);
+
+        $request->expects($this->once())
+            ->method('getAttribute')
+            ->with(RouteResult::class)
+            ->willReturn($routeResult);
+        $routeResult->expects($this->any())
+            ->method('getMatchedParams')
+            ->willReturn([]);
+        $routeResult->expects($this->atLeastOnce())
+            ->method('getMatchedRouteName')
+            ->willReturn($matchedRoute);
+
+        $this->assertEquals($isValid, $this->subject->isGranted($request));
     }
 }

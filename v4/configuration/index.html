@@ -279,6 +279,10 @@
                     <a href="#authorization-guardsglobalphp" class="toc__link nav-link">authorization-guards.global.php</a>
                 </li>
             
+                <li class="toc__entry">
+                    <a href="#route-name-placeholders" class="toc__link nav-link">Route Name Placeholders</a>
+                </li>
+            
             </ul>
         </div>
     
@@ -334,8 +338,8 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                                 'logout' =&gt; ['admin', 'user', 'viewer'],
                                 'account' =&gt; ['admin', 'user'],
                                 'home' =&gt; ['*'],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                     [
                         'type' =&gt; 'RoutePermission',
@@ -344,8 +348,8 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                                 'premium' =&gt; ['premium'],
                                 'account' =&gt; ['my-account'],
                                 'logout' =&gt; ['only-logged'],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                     [
                         'type' =&gt; 'Controller',
@@ -355,12 +359,12 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                                    'route' =&gt; 'controller route name',
                                    //list of actions to apply, or empty array for all actions
                                    'actions' =&gt; [],
-                                   //by default, authorization pass if all permissions are present (AND)
+                                   //by default, authorization passes if all permissions are present (AND)
                                    //list of roles to allow
-                                   'roles' =&gt; [],
+                                   'roles' =&gt; ['admin'],
                                ],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                     [
                         'type' =&gt; 'ControllerPermission',
@@ -370,9 +374,9 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                                     'route' =&gt; 'controller route name',
                                     //list of actions to apply, or empty array for all actions
                                     'actions' =&gt; [],
-                                    //by default, authorization pass if all permissions are present (AND)
+                                    //by default, authorization passes if all permissions are present (AND)
                                     //list of permissions to allow
-                                    'permissions' =&gt; [],
+                                    'permissions' =&gt; ['authenticated'],
                                 ],
                                 [
                                     'route' =&gt; 'controller route name',
@@ -381,9 +385,9 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
                                     'permissions' =&gt; [
                                         //permission can be defined in this way too, for all permission type guards
                                         //list of permissions
-                                        'permissions' =&gt; [],
+                                        'permissions' =&gt; ['authenticated'],
                                         'condition' =&gt; \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
-                                    ]
+                                    ],
                                 ]
                             ]
                         ]
@@ -401,6 +405,71 @@ Create a configuration file for this module in your 'config/autoload' folder.</p
         ],
     ],
 ];</code></pre>
+<blockquote>
+<p>It is <strong>strongly recommended</strong> to explicitly define permissions or roles and not leave the values empty, especially if using <code>GuardInterface::POLICY_DENY</code>!</p>
+</blockquote>
+<h2 id="route-name-placeholders">Route Name Placeholders</h2>
+<p>Route <strong>names</strong> are allowed to contain <code>*</code> as placeholders, allowing more compact specifications.
+This feature is available for all types of guards.</p>
+<blockquote>
+<p>Note that route rules are verified in order of their writing, take care of the order when using placeholder routes, as not to overwrite any specific routes!</p>
+</blockquote>
+<pre class="highlight"><code class="language-php">[
+    'type' =&gt; 'Route',
+    'options' =&gt; [
+        'rules' =&gt; [
+            'account-create-form' =&gt; ['admin'],
+            'account-update-form' =&gt; ['admin'],
+            'account-delete-form' =&gt; ['admin'],
+        ]
+    ],
+    [
+        'type' =&gt; 'Controller',
+        'options' =&gt; [
+            'rules' =&gt; [
+                [
+                   'route' =&gt; 'admin-create',
+                   'actions' =&gt; [],
+                   'roles' =&gt; ['admin'],
+               ],
+               [
+                   'route' =&gt; 'admin-edit',
+                   'actions' =&gt; [],
+                   'roles' =&gt; ['admin'],
+               ],
+               [
+                   'route' =&gt; 'admin-view',
+                   'actions' =&gt; [],
+                   'roles' =&gt; ['admin'],
+               ],
+            ]
+        ]
+    ],
+],
+
+
+// Can be written as:
+
+[
+    'type' =&gt; 'Route',
+    'options' =&gt; [
+        'rules' =&gt; [
+            'account-*-form' =&gt; ['admin'],
+        ]
+    ],
+        [
+        'type' =&gt; 'Controller',
+        'options' =&gt; [
+            'rules' =&gt; [
+                [
+                   'route' =&gt; 'admin-*',
+                   'actions' =&gt; [],
+                   'roles' =&gt; ['admin'],
+               ],
+            ]
+        ]
+    ],
+]</code></pre>
 
 
 

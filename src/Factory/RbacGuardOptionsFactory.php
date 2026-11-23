@@ -8,6 +8,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+use function is_array;
+
 class RbacGuardOptionsFactory
 {
     /**
@@ -16,6 +18,8 @@ class RbacGuardOptionsFactory
      */
     public function __invoke(ContainerInterface $container, string $requestedName): mixed
     {
-        return new $requestedName($container->get('config')['dot_authorization']);
+        $config = $container->get('config')['dot_authorization'] ?? [];
+
+        return new $requestedName(is_array($config) ? $config : []);
     }
 }

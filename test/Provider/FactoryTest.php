@@ -8,69 +8,48 @@ use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Provider\Factory;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
-use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
+use DotTest\Rbac\Guard\Fixture\InMemoryContainer;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 
 class FactoryTest extends TestCase
 {
-    protected ContainerInterface|MockObject $container;
-
-    /**
-     * @throws Exception
-     */
-    public function setUp(): void
+    public function testCreateWithoutTypeThrows(): void
     {
-        $this->container = $this->createMock(ContainerInterface::class);
-    }
-
-    /**
-     * @throws ContainerExceptionInterface
-     */
-    public function testCreateRuntimeException(): void
-    {
-        $subject = new Factory($this->container);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Guard provider type was not specified');
-        $subject->create([]);
+
+        (new Factory(new InMemoryContainer()))->create(['type' => '']);
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws Exception
-     */
-    public function testCreate(): void
+    public function testCreatePassesOptions(): void
     {
-        $type                        = 'arrayGuardsProvider';
-        $guardsProviderPluginManager = $this->createMock(GuardsProviderPluginManager::class);
-        $guardsProviderPluginManager->expects($this->once())
-            ->method('build')
-            ->with($type, null)
-            ->willReturn(new class implements GuardsProviderInterface {
-                public function getGuards(): array
-                {
-                    return [];
-                }
-            });
-        $subject = new Factory($this->container, $guardsProviderPluginManager);
-
-        $result = $subject->create(
-            [
-                'type' => $type,
-            ]
+        $received = null;
+        $provider = new class implements GuardsProviderInterface {
+            public function getGuards(): array
+            {
+                return [];
+            }
+        };
+        $manager  = new GuardsProviderPluginManager(new InMemoryContainer());
+        $manager->setFactory(
+            'custom',
+            static function ($container, $name, ?array $options) use (&$received, $provider): GuardsProviderInterface {
+                $received = $options;
+                return $provider;
+            }
         );
 
-        $this->assertContainsOnlyInstancesOf(GuardsProviderInterface::class, [$result]);
+        $factory = new Factory(new InMemoryContainer(), $manager);
+        $result  = $factory->create(['type' => 'custom', 'options' => ['a' => 1]]);
+
+        $this->assertSame($provider, $result);
+        $this->assertSame(['a' => 1], $received);
     }
 
     public function testGetGuardsProviderPluginManager(): void
     {
-        $guardsProviderPluginManager = new GuardsProviderPluginManager($this->container);
-        $subject                     = new Factory($this->container, $guardsProviderPluginManager);
+        $factory = new Factory(new InMemoryContainer());
 
-        $result = $subject->getGuardsProviderPluginManager();
-        $this->assertSame(GuardsProviderPluginManager::class, $result::class);
+        $this->assertSame($factory->getGuardsProviderPluginManager(), $factory->getGuardsProviderPluginManager());
     }
 }

@@ -8,6 +8,9 @@ use Dot\Rbac\Guard\Exception\RuntimeException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
+use function is_array;
+use function is_string;
+
 class Factory
 {
     protected ContainerInterface $container;
@@ -21,22 +24,24 @@ class Factory
     }
 
     /**
+     * @param array<array-key, mixed> $specs
      * @throws ContainerExceptionInterface
      */
     public function create(array $specs): GuardInterface
     {
-        $type = $specs['type'] ?? '';
-        if (empty($type)) {
+        $type    = $specs['type'] ?? '';
+        $options = $specs['options'] ?? null;
+        if (! is_string($type) || $type === '') {
             throw new RuntimeException('Guard type was not provided');
         }
 
         $guardPluginManager = $this->getGuardPluginManager();
-        return $guardPluginManager->build($type, $specs['options'] ?? null);
+        return $guardPluginManager->build($type, is_array($options) ? $options : null);
     }
 
     public function getGuardPluginManager(): GuardPluginManager
     {
-        if (! $this->guardPluginManager) {
+        if ($this->guardPluginManager === null) {
             $this->guardPluginManager = new GuardPluginManager($this->container, []);
         }
 

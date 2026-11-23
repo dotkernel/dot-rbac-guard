@@ -10,6 +10,8 @@ use Dot\Rbac\Guard\Event\AuthorizationEvent;
 use Dot\Rbac\Guard\Event\AuthorizationEventListenerInterface;
 use Dot\Rbac\Guard\Event\AuthorizationEventListenerTrait;
 use Dot\Rbac\Guard\Event\DispatchAuthorizationEventTrait;
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
+use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Options\MessagesOptions;
 use Dot\Rbac\Guard\Options\RbacGuardOptions;
 use Exception;
@@ -33,16 +35,21 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
 
     protected AuthorizationInterface $authorizationService;
 
+    /** @var list<int> */
     protected array $authorizationStatusCodes = [403];
 
     protected RbacGuardOptions $options;
 
     protected ?TemplateRendererInterface $renderer;
 
+    /** @var non-empty-string */
     protected string $template;
 
     protected bool $debug = false;
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function __construct(
         AuthorizationInterface $authorizationService,
         RbacGuardOptions $options,
@@ -52,7 +59,10 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
         $this->renderer             = $templateRenderer;
         $this->authorizationService = $authorizationService;
         $this->options              = $options;
-        $this->template             = $template;
+        if ($template === '') {
+            throw new InvalidArgumentException('The 403 template name must not be empty');
+        }
+        $this->template = $template;
     }
 
     /**
@@ -65,7 +75,7 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
         } catch (ForbiddenException $e) {
             return $this->handleForbiddenError($e, $request);
         } catch (Throwable $e) {
-            if (in_array($e->getCode(), $this->authorizationStatusCodes)) {
+            if (in_array($e->getCode(), $this->authorizationStatusCodes, true)) {
                 return $this->handleForbiddenError($e, $request);
             }
             throw $e;
@@ -74,6 +84,7 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
 
     /**
      * @throws Exception
+     * @throws RuntimeException
      */
     protected function handleForbiddenError(
         mixed $error,
@@ -89,6 +100,12 @@ class ForbiddenHandler implements MiddlewareInterface, AuthorizationEventListene
         }
 
         $request = $event->getParam('request');
+        if (! $request instanceof ServerRequestInterface) {
+            throw new RuntimeException(
+                'The "request" parameter of the authorization event must be an instance of '
+                . ServerRequestInterface::class
+            );
+        }
         $message = $this->options->getMessagesOptions()->getMessage(MessagesOptions::FORBIDDEN);
         if ($error instanceof ForbiddenException || ($this->isDebug() && $error instanceof Throwable)) {
             $message = $error->getMessage();

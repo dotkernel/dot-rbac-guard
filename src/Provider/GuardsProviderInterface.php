@@ -9,7 +9,7 @@ use Dot\Rbac\Guard\Guard\GuardInterface;
 interface GuardsProviderInterface
 {
     /**
-     * @return GuardInterface[]
+     * @return list<GuardInterface>
      */
     public function getGuards(): array;
 }

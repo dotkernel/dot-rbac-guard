@@ -2,97 +2,102 @@
 
 declare(strict_types=1);
 
+use Dot\Rbac\Guard\Guard\GuardInterface;
+use Dot\Rbac\Guard\Options\MessagesOptions;
+
 return [
     'dot_authorization' => [
+        // what a guard does when no rule matches the route: POLICY_ALLOW (default) or POLICY_DENY
+        'protection_policy' => GuardInterface::POLICY_ALLOW,
 
-        //define how it will treat non-matching guard rules, allow all by default
-        'protection_policy' => \Dot\Rbac\Guard\GuardInterface::POLICY_ALLOW,
-
+        // listeners for the authorization events, see the "Events" page
         'event_listeners' => [
             [
-                'type' => 'class or service name of the listener',
+                'type'     => 'class or service name of the listener',
                 'priority' => 1,
             ],
         ],
 
-        //define custom guards here
+        // add your own guards here, see "Custom guards and guards providers"
         'guard_manager' => [],
 
-        //register custom guards providers here
+        // add your own guards providers here
         'guards_provider_manager' => [],
 
-        //define which guards provider to use, along with its configuration
-        //the guards provider should know how to build a list of GuardInterfaces based on its configuration
+        // the guards provider and its configuration
+        // the guards provider builds the list of guards
         'guards_provider' => [
-            'type' => 'ArrayGuards',
+            'type'    => 'ArrayGuards',
             'options' => [
                 'guards' => [
                     [
-                        'type' => 'Route',
+                        'type'    => 'Route',
                         'options' => [
                             'rules' => [
                                 'premium' => ['admin'],
-                                'login' => ['guest'],
-                                'logout' => ['admin', 'user', 'viewer'],
+                                'login'   => ['guest'],
+                                'logout'  => ['admin', 'user', 'viewer'],
                                 'account' => ['admin', 'user'],
-                                'home' => ['*'],
-                            ]
-                        ]
+                                'home'    => ['*'],
+                            ],
+                        ],
                     ],
                     [
-                        'type' => 'RoutePermission',
+                        'type'    => 'RoutePermission',
                         'options' => [
                             'rules' => [
                                 'premium' => ['premium'],
                                 'account' => ['my-account'],
-                                'logout' => ['only-logged'],
-                            ]
-                        ]
+                                'logout'  => ['only-logged'],
+                            ],
+                        ],
                     ],
                     [
-                        'type' => 'Controller',
+                        'type'    => 'Controller',
                         'options' => [
                             'rules' => [
                                 [
-                                   'route' => 'controller route name',
-                                   'actions' => [//list of actions to apply, or empty array for all actions],
-                                   //by default, authorization pass if all permissions are present(AND)
-                                   'roles' => [//list of roles to allow],
-                               ],
-                            ]
-                        ]
+                                    'route'   => 'controller route name',
+                                    // the actions of the rule, or an empty array for all actions
+                                    'actions' => [],
+                                    // the roles that get access
+                                    'roles'   => ['admin'],
+                                ],
+                            ],
+                        ],
                     ],
                     [
-                        'type' => 'ControllerPermission',
+                        'type'    => 'ControllerPermission',
                         'options' => [
                             'rules' => [
                                 [
-                                    'route' => 'controller route name',
-                                    'actions' => [//list of actions to apply, or empty array for all actions],
-                                    //by default, authorization pass if all permissions are present(AND)
-                                    'permissions' => [//list of permissions to allow],
+                                    'route'       => 'controller route name',
+                                    'actions'     => [],
+                                    // by default, the user needs all the permissions (AND)
+                                    'permissions' => ['authenticated'],
                                 ],
                                 [
-                                    'route' => 'controller route name',
-                                    'actions' => [//list of actions to apply, or empty array for all actions],
+                                    'route'       => 'other controller route name',
+                                    'actions'     => [],
+                                    // this format is available in the two permission guards
                                     'permissions' => [
-                                        //permission can be defined in this way too, for all permission type guards
-                                        'permissions' => [//list of permissions],
-                                        'condition' => \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'permissions' => ['authenticated', 'premium'],
+                                        'condition'   => GuardInterface::CONDITION_OR,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ],
 
-        //overwrite default messages
+        // change the default messages
         'messages_options' => [
             'messages' => [
-                //MessagesOptions::UNAUTHORIZED => 'You must sign in first to access the requested content',
-                //MessagesOptions::FORBIDDEN => 'You don\'t have enough permissions to access the requested content',
-            ]
+                MessagesOptions::UNAUTHORIZED => 'You must sign in first to access the requested content',
+                MessagesOptions::FORBIDDEN    => 'You do not have enough permissions to access the requested content',
+            ],
         ],
+    ],
 ];

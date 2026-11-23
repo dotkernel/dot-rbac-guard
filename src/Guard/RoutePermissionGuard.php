@@ -7,28 +7,22 @@ namespace Dot\Rbac\Guard\Guard;
 use Dot\Authorization\AuthorizationInterface;
 use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\Exception\RuntimeException;
-use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ServerRequestInterface;
 
-use function array_keys;
-use function gettype;
-use function in_array;
+use function get_debug_type;
 use function is_int;
-use function is_object;
-use function preg_match;
-use function sprintf;
-use function str_contains;
-use function str_replace;
+use function is_string;
 use function strtolower;
 
 class RoutePermissionGuard extends AbstractGuard
 {
+    use PermissionGuardTrait;
+
     public const PRIORITY = 70;
 
-    protected ?AuthorizationInterface $authorizationService = null;
-
-    protected array $rules = [];
-
+    /**
+     * @param array<array-key, mixed>|null $options
+     */
     public function __construct(?array $options = null)
     {
         $options = $options ?? [];
@@ -41,100 +35,48 @@ class RoutePermissionGuard extends AbstractGuard
             $this->setAuthorizationService($options['authorization_service']);
         }
 
-        if (! $this->authorizationService instanceof AuthorizationInterface) {
+        if (! isset($this->authorizationService)) {
             throw new RuntimeException('Authorization service is required by this guard and was not set');
         }
     }
 
+    /**
+     * @param array<array-key, mixed> $rules
+     * @throws InvalidArgumentException
+     */
     public function setRules(array $rules): void
     {
         foreach ($rules as $key => $value) {
             if (is_int($key)) {
-                $routeName   = strtolower($value);
-                $permissions = [];
+                if (! is_string($value)) {
+                    throw new InvalidArgumentException(
+                        'A rule without a string key must be a route name, ' . get_debug_type($value) . ' given'
+                    );
+                }
+                $this->rules[strtolower($value)] = [];
             } else {
-                $routeName   = strtolower($key);
-                $permissions = (array) $value;
+                $this->rules[strtolower($key)] = (array) $value;
             }
-            $this->rules[$routeName] = $permissions;
         }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function isGranted(ServerRequestInterface $request): bool
     {
-        $routeResult = $request->getAttribute(RouteResult::class, false);
-        //if we do not have a matched route(probably 404 not found) let it go to the final handler
-        if (! $routeResult instanceof RouteResult || ! $routeResult->getMatchedRouteName()) {
+        // without a matched route (probably 404 not found), let the request go to the final handler
+        $routeName = $this->getMatchedRouteName($request);
+        if ($routeName === null) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        $matchedRouteName   = strtolower($routeResult->getMatchedRouteName());
-        $allowedPermissions = null;
-
-        foreach (array_keys($this->rules) as $routeName) {
-            if (str_contains($routeName, '*')) {
-                $routePattern = sprintf(
-                    "/^%s$/",
-                    str_replace('*', '[\w\-]+', $routeName)
-                );
-
-                $routeMatched = preg_match($routePattern, $matchedRouteName);
-
-                if ($routeMatched === 1) {
-                    $allowedPermissions = $this->rules[$routeName];
-                    break;
-                }
-            } else {
-                if ($matchedRouteName === $routeName) {
-                    $allowedPermissions = $this->rules[$routeName];
-                    break;
-                }
-            }
-        }
-
-        // If no rules apply, it is considered as granted or not based on the protection policy
-        if (null === $allowedPermissions) {
+        // if no rule applies, the protection policy decides
+        $rule = $this->findRule($routeName);
+        if ($rule === null) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        if (in_array('*', $allowedPermissions)) {
-            return true;
-        }
-
-        $permissions = $allowedPermissions['permissions'] ?? $allowedPermissions;
-        $condition   = $allowedPermissions['condition'] ?? GuardInterface::CONDITION_AND;
-
-        if (GuardInterface::CONDITION_AND === $condition) {
-            foreach ($permissions as $permission) {
-                if (! $this->getAuthorizationService()->isGranted($permission)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        if (GuardInterface::CONDITION_OR === $condition) {
-            foreach ($permissions as $permission) {
-                if ($this->getAuthorizationService()->isGranted($permission)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        throw new InvalidArgumentException(sprintf(
-            'Condition must be either "AND" or "OR", %s given',
-            is_object($condition) ? $condition::class : gettype($condition)
-        ));
-    }
-
-    public function getAuthorizationService(): ?AuthorizationInterface
-    {
-        return $this->authorizationService;
-    }
-
-    public function setAuthorizationService(AuthorizationInterface $authorizationService): void
-    {
-        $this->authorizationService = $authorizationService;
+        return $this->isGrantedByPermissions($this->rules[$rule]);
     }
 }

@@ -18,6 +18,7 @@ use function is_string;
 class PermissionGuardFactory
 {
     /**
+     * @param array<array-key, mixed>|null $options
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -33,7 +34,7 @@ class PermissionGuardFactory
         /** @var RbacGuardOptions $moduleOptions */
         $moduleOptions                = $container->get(RbacGuardOptions::class);
         $options['protection_policy'] = isset($options['protection_policy'])
-        && in_array($options['protection_policy'], [GuardInterface::POLICY_ALLOW, GuardInterface::POLICY_DENY])
+        && in_array($options['protection_policy'], [GuardInterface::POLICY_ALLOW, GuardInterface::POLICY_DENY], true)
             ? $options['protection_policy']
             : $moduleOptions->getProtectionPolicy();
 

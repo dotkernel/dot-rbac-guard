@@ -4,61 +4,49 @@ declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
 
-use Dot\Controller\AbstractController;
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Role\RoleServiceInterface;
-use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ServerRequestInterface;
 
-use function array_keys;
 use function in_array;
-use function preg_match;
-use function sprintf;
-use function str_contains;
-use function str_replace;
-use function strtolower;
+use function is_array;
 
 class ControllerGuard extends AbstractGuard
 {
+    use ControllerRulesTrait;
+
     public const PRIORITY = 40;
 
-    protected ?RoleServiceInterface $roleService = null;
+    protected RoleServiceInterface $roleService;
 
-    protected array $rules = [];
-
+    /**
+     * @param array<array-key, mixed>|null $options
+     */
     public function __construct(?array $options = null)
     {
         $options = $options ?? [];
         parent::__construct($options);
+
         if (isset($options['role_service']) && $options['role_service'] instanceof RoleServiceInterface) {
             $this->setRoleService($options['role_service']);
         }
 
-        if (! $this->roleService instanceof RoleServiceInterface) {
+        if (! isset($this->roleService)) {
             throw new RuntimeException('RoleService is required by this guard and was not set');
         }
     }
 
+    /**
+     * @param array<array-key, mixed> $rules
+     * @throws InvalidArgumentException
+     */
     public function setRules(array $rules): void
     {
-        foreach ($rules as $rule) {
-            $route   = strtolower($rule['route']);
-            $actions = isset($rule['actions']) ? (array) $rule['actions'] : [];
-            $roles   = (array) $rule['roles'];
-
-            if (empty($actions)) {
-                $this->rules[$route][0] = $roles;
-                continue;
-            }
-
-            foreach ($actions as $action) {
-                $action                       = AbstractController::getMethodFromAction($action);
-                $this->rules[$route][$action] = $roles;
-            }
-        }
+        $this->addControllerRules($rules, 'roles');
     }
 
-    public function getRoleService(): ?RoleServiceInterface
+    public function getRoleService(): RoleServiceInterface
     {
         return $this->roleService;
     }
@@ -70,49 +58,12 @@ class ControllerGuard extends AbstractGuard
 
     public function isGranted(ServerRequestInterface $request): bool
     {
-        $routeResult = $request->getAttribute(RouteResult::class);
-        if (! $routeResult instanceof RouteResult || ! $routeResult->getMatchedRouteName()) {
+        $allowedRoles = $this->findControllerRule($request);
+        if (! is_array($allowedRoles)) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        $route = strtolower($routeResult->getMatchedRouteName());
-
-        foreach (array_keys($this->rules) as $routeName) {
-            if (str_contains($routeName, '*')) {
-                $routePattern = sprintf(
-                    "/^%s$/",
-                    str_replace('*', '[\w\-]+', $routeName)
-                );
-
-                $routeMatched = preg_match($routePattern, $route);
-
-                if ($routeMatched === 1) {
-                    $route = $routeName;
-                    break;
-                }
-            }
-        }
-
-        if (! isset($this->rules[$route])) {
-            return $this->protectionPolicy === self::POLICY_ALLOW;
-        }
-
-        $params = $routeResult->getMatchedParams();
-        $action = ! empty($params['action'])
-            ? $params['action']
-            : 'index';
-
-        $action = AbstractController::getMethodFromAction($action);
-
-        if (isset($this->rules[$route][$action])) {
-            $allowedRoles = $this->rules[$route][$action];
-        } elseif (isset($this->rules[$route][0])) {
-            $allowedRoles = $this->rules[$route][0];
-        } else {
-            return $this->protectionPolicy === self::POLICY_ALLOW;
-        }
-
-        if (in_array('*', $allowedRoles)) {
+        if (in_array('*', $allowedRoles, true)) {
             return true;
         }
 

@@ -15,6 +15,7 @@ use function is_string;
 class GuardsProviderFactory
 {
     /**
+     * @param array<array-key, mixed>|null $options
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */

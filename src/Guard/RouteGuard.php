@@ -4,28 +4,26 @@ declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
 
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
 use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Role\RoleServiceInterface;
-use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ServerRequestInterface;
 
-use function array_keys;
+use function get_debug_type;
 use function in_array;
 use function is_int;
-use function preg_match;
-use function sprintf;
-use function str_contains;
-use function str_replace;
+use function is_string;
 use function strtolower;
 
 class RouteGuard extends AbstractGuard
 {
     public const PRIORITY = 100;
 
-    protected ?RoleServiceInterface $roleService = null;
+    protected RoleServiceInterface $roleService;
 
-    protected array $rules = [];
-
+    /**
+     * @param array<array-key, mixed>|null $options
+     */
     public function __construct(?array $options = null)
     {
         $options = $options ?? [];
@@ -35,27 +33,32 @@ class RouteGuard extends AbstractGuard
             $this->setRoleService($options['role_service']);
         }
 
-        if (! $this->roleService instanceof RoleServiceInterface) {
+        if (! isset($this->roleService)) {
             throw new RuntimeException('RoleService is required by this guard and was not set');
         }
     }
 
+    /**
+     * @param array<array-key, mixed> $rules
+     * @throws InvalidArgumentException
+     */
     public function setRules(array $rules): void
     {
         foreach ($rules as $key => $value) {
             if (is_int($key)) {
-                $routeName = strtolower($value);
-                $roles     = [];
+                if (! is_string($value)) {
+                    throw new InvalidArgumentException(
+                        'A rule without a string key must be a route name, ' . get_debug_type($value) . ' given'
+                    );
+                }
+                $this->rules[strtolower($value)] = [];
             } else {
-                $routeName = strtolower($key);
-                $roles     = (array) $value;
+                $this->rules[strtolower($key)] = (array) $value;
             }
-
-            $this->rules[$routeName] = $roles;
         }
     }
 
-    public function getRoleService(): ?RoleServiceInterface
+    public function getRoleService(): RoleServiceInterface
     {
         return $this->roleService;
     }
@@ -67,41 +70,19 @@ class RouteGuard extends AbstractGuard
 
     public function isGranted(ServerRequestInterface $request): bool
     {
-        $routeResult = $request->getAttribute(RouteResult::class, false);
-        //if we do not have a matched route(probably 404 not found) let it go to the final handler
-        if (! $routeResult instanceof RouteResult || ! $routeResult->getMatchedRouteName()) {
+        // without a matched route (probably 404 not found), let the request go to the final handler
+        $routeName = $this->getMatchedRouteName($request);
+        if ($routeName === null) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        $matchedRouteName = strtolower($routeResult->getMatchedRouteName());
-        $allowedRoles     = null;
-
-        foreach (array_keys($this->rules) as $routeName) {
-            if (str_contains($routeName, '*')) {
-                $routePattern = sprintf(
-                    "/^%s$/",
-                    str_replace('*', '[\w\-]+', $routeName)
-                );
-
-                $routeMatched = preg_match($routePattern, $matchedRouteName);
-
-                if ($routeMatched === 1) {
-                    $allowedRoles = $this->rules[$routeName];
-                    break;
-                }
-            } else {
-                if ($routeName === $matchedRouteName) {
-                    $allowedRoles = $this->rules[$routeName];
-                    break;
-                }
-            }
-        }
-
-        if (null === $allowedRoles) {
+        $rule = $this->findRule($routeName);
+        if ($rule === null) {
             return $this->protectionPolicy === self::POLICY_ALLOW;
         }
 
-        if (in_array('*', $allowedRoles)) {
+        $allowedRoles = $this->rules[$rule];
+        if (in_array('*', $allowedRoles, true)) {
             return true;
         }
 

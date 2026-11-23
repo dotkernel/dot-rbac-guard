@@ -12,7 +12,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-use function is_bool;
+use function is_array;
+use function is_string;
 
 class ForbiddenHandlerFactory
 {
@@ -25,12 +26,16 @@ class ForbiddenHandlerFactory
     public function __invoke(ContainerInterface $container, string $requestedName): ForbiddenHandler
     {
         $config = $container->get('config');
-        $debug  = is_bool($config['debug']) && $config['debug'];
+        $config = is_array($config) ? $config : [];
+        $debug  = ($config['debug'] ?? false) === true;
 
         $authorizationService = $container->get(AuthorizationInterface::class);
         $moduleOptions        = $container->get(RbacGuardOptions::class);
 
-        $template = $config['mezzio']['error_handler']['template_403'] ?? ForbiddenHandler::TEMPLATE_DEFAULT;
+        $template = $config['mezzio']['error_handler']['template_403'] ?? null;
+        if (! is_string($template) || $template === '') {
+            $template = ForbiddenHandler::TEMPLATE_DEFAULT;
+        }
 
         $renderer = $container->has(TemplateRendererInterface::class)
             ? $container->get(TemplateRendererInterface::class)

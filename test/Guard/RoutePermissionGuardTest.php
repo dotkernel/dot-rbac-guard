@@ -4,185 +4,164 @@ declare(strict_types=1);
 
 namespace DotTest\Rbac\Guard\Guard;
 
-use Dot\Authorization\AuthorizationInterface;
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
+use Dot\Rbac\Guard\Exception\RuntimeException;
+use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Guard\RoutePermissionGuard;
-use Laminas\Diactoros\ServerRequest;
-use Mezzio\Router\RouteResult;
+use DotTest\Rbac\Guard\Fixture\AuthorizationService;
+use DotTest\Rbac\Guard\Fixture\Requests;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RoutePermissionGuardTest extends TestCase
 {
-    protected RoutePermissionGuard $subject;
+    /**
+     * @param array<array-key, mixed> $rules
+     */
+    private function guard(
+        array $rules,
+        string $policy = GuardInterface::POLICY_ALLOW,
+        ?AuthorizationService $authorization = null
+    ): RoutePermissionGuard {
+        return new RoutePermissionGuard([
+            'authorization_service' => $authorization ?? new AuthorizationService(['authenticated', 'premium']),
+            'protection_policy'     => $policy,
+            'rules'                 => $rules,
+        ]);
+    }
 
-    protected AuthorizationInterface $mockAuthorizationInterface;
-
-    protected array $rules = [
-        'actions' => [
-            'avatar',
-            'details',
-            'changePassword',
-            'deleteAccount',
-            'index',
-        ],
-        'test'    => ['*'],
-    ];
-
-    public function setUp(): void
+    public function testConstructorRequiresAuthorizationService(): void
     {
-        $this->mockAuthorizationInterface = new class implements AuthorizationInterface {
-            public function isGranted(string $permission, array $roles = [], mixed $context = null): bool
-            {
-                return true;
-            }
-        };
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Authorization service is required by this guard and was not set');
 
-        $this->subject = new RoutePermissionGuard(
-            [
-                'authorization_service' => $this->mockAuthorizationInterface,
-            ]
-        );
+        new RoutePermissionGuard(null);
     }
 
     public function testSetRules(): void
     {
-        $this->subject->setRules($this->rules);
-        $this->assertIsArray($this->subject->getRules());
+        $guard = $this->guard(['Premium' => 'premium', 'Open']);
+
+        $this->assertSame(['premium' => ['premium'], 'open' => []], $guard->getRules());
+        $this->assertSame(RoutePermissionGuard::PRIORITY, $guard->getPriority());
     }
 
-    public function testIsNotGrantedProtectionPolicy(): void
+    public function testSetRulesRejectsNonStringRouteName(): void
     {
-        $request = new ServerRequest();
-        $result  = $this->subject->isGranted($request);
-        $this->assertFalse($result);
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->guard([['premium']]);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function testIsNotGrantedNullAllowedRoles(): void
+    public function testAuthorizationServiceAccessors(): void
     {
-        $request     = $this->createMock(ServerRequest::class);
-        $routeResult = $this->createMock(RouteResult::class);
+        $guard         = $this->guard([]);
+        $authorization = new AuthorizationService();
+        $guard->setAuthorizationService($authorization);
 
-        $request->expects($this->once())
-            ->method('getAttribute')
-            ->with(RouteResult::class)
-            ->willReturn($routeResult);
-        $routeResult->expects($this->atLeastOnce())
-            ->method('getMatchedRouteName')
-            ->willReturn('testRoute');
-
-        $result = $this->subject->isGranted($request);
-        $this->assertFalse($result);
+        $this->assertSame($authorization, $guard->getAuthorizationService());
     }
 
     /**
-     * @throws Exception
+     * @return array<string, array{array<array-key, mixed>, string, ServerRequestInterface, bool}>
      */
-    public function testIsGrantedEverything(): void
+    public static function isGrantedProvider(): array
     {
-        $request     = $this->createMock(ServerRequest::class);
-        $routeResult = $this->createMock(RouteResult::class);
+        $or = ['permissions' => ['admin', 'premium'], 'condition' => GuardInterface::CONDITION_OR];
 
-        $request->expects($this->once())
-            ->method('getAttribute')
-            ->with(RouteResult::class)
-            ->willReturn($routeResult);
-        $routeResult->expects($this->atLeastOnce())
-            ->method('getMatchedRouteName')
-            ->willReturn('test');
-
-        $this->subject->setRules($this->rules);
-        $result = $this->subject->isGranted($request);
-        $this->assertTrue($result);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testIsGranted(): void
-    {
-        $request     = $this->createMock(ServerRequest::class);
-        $routeResult = $this->createMock(RouteResult::class);
-
-        $request->expects($this->once())
-            ->method('getAttribute')
-            ->with(RouteResult::class)
-            ->willReturn($routeResult);
-        $routeResult->expects($this->atLeastOnce())
-            ->method('getMatchedRouteName')
-            ->willReturn('actions');
-
-        $this->subject->setRules($this->rules);
-        $result = $this->subject->isGranted($request);
-        $this->assertTrue($result);
-    }
-
-    public static function rulesProvider(): array
-    {
         return [
-            'valid-placeholder'             => [
-                [
-                    'account-*'    => [
-                        'view',
-                        'create',
-                    ],
-                    'account-view' => [],
-                ],
-                'account-view',
+            'no route result, allow'     => [[], 'allow', Requests::withoutRouteResult(), true],
+            'no route result, deny'      => [[], 'deny', Requests::withoutRouteResult(), false],
+            'no rule, allow'             => [['premium' => ['premium']], 'allow', Requests::forRoute('other'), true],
+            'no rule, deny'              => [['premium' => ['premium']], 'deny', Requests::forRoute('other'), false],
+            'everyone'                   => [['home' => ['*']], 'deny', Requests::forRoute('home'), true],
+            'all permissions granted'    => [
+                ['page' => ['authenticated', 'premium']],
+                'deny',
+                Requests::forRoute('page'),
                 true,
             ],
-            'invalid-placeholder'           => [
-                [
-                    'account-*' => [
-                        'view',
-                        'create',
-                    ],
-                ],
-                'different-account-route',
+            'one permission missing'     => [
+                ['page' => ['authenticated', 'admin']],
+                'allow',
+                Requests::forRoute('page'),
                 false,
             ],
-            'valid-composite-placeholder'   => [
-                [
-                    'user-*-form' => [
-                        'user-create-form',
-                        'user-edit-form',
-                    ],
-                ],
-                'user-create-form',
+            'or condition, one granted'  => [['page' => $or], 'deny', Requests::forRoute('page'), true],
+            'or condition, none granted' => [
+                ['page' => ['permissions' => ['admin'], 'condition' => 'OR']],
+                'allow',
+                Requests::forRoute('page'),
+                false,
+            ],
+            'nested and condition'       => [
+                ['page' => ['permissions' => ['premium']]],
+                'deny',
+                Requests::forRoute('page'),
                 true,
             ],
-            'invalid-composite-placeholder' => [
-                [
-                    'user-*-form' => [
-                        'user-create-form',
-                        'user-edit-form',
-                    ],
-                ],
-                'user-create-avatar',
+            'empty rule, deny'           => [['secret'], 'deny', Requests::forRoute('secret'), false],
+            'empty rule, allow'          => [['secret'], 'allow', Requests::forRoute('secret'), true],
+            'empty nested rule, deny'    => [
+                ['secret' => ['permissions' => [], 'condition' => 'OR']],
+                'deny',
+                Requests::forRoute('secret'),
                 false,
+            ],
+            'mixed case route name'      => [['Admin' => ['admin']], 'allow', Requests::forRoute('ADMIN'), false],
+            'placeholder'                => [
+                ['account-*' => ['premium']],
+                'deny',
+                Requests::forRoute('account-view'),
+                true,
+            ],
+            'placeholder, no match'      => [
+                ['account-*' => ['premium']],
+                'deny',
+                Requests::forRoute('different-account-route'),
+                false,
+            ],
+            'slash in rule'              => [
+                ['/user/*' => ['admin']],
+                'allow',
+                Requests::forRoute('/user/list'),
+                false,
+            ],
+            'first rule wins'            => [
+                ['admin-edit' => ['premium'], 'admin-*' => ['admin']],
+                'deny',
+                Requests::forRoute('admin-edit'),
+                true,
             ],
         ];
     }
 
-    #[DataProvider('rulesProvider')]
-    public function testPlaceholderRoutes(array $rules, string $matchedRoute, bool $isValid): void
+    /**
+     * @param array<array-key, mixed> $rules
+     */
+    #[DataProvider('isGrantedProvider')]
+    public function testIsGranted(array $rules, string $policy, ServerRequestInterface $request, bool $expected): void
     {
-        $request     = $this->createMock(ServerRequest::class);
-        $routeResult = $this->createMock(RouteResult::class);
+        $this->assertSame($expected, $this->guard($rules, $policy)->isGranted($request));
+    }
 
-        $this->subject->setRules($rules);
+    public function testAndConditionStopsAtFirstMissingPermission(): void
+    {
+        $authorization = new AuthorizationService(['premium']);
+        $guard         = $this->guard(['page' => ['admin', 'premium']], 'allow', $authorization);
 
-        $request->expects($this->once())
-            ->method('getAttribute')
-            ->with(RouteResult::class)
-            ->willReturn($routeResult);
-        $routeResult->expects($this->atLeastOnce())
-            ->method('getMatchedRouteName')
-            ->willReturn($matchedRoute);
+        $this->assertFalse($guard->isGranted(Requests::forRoute('page')));
+        $this->assertSame(['admin'], $authorization->checked);
+    }
 
-        $this->assertEquals($isValid, $this->subject->isGranted($request));
+    public function testInvalidConditionThrows(): void
+    {
+        $guard = $this->guard(['page' => ['permissions' => ['premium'], 'condition' => 'XOR']]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Condition must be either "AND" or "OR", string given');
+
+        $guard->isGranted(Requests::forRoute('page'));
     }
 }

@@ -4,44 +4,83 @@ declare(strict_types=1);
 
 namespace DotTest\Rbac\Guard\Provider;
 
-use Dot\Rbac\Guard\Factory\GuardsProviderPluginManagerFactory;
+use Dot\Authorization\AuthorizationInterface;
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
+use Dot\Rbac\Guard\Exception\InvalidPluginException;
+use Dot\Rbac\Guard\Exception\PluginNotFoundException;
+use Dot\Rbac\Guard\Guard\GuardPluginManager;
+use Dot\Rbac\Guard\Options\RbacGuardOptions;
+use Dot\Rbac\Guard\Provider\ArrayGuardsProvider;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
-use Laminas\ServiceManager\Exception\InvalidServiceException;
-use PHPUnit\Framework\MockObject\Exception;
+use DotTest\Rbac\Guard\Fixture\AuthorizationService;
+use DotTest\Rbac\Guard\Fixture\InMemoryContainer;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-
-use function sprintf;
+use stdClass;
 
 class GuardsProviderPluginManagerTest extends TestCase
 {
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws Exception
-     * @throws NotFoundExceptionInterface
-     */
-    public function testWillNotCreateInvalidPlugin(): void
+    private InMemoryContainer $container;
+
+    protected function setUp(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
+        $this->container = new InMemoryContainer([
+            AuthorizationInterface::class => new AuthorizationService(),
+            RbacGuardOptions::class       => new RbacGuardOptions([]),
+        ]);
+        $this->container->set(GuardPluginManager::class, new GuardPluginManager($this->container));
+    }
 
-        $container->expects($this->once())
-            ->method('get')
-            ->with('config')
-            ->willReturn(['dot_authorization' => ['guards_provider_manager' => []]]);
+    public function testBuildsArrayGuardsProvider(): void
+    {
+        $manager = new GuardsProviderPluginManager($this->container);
 
-        $this->expectException(InvalidServiceException::class);
-        $this->expectExceptionMessage(
-            sprintf(
-                '%s can only create instances of %s; string is invalid',
-                GuardsProviderPluginManager::class,
-                GuardsProviderInterface::class
-            )
-        );
+        foreach (['ArrayGuards', 'arrayGuardsProvider', ArrayGuardsProvider::class] as $name) {
+            $this->assertTrue($manager->has($name));
+            $this->assertInstanceOf(ArrayGuardsProvider::class, $manager->build($name, ['guards' => []]));
+        }
+        $this->assertSame($manager->get('ArrayGuards'), $manager->get(ArrayGuardsProvider::class));
+    }
 
-        $service = (new GuardsProviderPluginManagerFactory())($container);
-        $service->validate('invalid');
+    public function testCustomProviderFromConfig(): void
+    {
+        $provider = new class implements GuardsProviderInterface {
+            public function getGuards(): array
+            {
+                return [];
+            }
+        };
+        $manager  = new GuardsProviderPluginManager($this->container, [
+            'factories' => ['custom' => static fn (): GuardsProviderInterface => $provider],
+        ]);
+
+        $this->assertSame($provider, $manager->build('custom'));
+        $this->assertSame($provider, $manager->get('custom'));
+    }
+
+    public function testUnknownProviderThrows(): void
+    {
+        $this->expectException(PluginNotFoundException::class);
+        $this->expectExceptionMessage('The guards provider "unknown" is not registered.');
+
+        (new GuardsProviderPluginManager($this->container))->get('unknown');
+    }
+
+    public function testFactoryThatReturnsWrongTypeThrows(): void
+    {
+        $manager = new GuardsProviderPluginManager($this->container, [
+            'factories' => ['invalid' => static fn (): stdClass => new stdClass()],
+        ]);
+
+        $this->expectException(InvalidPluginException::class);
+
+        $manager->get('invalid');
+    }
+
+    public function testUnsupportedConfigKeyThrows(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new GuardsProviderPluginManager($this->container, ['delegators' => []]);
     }
 }

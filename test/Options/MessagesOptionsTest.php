@@ -9,22 +9,18 @@ use PHPUnit\Framework\TestCase;
 
 class MessagesOptionsTest extends TestCase
 {
-    protected MessagesOptions $subject;
-
-    public function setUp(): void
+    public function testSetMessagesReplacesByKey(): void
     {
-        $this->subject = new MessagesOptions();
+        $options = new MessagesOptions();
+        $options->setMessages([MessagesOptions::UNAUTHORIZED => 'Sign in']);
+
+        $this->assertCount(2, $options->getMessages());
+        $this->assertSame('Sign in', $options->getMessage(MessagesOptions::UNAUTHORIZED));
+        $this->assertNotSame('', $options->getMessage(MessagesOptions::FORBIDDEN));
     }
 
-    public function testGetMessages(): void
+    public function testUnknownKeyReturnsEmptyString(): void
     {
-        $this->subject->setMessages(['testMessage']);
-        $this->assertCount(2, $this->subject->getMessages());
-    }
-
-    public function testGetMessage(): void
-    {
-        $this->assertEmpty($this->subject->getMessage(1000));
-        $this->assertIsString($this->subject->getMessage(MessagesOptions::UNAUTHORIZED));
+        $this->assertSame('', (new MessagesOptions())->getMessage(1000));
     }
 }

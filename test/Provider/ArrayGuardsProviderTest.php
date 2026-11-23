@@ -4,62 +4,70 @@ declare(strict_types=1);
 
 namespace DotTest\Rbac\Guard\Provider;
 
+use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Guard\Factory;
-use Dot\Rbac\Guard\Guard\GuardInterface;
+use Dot\Rbac\Guard\Guard\GuardPluginManager;
 use Dot\Rbac\Guard\Provider\ArrayGuardsProvider;
-use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
+use DotTest\Rbac\Guard\Fixture\Guard;
+use DotTest\Rbac\Guard\Fixture\InMemoryContainer;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 class ArrayGuardsProviderTest extends TestCase
 {
-    protected ArrayGuardsProvider $subject;
+    private int $builds = 0;
 
-    protected Factory|MockObject $mockFactory;
-
-    /**
-     * @throws Exception
-     */
-    public function setUp(): void
+    private function factory(): Factory
     {
-        $this->mockFactory = $this->createMock(Factory::class);
-
-        $this->subject = new ArrayGuardsProvider(['guard_factory' => $this->mockFactory]);
-    }
-
-    public function testGetGuardsEmptyGuards(): void
-    {
-        $result = $this->subject->getGuards();
-
-        $this->assertEmpty($result);
-    }
-
-    public function testGetGuards(): void
-    {
-        $this->mockFactory->expects($this->once())
-        ->method('create')
-        ->with(['test'])
-        ->willReturn(new class implements GuardInterface {
-            public function isGranted(ServerRequestInterface $request): bool
-            {
-                return true;
-            }
-
-            public function getPriority(): int
-            {
-                return 1;
-            }
+        $manager = new GuardPluginManager(new InMemoryContainer());
+        $manager->setFactory('low', function (): Guard {
+            $this->builds++;
+            return new Guard(true, 1);
         });
-        $this->subject->setGuardsConfig([['test']]);
+        $manager->setFactory('high', function (): Guard {
+            $this->builds++;
+            return new Guard(false, 100);
+        });
 
-        $this->assertCount(1, $this->subject->getGuards());
+        return new Factory(new InMemoryContainer(), $manager);
     }
 
-    public function testGetGuardsConfig(): void
+    public function testConstructorRequiresGuardFactory(): void
     {
-        $this->subject->setGuardsConfig(['test' => 'config']);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Guard factory is required and was not set');
 
-        $this->assertCount(1, $this->subject->getGuardsConfig());
+        new ArrayGuardsProvider([]);
+    }
+
+    public function testGetGuardsEmptyConfig(): void
+    {
+        $provider = new ArrayGuardsProvider(['guard_factory' => $this->factory()]);
+
+        $this->assertSame([], $provider->getGuards());
+        $this->assertSame([], $provider->getGuardsConfig());
+    }
+
+    public function testGetGuardsSortsByPriorityAndCaches(): void
+    {
+        $config   = [['type' => 'low'], ['type' => 'high']];
+        $factory  = $this->factory();
+        $provider = new ArrayGuardsProvider(['guard_factory' => $factory, 'guards' => $config]);
+
+        $guards = $provider->getGuards();
+
+        $this->assertSame([100, 1], [$guards[0]->getPriority(), $guards[1]->getPriority()]);
+        $this->assertSame($guards, $provider->getGuards());
+        $this->assertSame(2, $this->builds);
+        $this->assertSame($config, $provider->getGuardsConfig());
+        $this->assertSame($factory, $provider->getGuardFactory());
+    }
+
+    public function testInvalidGuardConfigThrows(): void
+    {
+        $provider = new ArrayGuardsProvider(['guard_factory' => $this->factory(), 'guards' => ['low']]);
+
+        $this->expectException(RuntimeException::class);
+
+        $provider->getGuards();
     }
 }

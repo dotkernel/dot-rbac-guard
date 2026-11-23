@@ -18,6 +18,9 @@ use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 
 class ConfigProvider
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function __invoke(): array
     {
         return [

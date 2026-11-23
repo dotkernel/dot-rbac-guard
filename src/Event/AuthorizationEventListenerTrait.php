@@ -30,14 +30,23 @@ trait AuthorizationEventListenerTrait
         );
     }
 
+    /**
+     * @param AuthorizationEvent<*, *> $e
+     */
     public function onBeforeAuthorization(AuthorizationEvent $e): void
     {
     }
 
+    /**
+     * @param AuthorizationEvent<*, *> $e
+     */
     public function onAfterAuthorization(AuthorizationEvent $e): void
     {
     }
 
+    /**
+     * @param AuthorizationEvent<*, *> $e
+     */
     public function onForbidden(AuthorizationEvent $e): void
     {
     }

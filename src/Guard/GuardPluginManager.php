@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Guard;
 
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
+use Dot\Rbac\Guard\Exception\InvalidPluginException;
+use Dot\Rbac\Guard\Exception\PluginNotFoundException;
 use Dot\Rbac\Guard\Factory\GuardFactory;
 use Dot\Rbac\Guard\Factory\PermissionGuardFactory;
-use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\ServiceManager\Exception\InvalidServiceException;
-
-use function gettype;
-use function is_object;
-use function sprintf;
+use Dot\Rbac\Guard\PluginManagerTrait;
+use Psr\Container\ContainerInterface;
 
 /**
- * @template T
- * @extends AbstractPluginManager<T>
+ * A PSR-11 container for guards.
+ *
+ * It supports the "factories" and "aliases" keys of the "dot_authorization.guard_manager" config.
  */
-class GuardPluginManager extends AbstractPluginManager
+class GuardPluginManager implements ContainerInterface
 {
-    protected string $instanceOf = GuardInterface::class;
+    use PluginManagerTrait;
 
-    protected array $factories = [
+    private const FACTORIES = [
         RouteGuard::class                => GuardFactory::class,
         RoutePermissionGuard::class      => PermissionGuardFactory::class,
         ControllerGuard::class           => GuardFactory::class,
         ControllerPermissionGuard::class => PermissionGuardFactory::class,
     ];
 
-    protected array $aliases = [
+    private const ALIASES = [
         'routeguard'                => RouteGuard::class,
         'routeGuard'                => RouteGuard::class,
         'RouteGuard'                => RouteGuard::class,
@@ -53,15 +53,56 @@ class GuardPluginManager extends AbstractPluginManager
         'ControllerPermission'      => ControllerPermissionGuard::class,
     ];
 
-    public function validate(mixed $instance): void
+    /**
+     * @param array<array-key, mixed> $config
+     * @throws InvalidArgumentException
+     * @throws InvalidPluginException
+     */
+    public function __construct(ContainerInterface $container, array $config = [])
     {
-        if (! $instance instanceof $this->instanceOf) {
-            throw new InvalidServiceException(sprintf(
-                '%s can only create instances of %s; %s is invalid',
-                static::class,
-                $this->instanceOf,
-                is_object($instance) ? $instance::class : gettype($instance)
-            ));
+        $this->initialize($container, self::FACTORIES, self::ALIASES, $config);
+    }
+
+    /**
+     * Return the shared instance of a guard. Create it on the first call.
+     *
+     * @throws PluginNotFoundException
+     * @throws InvalidPluginException
+     */
+    public function get(string $id): GuardInterface
+    {
+        $guard = $this->getPlugin($id);
+        if (! $guard instanceof GuardInterface) {
+            throw InvalidPluginException::fromInstance($this->getPluginLabel(), $id, GuardInterface::class, $guard);
         }
+
+        return $guard;
+    }
+
+    /**
+     * Create a new instance of a guard on each call.
+     *
+     * @param array<array-key, mixed>|null $options
+     * @throws PluginNotFoundException
+     * @throws InvalidPluginException
+     */
+    public function build(string $name, ?array $options = null): GuardInterface
+    {
+        $guard = $this->buildPlugin($name, $options);
+        if (! $guard instanceof GuardInterface) {
+            throw InvalidPluginException::fromInstance($this->getPluginLabel(), $name, GuardInterface::class, $guard);
+        }
+
+        return $guard;
+    }
+
+    protected function getPluginLabel(): string
+    {
+        return 'guard';
+    }
+
+    protected function getPluginInterface(): string
+    {
+        return GuardInterface::class;
     }
 }

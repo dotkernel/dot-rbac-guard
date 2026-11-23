@@ -1,177 +1,55 @@
 # dot-rbac-guard
 
-Defines authorization guards that authorize users to access certain parts of an application based on various criteria.
-If the authorization service can be used to check authorization on a narrow level, the guards are meant to work as gateways to bigger parts of an application.
-Usually, you'll want to use both methods in an application for increased security.
+Defines authorization guards that authorize users to access parts of an application, based on routes, controller actions, roles and permissions.
+The authorization service of `dotkernel/dot-rbac` checks authorization at a narrow level.
+The guards work as gateways to larger parts of an application.
+For better security, use both in an application.
+The package works with any PSR-11 container.
 
 ## Documentation
 
 Documentation is available at: https://docs.dotkernel.org/dot-rbac-guard/.
 
+## Versions
+
+| Version | Supported | PHP versions |
+| --- | --- | --- |
+| 5.x | Yes | 8.3, 8.4, 8.5, 8.6 |
+| 4.x | Yes | 8.2, 8.3, 8.4, 8.5 |
+| 3.x | No | 8.2, 8.3, 8.4, 8.5 |
+
+To upgrade from 4.x, read the "Upgrading" page of the version 5 documentation.
+
 ## Badges
 
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/dotkernel/dot-rbac-guard)
-![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/4.2.0)
+![PHP from Packagist (specify version)](https://img.shields.io/packagist/php-v/dotkernel/dot-rbac-guard/5.0.0)
 
 [![GitHub issues](https://img.shields.io/github/issues/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/issues)
 [![GitHub forks](https://img.shields.io/github/forks/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/network)
 [![GitHub stars](https://img.shields.io/github/stars/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/stargazers)
-[![GitHub license](https://img.shields.io/github/license/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/blob/4.0/LICENSE.md)
+[![GitHub license](https://img.shields.io/github/license/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/blob/5.0/LICENSE.md)
 
-[![Build Static](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml/badge.svg?branch=4.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml)
+[![Build Static](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml/badge.svg?branch=5.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml)
 [![codecov](https://codecov.io/gh/dotkernel/dot-rbac-guard/graph/badge.svg?token=HB718GSIKS)](https://codecov.io/gh/dotkernel/dot-rbac-guard)
-[![PHPStan](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml/badge.svg?branch=4.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml)
+[![PHPStan](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml/badge.svg?branch=5.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml)
 
 ## Installation
 
-Run the following command in your project's root directory:
+Run this command in the root directory of your project:
 
 ```shell
 composer require dotkernel/dot-rbac-guard
 ```
 
-Please note that this module is built around the authorization service defined in module dot-rbac.
-Running the above command will also install that package.
-You'll have to first configure dot-rbac before using this module.
+The guards use the authorization service of `dotkernel/dot-rbac`.
+Composer installs that package too.
+Configure `dot-rbac` before you use the guards.
 
-## Configuration
+## Usage
 
-As with many Dotkernel modules, we focus on the configuration-based approach of customizing the module for your needs.
+1. Add `Dot\Rbac\Guard\ConfigProvider` to your application configuration.
+2. Configure the guards in `config/autoload/authorization-guards.global.php`. The file `authorization-guards.global.php.dist` of this package is an example.
+3. Add `ForbiddenHandler` and `RbacGuardMiddleware` to the pipeline, between `RouteMiddleware` and `DispatchMiddleware`.
 
-After installing, merge the module's `ConfigProvider` with your application's config to make sure required dependencies and default module configuration are registered.
-Create a configuration file for this module in your 'config/autoload' folder.
-
-### authorization-guards.global.php
-
-```php
-return [
-    'dot_authorization' => [
-    
-        //define how it will treat non-matching guard rules, allow all by default
-        'protection_policy' => \Dot\Rbac\Guard\GuardInterface::POLICY_ALLOW,
-        
-        'event_listeners' => [
-            [
-                'type' => 'class or service name of the listener',
-                'priority' => 1,
-            ],
-        ],
-        
-        //define custom guards here
-        'guard_manager' => [],
-        
-        //register custom guards providers here
-        'guards_provider_manager' => [],
-        
-        //define which guard provider to use, along with its configuration
-        //the guard provider should know how to build a list of GuardInterfaces based on its configuration
-        'guards_provider' => [
-            'type' => 'ArrayGuards',
-            'options' => [
-                'guards' => [
-                    [
-                        'type' => 'Route',
-                        'options' => [
-                            'rules' => [
-                                'premium' => ['admin'],
-                                'login' => ['guest'],
-                                'logout' => ['admin', 'user', 'viewer'],
-                                'account' => ['admin', 'user'],
-                                'home' => ['*'],
-                            ]
-                        ]
-                    ],
-                    [
-                        'type' => 'RoutePermission',
-                        'options' => [
-                            'rules' => [
-                                'premium' => ['premium'],
-                                'account' => ['my-account'],
-                                'logout' => ['only-logged'],
-                            ]
-                        ]
-                    ],
-                    [
-                        'type' => 'Controller',
-                        'options' => [
-                            'rules' => [
-                                [
-                                   'route' => 'controller route name',
-                                   //list of actions to apply, or empty array for all actions
-                                   'actions' => [],
-                                   //by default, authorization pass if all permissions are present (AND)
-                                   //list of roles to allow
-                                   'roles' => [],
-                               ],
-                            ]
-                        ]
-                    ],
-                    [
-                        'type' => 'ControllerPermission',
-                        'options' => [
-                            'rules' => [
-                                [
-                                    'route' => 'controller route name',
-                                    //list of actions to apply, or empty array for all actions
-                                    'actions' => [],
-                                    //by default, authorization pass if all permissions are present (AND)
-                                    //list of permissions to allow
-                                    'permissions' => [],
-                                ],
-                                [
-                                    'route' => 'controller route name',
-                                    //list of actions to apply, or empty array for all actions
-                                    'actions' => [],
-                                    'permissions' => [
-                                        //permission can be defined in this way too, for all permission type guards
-                                        //list of permissions
-                                        'permissions' => [],
-                                        'condition' => \Dot\Rbac\Guard\GuardInterface::CONDITION_OR,
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-        ],
-
-        //overwrite default messages
-        'messages_options' => [
-            'messages' => [
-                //MessagesOptions::UNAUTHORIZED => 'You must sign in first to access the requested content',
-                //MessagesOptions::FORBIDDEN => 'You don\'t have enough permissions to access the requested content',
-            ]
-        ],
-    ],
-];
-```
-
-## Register the RbacGuardMiddleware in the pipe
-
-The last step to use this package is to register the middleware.
-This middleware triggers the authorization event.
-You MUST insert this middleware between the routing middleware and the dispatch middleware of the application, because the guards need the `RouteResult` in order to get the matched route and params.
-
-### middleware-pipeline.global.php
-
-```php
-//...
-
-'routing' => [
-    'middleware' => [
-        ApplicationFactory::ROUTING_MIDDLEWARE,
-
-        //...
-
-        \Dot\Rbac\Guard\Middleware\RbacGuardMiddleware::class,
-
-        //...
-
-        ApplicationFactory::DISPATCH_MIDDLEWARE,
-    ],
-    'priority' => 1,
-],
-
-//...
-```
+The documentation explains each step, the guards, the events and the configuration keys.

@@ -9,6 +9,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+use function is_array;
+
 class GuardsProviderPluginManagerFactory
 {
     /**
@@ -17,9 +19,8 @@ class GuardsProviderPluginManagerFactory
      */
     public function __invoke(ContainerInterface $container): GuardsProviderPluginManager
     {
-        return new GuardsProviderPluginManager(
-            $container,
-            $container->get('config')['dot_authorization']['guards_provider_manager']
-        );
+        $config = $container->get('config')['dot_authorization']['guards_provider_manager'] ?? [];
+
+        return new GuardsProviderPluginManager($container, is_array($config) ? $config : []);
     }
 }

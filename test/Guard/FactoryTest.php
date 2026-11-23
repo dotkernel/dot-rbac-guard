@@ -4,72 +4,65 @@ declare(strict_types=1);
 
 namespace DotTest\Rbac\Guard\Guard;
 
+use Dot\Rbac\Guard\Exception\RuntimeException;
 use Dot\Rbac\Guard\Guard\Factory;
-use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Guard\GuardPluginManager;
-use PHPUnit\Framework\MockObject\Exception;
+use DotTest\Rbac\Guard\Fixture\Guard;
+use DotTest\Rbac\Guard\Fixture\InMemoryContainer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 class FactoryTest extends TestCase
 {
     /**
-     * @throws ContainerExceptionInterface
-     * @throws Exception
+     * @return array<string, array{array<array-key, mixed>}>
      */
-    public function testCreateRuntimeException(): void
+    public static function invalidSpecsProvider(): array
     {
-        $container = $this->createMock(ContainerInterface::class);
-        $subject   = new Factory($container);
+        return [
+            'no type'         => [[]],
+            'empty type'      => [['type' => '']],
+            'non-string type' => [['type' => 1]],
+        ];
+    }
 
+    /**
+     * @param array<array-key, mixed> $specs
+     */
+    #[DataProvider('invalidSpecsProvider')]
+    public function testCreateWithoutTypeThrows(array $specs): void
+    {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Guard type was not provided');
-        $subject->create([]);
+
+        (new Factory(new InMemoryContainer()))->create($specs);
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws Exception
-     */
-    public function testCreate(): void
+    /** @var list<array<array-key, mixed>|null> */
+    private array $received = [];
+
+    public function testCreatePassesOptions(): void
     {
-        $container           = $this->createMock(ContainerInterface::class);
-        $guardsPluginManager = $this->createMock(GuardPluginManager::class);
+        $manager = new GuardPluginManager(new InMemoryContainer());
+        $manager->setFactory('custom', function ($container, $name, ?array $options): Guard {
+            $this->received[] = $options;
+            return new Guard(true);
+        });
 
-        $guardsPluginManager->expects($this->once())
-            ->method('build')
-            ->with('testType', null)
-            ->willReturn(new class implements GuardInterface {
-                public function isGranted(ServerRequestInterface $request): bool
-                {
-                    return true;
-                }
+        $factory = new Factory(new InMemoryContainer(), $manager);
+        $factory->create(['type' => 'custom', 'options' => ['rules' => []]]);
+        $factory->create(['type' => 'custom', 'options' => 'invalid']);
 
-                public function getPriority(): int
-                {
-                    return 1;
-                }
-            });
-        $subject = new Factory($container, $guardsPluginManager);
-
-        $result = $subject->create(['type' => 'testType']);
-        $this->assertContainsOnlyInstancesOf(GuardInterface::class, [$result]);
+        $this->assertSame([['rules' => []], null], $this->received);
     }
 
-    /**
-     * @throws Exception
-     */
     public function testGetGuardPluginManager(): void
     {
-        $container           = $this->createMock(ContainerInterface::class);
-        $guardsPluginManager = $this->createMock(GuardPluginManager::class);
+        $manager = new GuardPluginManager(new InMemoryContainer());
 
-        $subject = new Factory($container, $guardsPluginManager);
+        $this->assertSame($manager, (new Factory(new InMemoryContainer(), $manager))->getGuardPluginManager());
 
-        $result = $subject->getGuardPluginManager();
-        $this->assertContainsOnlyInstancesOf(GuardPluginManager::class, [$result]);
+        $factory = new Factory(new InMemoryContainer());
+        $this->assertSame($factory->getGuardPluginManager(), $factory->getGuardPluginManager());
     }
 }

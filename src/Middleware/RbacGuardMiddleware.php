@@ -51,6 +51,7 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
     /**
      * @throws ForbiddenException
      * @throws UnauthorizedException
+     * @throws RuntimeException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -62,24 +63,20 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
             return $event;
         }
 
-        $request     = $event->getParam('request');
-        $routeResult = $request->getAttribute(RouteResult::class, null);
+        $request     = $this->getRequestParam($event);
+        $routeResult = $request->getAttribute(RouteResult::class);
         if ($routeResult instanceof RouteResult) {
-            $guards = $this->guardsProvider->getGuards();
-
-            //iterate over guards, which are sorted by priority
-            //break on the first one that does not grant access
-
+            // the guards are sorted by priority
+            // stop at the first guard that does not agree with the protection policy
             $isGranted = $this->options->getProtectionPolicy() === GuardInterface::POLICY_ALLOW;
-            foreach ($guards as $guard) {
+            foreach ($this->guardsProvider->getGuards() as $guard) {
                 if (! $guard instanceof GuardInterface) {
-                    throw new RuntimeException("Guard is not an instance of " . GuardInterface::class);
+                    throw new RuntimeException('Guard is not an instance of ' . GuardInterface::class);
                 }
 
-                //according to the policy, we whitelist or blacklist matched routes
-                $r = $guard->isGranted($request);
-                if ($r !== $isGranted) {
-                    $isGranted = $r;
+                $result = $guard->isGranted($request);
+                if ($result !== $isGranted) {
+                    $isGranted = $result;
                     break;
                 }
             }
@@ -88,24 +85,20 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
             $event->setParam('authorized', true);
         }
 
-        $params = $event->getParams();
-        $event  = $this->dispatchEvent(AuthorizationEvent::EVENT_AFTER_AUTHORIZATION, $params);
+        $event = $this->dispatchEvent(AuthorizationEvent::EVENT_AFTER_AUTHORIZATION, $event->getParams());
         if ($event instanceof ResponseInterface) {
             return $event;
         }
 
-        $request   = $event->getParam('request');
-        $isGranted = $event->getParam('authorized', true);
-        if (! $isGranted) {
-            if ($this->authentication) {
-                //we throw a 401 if is guest, and let unauthorized exception handlers process it
-                //403 otherwise, resulting in a final handler or redirect, whatever you register as the error handler
-                if (! $this->authentication->hasIdentity()) {
-                    throw new UnauthorizedException(
-                        $this->options->getMessagesOptions()->getMessage(MessagesOptions::UNAUTHORIZED),
-                        401
-                    );
-                }
+        $request = $this->getRequestParam($event);
+        if (! $event->getParam('authorized', true)) {
+            // a guest gets a 401, so that the unauthorized exception handlers can process it
+            // an identity gets a 403, which goes to the error handler that you register
+            if ($this->authentication !== null && ! $this->authentication->hasIdentity()) {
+                throw new UnauthorizedException(
+                    $this->options->getMessagesOptions()->getMessage(MessagesOptions::UNAUTHORIZED),
+                    401
+                );
             }
 
             throw new ForbiddenException(
@@ -115,5 +108,22 @@ class RbacGuardMiddleware implements MiddlewareInterface, AuthorizationEventList
         }
 
         return $handler->handle($request);
+    }
+
+    /**
+     * @param AuthorizationEvent<object|string, array<string, mixed>> $event
+     * @throws RuntimeException
+     */
+    private function getRequestParam(AuthorizationEvent $event): ServerRequestInterface
+    {
+        $request = $event->getParam('request');
+        if (! $request instanceof ServerRequestInterface) {
+            throw new RuntimeException(
+                'The "request" parameter of the authorization event must be an instance of '
+                . ServerRequestInterface::class
+            );
+        }
+
+        return $request;
     }
 }

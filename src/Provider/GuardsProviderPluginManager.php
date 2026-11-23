@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Dot\Rbac\Guard\Provider;
 
+use Dot\Rbac\Guard\Exception\InvalidArgumentException;
+use Dot\Rbac\Guard\Exception\InvalidPluginException;
+use Dot\Rbac\Guard\Exception\PluginNotFoundException;
 use Dot\Rbac\Guard\Factory\GuardsProviderFactory;
-use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\ServiceManager\Exception\InvalidServiceException;
-
-use function gettype;
-use function is_object;
-use function sprintf;
+use Dot\Rbac\Guard\PluginManagerTrait;
+use Psr\Container\ContainerInterface;
 
 /**
- * @template T
- * @extends AbstractPluginManager<T>
+ * A PSR-11 container for guards providers.
+ *
+ * It supports the "factories" and "aliases" keys of the "dot_authorization.guards_provider_manager" config.
  */
-class GuardsProviderPluginManager extends AbstractPluginManager
+class GuardsProviderPluginManager implements ContainerInterface
 {
-    protected string $instanceOf = GuardsProviderInterface::class;
+    use PluginManagerTrait;
 
-    protected array $factories = [
+    private const FACTORIES = [
         ArrayGuardsProvider::class => GuardsProviderFactory::class,
     ];
 
-    protected array $aliases = [
+    private const ALIASES = [
         'arrayguardsprovider' => ArrayGuardsProvider::class,
         'arrayGuardsProvider' => ArrayGuardsProvider::class,
         'ArrayGuardsProvider' => ArrayGuardsProvider::class,
@@ -33,15 +33,66 @@ class GuardsProviderPluginManager extends AbstractPluginManager
         'ArrayGuards'         => ArrayGuardsProvider::class,
     ];
 
-    public function validate(mixed $instance): void
+    /**
+     * @param array<array-key, mixed> $config
+     * @throws InvalidArgumentException
+     * @throws InvalidPluginException
+     */
+    public function __construct(ContainerInterface $container, array $config = [])
     {
-        if (! $instance instanceof $this->instanceOf) {
-            throw new InvalidServiceException(sprintf(
-                '%s can only create instances of %s; %s is invalid',
-                static::class,
-                $this->instanceOf,
-                is_object($instance) ? $instance::class : gettype($instance)
-            ));
+        $this->initialize($container, self::FACTORIES, self::ALIASES, $config);
+    }
+
+    /**
+     * Return the shared instance of a guards provider. Create it on the first call.
+     *
+     * @throws PluginNotFoundException
+     * @throws InvalidPluginException
+     */
+    public function get(string $id): GuardsProviderInterface
+    {
+        $provider = $this->getPlugin($id);
+        if (! $provider instanceof GuardsProviderInterface) {
+            throw InvalidPluginException::fromInstance(
+                $this->getPluginLabel(),
+                $id,
+                GuardsProviderInterface::class,
+                $provider
+            );
         }
+
+        return $provider;
+    }
+
+    /**
+     * Create a new instance of a guards provider on each call.
+     *
+     * @param array<array-key, mixed>|null $options
+     * @throws PluginNotFoundException
+     * @throws InvalidPluginException
+     */
+    public function build(string $name, ?array $options = null): GuardsProviderInterface
+    {
+        $provider = $this->buildPlugin($name, $options);
+        if (! $provider instanceof GuardsProviderInterface) {
+            throw InvalidPluginException::fromInstance(
+                $this->getPluginLabel(),
+                $name,
+                GuardsProviderInterface::class,
+                $provider
+            );
+        }
+
+        return $provider;
+    }
+
+    protected function getPluginLabel(): string
+    {
+        return 'guards provider';
+    }
+
+    protected function getPluginInterface(): string
+    {
+        return GuardsProviderInterface::class;
     }
 }

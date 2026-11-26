@@ -9,21 +9,21 @@ use Dot\Rbac\Guard\Provider\Factory;
 use Dot\Rbac\Guard\Provider\GuardsProviderInterface;
 use Dot\Rbac\Guard\Provider\GuardsProviderPluginManager;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 class FactoryTest extends TestCase
 {
-    protected ContainerInterface|MockObject $container;
+    protected ContainerInterface|Stub $container;
 
     /**
      * @throws Exception
      */
     public function setUp(): void
     {
-        $this->container = $this->createMock(ContainerInterface::class);
+        $this->container = $this->createStub(ContainerInterface::class);
     }
 
     /**

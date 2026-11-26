@@ -7,6 +7,7 @@ namespace DotTest\Rbac\Guard\Provider;
 use Dot\Rbac\Guard\Guard\Factory;
 use Dot\Rbac\Guard\Guard\GuardInterface;
 use Dot\Rbac\Guard\Provider\ArrayGuardsProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +29,7 @@ class ArrayGuardsProviderTest extends TestCase
         $this->subject = new ArrayGuardsProvider(['guard_factory' => $this->mockFactory]);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetGuardsEmptyGuards(): void
     {
         $result = $this->subject->getGuards();
@@ -56,6 +58,7 @@ class ArrayGuardsProviderTest extends TestCase
         $this->assertCount(1, $this->subject->getGuards());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetGuardsConfig(): void
     {
         $this->subject->setGuardsConfig(['test' => 'config']);

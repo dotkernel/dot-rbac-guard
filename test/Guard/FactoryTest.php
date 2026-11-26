@@ -20,7 +20,7 @@ class FactoryTest extends TestCase
      */
     public function testCreateRuntimeException(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
+        $container = $this->createStub(ContainerInterface::class);
         $subject   = new Factory($container);
 
         $this->expectException(RuntimeException::class);
@@ -33,7 +33,7 @@ class FactoryTest extends TestCase
      */
     public function testCreate(): void
     {
-        $container           = $this->createMock(ContainerInterface::class);
+        $container           = $this->createStub(ContainerInterface::class);
         $guardsPluginManager = $this->createMock(GuardPluginManager::class);
 
         $guardsPluginManager->expects($this->once())
@@ -61,8 +61,8 @@ class FactoryTest extends TestCase
      */
     public function testGetGuardPluginManager(): void
     {
-        $container           = $this->createMock(ContainerInterface::class);
-        $guardsPluginManager = $this->createMock(GuardPluginManager::class);
+        $container           = $this->createStub(ContainerInterface::class);
+        $guardsPluginManager = $this->createStub(GuardPluginManager::class);
 
         $subject = new Factory($container, $guardsPluginManager);
 

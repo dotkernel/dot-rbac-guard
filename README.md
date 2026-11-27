@@ -18,9 +18,9 @@ Documentation is available at: https://docs.dotkernel.org/dot-rbac-guard/.
 [![GitHub stars](https://img.shields.io/github/stars/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/stargazers)
 [![GitHub license](https://img.shields.io/github/license/dotkernel/dot-rbac-guard)](https://github.com/dotkernel/dot-rbac-guard/blob/4.0/LICENSE.md)
 
-[![Build Static](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml/badge.svg?branch=4.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml)
+[![Build Static](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml/badge.svg?branch=4.x)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/continuous-integration.yml)
 [![codecov](https://codecov.io/gh/dotkernel/dot-rbac-guard/graph/badge.svg?token=HB718GSIKS)](https://codecov.io/gh/dotkernel/dot-rbac-guard)
-[![PHPStan](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml/badge.svg?branch=4.0)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml)
+[![PHPStan](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml/badge.svg?branch=4.x)](https://github.com/dotkernel/dot-rbac-guard/actions/workflows/static-analysis.yml)
 
 ## Installation
 

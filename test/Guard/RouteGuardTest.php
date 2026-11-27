@@ -79,7 +79,7 @@ class RouteGuardTest extends TestCase
      */
     public function testIsNotGrantedRulesNotSet(): void
     {
-        $request = $this->createMock(ServerRequest::class);
+        $request = $this->createStub(ServerRequest::class);
 
         $result = $this->subject->isGranted($request);
         $this->assertFalse($result);
